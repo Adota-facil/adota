@@ -1,0 +1,27 @@
+import 'package:flutter/material.dart';
+
+class Buton_AppBar extends StatelessWidget {
+  final String titulo;
+
+
+  const Buton_AppBar({super.key, required this.titulo});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 12),
+      child: ElevatedButton(
+        onPressed: () {},
+        style: ElevatedButton.styleFrom(
+          minimumSize: Size(40, 40),
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          side: BorderSide(color: const Color(0xFFEF9737), width: 3),
+          padding: EdgeInsets.symmetric(vertical: 20, horizontal: 25),
+        ),
+        child: Text(titulo, style: TextStyle(color: Color(0xFFEF9737), fontWeight: FontWeight.bold, fontSize: 20),),
+      ),
+    );
+
+  }
+}
