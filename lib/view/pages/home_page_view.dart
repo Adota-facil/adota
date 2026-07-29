@@ -1,4 +1,5 @@
 import 'package:adota_facil/view/widgets/appBar_Widget.dart';
+import 'package:adota_facil/view/widgets/custom_bottom_nav.dart';
 import 'package:flutter/material.dart';
 
 class HomePageView extends StatelessWidget {
@@ -9,6 +10,11 @@ class HomePageView extends StatelessWidget {
     return Scaffold( 
       backgroundColor: Colors.white,
       appBar: AppbarWidget(leadingName: "Bem vindo! \n Eduardo"),
+     bottomNavigationBar: CustomBottomNav(
+        currentIndex: 0, // Deixa a aba "Início" sempre marcada por enquanto
+        onTap: (index) {// Função vazia: não faz nada quando o usuário clica
+        },
+      ),
     );
   }
 }
