@@ -1,3 +1,4 @@
+import 'package:adota_facil/view/pages/cadastro_usuario_view.dart';
 import 'package:adota_facil/view/pages/perfil_pet_view.dart';
 import 'package:adota_facil/view/widgets/appBar_Widget.dart';
 import 'package:adota_facil/view/widgets/custom_bottom_nav.dart';
@@ -18,10 +19,10 @@ class HomePageView extends StatelessWidget {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const PerfilPet()),
+              MaterialPageRoute(builder: (context) => const CadastroUsuarioView()),
             );
           },
-          child: const Text('Ir para pagina de Perfil Pet'),
+          child: const Text('Ir para pagina de Cadastro de usuario'),
         ),
       ),
     );
