@@ -1,4 +1,6 @@
 import 'package:adota_facil/view/pages/home_page_view.dart';
+import 'package:adota_facil/view/pages/perfil_pet_view.dart';
+import 'package:adota_facil/view/pages/search_page_view.dart';
 import 'package:adota_facil/view/widgets/avatar_icon.dart';
 import 'package:adota_facil/view/widgets/buton_padrao_widget.dart';
 import 'package:adota_facil/view/widgets/buton_search.dart';
@@ -32,6 +34,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    return HomePageView();
+    return SearchPageView();
   }
 }

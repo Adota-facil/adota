@@ -17,19 +17,20 @@ class CustomBottomNav extends StatelessWidget {
       decoration: const BoxDecoration(
         boxShadow: [
           BoxShadow(
-            color: Colors.black26, // Uma sombra preta bem suave (12% de opacidade)
-            blurRadius: 25.0,       // O quanto a sombra fica esfumaçada
+            color:
+                Colors.black26, // Uma sombra preta bem suave (12% de opacidade)
+            blurRadius: 25.0, // O quanto a sombra fica esfumaçada
             offset: Offset(0, -3), // Move a sombra 3 pixels para CIMA
           ),
         ],
-        color: Color(0xFFF9A86B), 
+        color: Color(0xFFF9A86B),
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(25.0),
           topRight: Radius.circular(25.0),
         ),
       ),
       padding: const EdgeInsets.symmetric(vertical: 20.0),
-      child: SafeArea( 
+      child: SafeArea(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.end,
@@ -48,7 +49,7 @@ class CustomBottomNav extends StatelessWidget {
   // Método atualizado usando IconButton
   Widget _buildNavItem(IconData icon, String label, int index) {
     final isSelected = currentIndex == index;
-    
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -58,8 +59,8 @@ class CustomBottomNav extends StatelessWidget {
           color: Colors.white,
           iconSize: 40,
           // Removemos os espaçamentos padrão do IconButton para não quebrar o layout
-          padding: EdgeInsets.zero, 
-          constraints: const BoxConstraints(), 
+          padding: EdgeInsets.zero,
+          constraints: const BoxConstraints(),
         ),
         const SizedBox(height: 4),
         Text(
@@ -67,7 +68,7 @@ class CustomBottomNav extends StatelessWidget {
           style: TextStyle(
             color: Colors.white,
             fontSize: 14,
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal, 
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
           ),
         ),
       ],
@@ -97,10 +98,7 @@ class CustomBottomNav extends StatelessWidget {
         const SizedBox(height: 4),
         const Text(
           'Anunciar',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 14,
-          ),
+          style: TextStyle(color: Colors.white, fontSize: 14),
         ),
       ],
     );
