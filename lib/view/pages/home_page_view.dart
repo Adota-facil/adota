@@ -102,7 +102,14 @@ class HomePageView extends StatelessWidget {
               ],
             ),
             SingleChildScrollView(
-              child: Row(children: [Avatar_animals(icone: Icons.person, nome: "Cachorro",)]),
+              child: Row(
+                children: [
+                  Avatar_animals(icone: Icons.sound_dete, nome: "Cachorro"),
+                  Avatar_animals(icone: Icons.catching_pokemon, nome: "Gatos"),
+                  Avatar_animals(icone: Icons., nome: "Roedores"),
+
+                ],
+              ),
             ),
           ],
         ),
