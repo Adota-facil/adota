@@ -13,7 +13,7 @@ class CustomBottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 111,
+      height: 140,
       decoration: const BoxDecoration(
         boxShadow: [
           BoxShadow(
@@ -31,14 +31,14 @@ class CustomBottomNav extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 20.0),
       child: SafeArea( 
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             _buildNavItem(Icons.home, 'Início', 0),
             _buildNavItem(Icons.pets, 'Pets', 1),
             _buildCenterButton(2),
             _buildNavItem(Icons.person_outline, 'Perfil', 3),
-            _buildNavItem(Icons.settings, 'configurações', 4),
+            _buildNavItem(Icons.settings, 'config.', 4),
           ],
         ),
       ),
@@ -61,7 +61,7 @@ class CustomBottomNav extends StatelessWidget {
           padding: EdgeInsets.zero, 
           constraints: const BoxConstraints(), 
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 4,),
         Text(
           label,
           style: TextStyle(
@@ -94,7 +94,7 @@ class CustomBottomNav extends StatelessWidget {
             padding: EdgeInsets.zero,
           ),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 5,),
         const Text(
           'Anunciar',
           style: TextStyle(

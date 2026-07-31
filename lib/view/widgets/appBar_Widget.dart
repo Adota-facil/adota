@@ -12,7 +12,7 @@ class AppbarWidget extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
         toolbarHeight: 80, 
-        leadingWidth: 120,
+        leadingWidth: 130,
         backgroundColor: Colors.white,
         leading: Center(
           child: Text(
