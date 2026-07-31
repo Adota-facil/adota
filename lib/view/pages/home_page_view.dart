@@ -2,7 +2,6 @@ import 'package:adota_facil/view/widgets/CarouselSlider_widget.dart';
 import 'package:adota_facil/view/widgets/appBar_Widget.dart';
 import 'package:adota_facil/view/widgets/custom_bottom_nav.dart';
 //import 'package:adota_facil/view/widgets/avatar_animais_widget.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 
 class HomePageView extends StatelessWidget {
