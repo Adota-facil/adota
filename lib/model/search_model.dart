@@ -1,4 +1,4 @@
-import 'dart:ui';
+import 'package:flutter/material.dart';
 
 class PetModel {
   final String id;
@@ -7,7 +7,6 @@ class PetModel {
   final String statusSaude;
   final String idade;
   final String porte;
-  final String imagemUrl;
   final String genero;
 
   const PetModel({
@@ -17,12 +16,28 @@ class PetModel {
     required this.statusSaude,
     required this.idade,
     required this.porte,
-    required this.imagemUrl,
     required this.genero,
-    required String name,
   });
 
-  // Converte JSON da API para o Objeto Pet
+  // Getter para formatar as informações exibidas nos cards
+  String get informacoesFormatadas =>
+      '$especie • $statusSaude\n$idade • $porte';
+
+  // Ícone dinâmico com base no gênero
+  IconData get iconeGenero {
+    return genero.toLowerCase() == 'fêmea' || genero.toLowerCase() == 'femea'
+        ? Icons.female
+        : Icons.male;
+  }
+
+  // Cor dinâmica com base no gênero
+  Color get corGenero {
+    return genero.toLowerCase() == 'fêmea' || genero.toLowerCase() == 'femea'
+        ? Colors.pink
+        : Colors.blue;
+  }
+
+  // Converte JSON vindo de uma API ou banco para o modelo
   factory PetModel.fromJson(Map<String, dynamic> json) {
     return PetModel(
       id: json['id'] ?? '',
@@ -31,13 +46,11 @@ class PetModel {
       statusSaude: json['statusSaude'] ?? '',
       idade: json['idade'] ?? '',
       porte: json['porte'] ?? '',
-      imagemUrl: json['imagemUrl'] ?? '',
       genero: json['genero'] ?? 'macho',
-      name: '',
     );
   }
 
-  // Converte o Objeto Pet para JSON (caso precise enviar algo para a API)
+  // Converte o objeto para Map/JSON
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -46,7 +59,6 @@ class PetModel {
       'statusSaude': statusSaude,
       'idade': idade,
       'porte': porte,
-      'imagemUrl': imagemUrl,
       'genero': genero,
     };
   }
