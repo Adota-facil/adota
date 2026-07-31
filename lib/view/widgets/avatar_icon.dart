@@ -13,11 +13,11 @@ class Avatar_buton extends StatelessWidget {
           padding: const EdgeInsets.only(right: 20),
           child: CircleAvatar(
             radius: 30,
-            backgroundImage: AssetImage(
-              'assets/image/7433277_yuri_alberto_20240512172139.png',
+            child: Icon(Icons.person, size: 40,),
+            
+      
             ),
           ),
-        ),
       ],
     );
   }
