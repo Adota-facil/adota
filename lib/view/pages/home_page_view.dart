@@ -1,7 +1,7 @@
 import 'package:adota_facil/view/widgets/CarouselSlider_widget.dart';
 import 'package:adota_facil/view/widgets/appBar_Widget.dart';
-import 'package:adota_facil/view/widgets/avatar_animais_widget.dart';
 import 'package:adota_facil/view/widgets/custom_bottom_nav.dart';
+//import 'package:adota_facil/view/widgets/avatar_animais_widget.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 
@@ -104,10 +104,9 @@ class HomePageView extends StatelessWidget {
             SingleChildScrollView(
               child: Row(
                 children: [
-                  Avatar_animals(icone: Icons.sound_dete, nome: "Cachorro"),
+                  /*Avatar_animals(icone: Icons.sound_dete, nome: "Cachorro"),
                   Avatar_animals(icone: Icons.catching_pokemon, nome: "Gatos"),
-                  Avatar_animals(icone: Icons., nome: "Roedores"),
-
+                  Avatar_animals(icone: Icons., nome: "Roedores"),*/
                 ],
               ),
             ),
