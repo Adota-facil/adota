@@ -17,8 +17,8 @@ class _BasePageViewState extends State<BasePageView> {
 
   final List<String> _titulosAppBar = [
     "Adota Pet",
-    "Pets Disponíveis",
-    "Novo\nPet:",
+    "Pets",
+    "Novo Pet:",
     "Meu Perfil",
     "Config.",
   ];
