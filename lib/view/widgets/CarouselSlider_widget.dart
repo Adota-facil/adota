@@ -3,7 +3,6 @@ import 'package:carousel_slider/carousel_slider.dart';
 
 class CarouselsliderWidget extends StatefulWidget {
   final double altura;
-
   const CarouselsliderWidget({super.key, required this.altura});
 
   @override
@@ -11,25 +10,20 @@ class CarouselsliderWidget extends StatefulWidget {
 }
 
 class _CarouselsliderWidgetState extends State<CarouselsliderWidget> {
-  
   int _current = 0;
   final CarouselSliderController _controller = CarouselSliderController();
-  
-  // A sua lista original de itens
-  final List<int> items = [1, 2, 3];
+  final List<int> items =[1,2,3];
 
   @override
   Widget build(BuildContext context) {
     return Stack(
       alignment: Alignment.bottomCenter,
       children: [
-        // O seu CarouselSlider original adaptado
         CarouselSlider(
           carouselController: _controller,
           options: CarouselOptions(
-            height: widget.altura, 
-            viewportFraction: 1,
-            // Adicionado para atualizar a bolinha ao arrastar
+            height: widget.altura,
+            viewportFraction: 1.0,
             onPageChanged: (index, reason) {
               setState(() {
                 _current = index;
@@ -43,14 +37,17 @@ class _CarouselsliderWidgetState extends State<CarouselsliderWidget> {
                   width: double.infinity,
                   margin: const EdgeInsets.symmetric(horizontal: 5.0),
                   decoration: const BoxDecoration(color: Colors.amber),
-                  child: Center(child: Text('text $i', style: const TextStyle(fontSize: 16.0))),
+                  child: Center(
+                    child: Text(
+                      'text $i',
+                      style: const TextStyle(fontSize: 16.0),
+                    ),
+                  ),
                 );
               },
             );
           }).toList(),
         ),
-        
-        // As bolinhas posicionadas em cima do carrossel
         Positioned(
           bottom: 10,
           child: Row(
@@ -65,8 +62,8 @@ class _CarouselsliderWidgetState extends State<CarouselsliderWidget> {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: _current == entry.key
-                        ? const Color(0xFF42A5F5) // Azul claro (Ativa)
-                        : const Color(0xFF000080), // Azul escuro (Inativa)
+                        ? const Color(0xFF42A5F5)
+                        : const Color(0xFF000080),
                   ),
                 ),
               );
