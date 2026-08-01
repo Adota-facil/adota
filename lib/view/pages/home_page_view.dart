@@ -11,13 +11,6 @@ class HomePageView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppbarWidget(leadingName: "Bem vindo! \n Eduardo"),
-      bottomNavigationBar: CustomBottomNav(
-        currentIndex: 0, // Deixa a aba "Início" sempre marcada por enquanto
-        onTap: (index) {
-          // Função vazia: não faz nada quando o usuário clica
-        },
-      ),
       body: SingleChildScrollView(
         // <-- Adicionado aqui
         child: Column(

@@ -1,5 +1,3 @@
-import 'package:adota_facil/view/widgets/appBar_Widget.dart';
-import 'package:adota_facil/view/widgets/custom_bottom_nav.dart';
 import 'package:flutter/material.dart';
 
 class CadastroPetView extends StatefulWidget {
@@ -91,7 +89,7 @@ class _CadastroPetViewState extends State<CadastroPetView> {
               style: TextStyle(color: Colors.black26, fontSize: 14),
             ),
             decoration: InputDecoration(
-              
+              prefixIcon: const Icon(Icons.category, color: Colors.blue),
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 14,
                 vertical: 12,
@@ -153,12 +151,104 @@ class _CadastroPetViewState extends State<CadastroPetView> {
     );
   }
 
+  Widget _construirGradeFotosExemplo() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 24.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Fotos do Pet*',
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 14,
+              color: Colors.black87,
+            ),
+          ),
+          const SizedBox(height: 8),
+          InkWell(
+            onTap: () {},
+            borderRadius: BorderRadius.circular(8),
+            child: Container(
+              width: double.infinity,
+              height: 180,
+              decoration: BoxDecoration(
+                color: const Color(0xFFF5F5F5),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: const Color(0xFFE0E0E0), width: 1.2),
+              ),
+              child: Stack(
+                children: [
+                  const Center(
+                    child: Icon(Icons.pets, color: Colors.black12, size: 64),
+                  ),
+                  Positioned(
+                    bottom: 12,
+                    right: 12,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.black54,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: const Text(
+                        'Foto Principal',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: List.generate(4, (index) {
+              return Expanded(
+                child: Padding(
+                  padding: EdgeInsets.only(right: index < 3 ? 12.0 : 0.0),
+                  child: InkWell(
+                    onTap: () {},
+                    borderRadius: BorderRadius.circular(8),
+                    child: Container(
+                      height: 75,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFAFAFA),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: const Color(0xFFE0E0E0),
+                          width: 1.2,
+                        ),
+                      ),
+                      child: const Center(
+                        child: Icon(
+                          Icons.add_a_photo_outlined,
+                          color: Colors.blue,
+                          size: 22,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppbarWidget(leadingName: "Bem vindo! \n Eduardo"),
-      bottomNavigationBar: CustomBottomNav(currentIndex: 0, onTap: (index) {}),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
         child: Form(
@@ -204,7 +294,10 @@ class _CadastroPetViewState extends State<CadastroPetView> {
               Row(
                 children: [
                   Expanded(
-                    child: _construirCampo(label: 'Cidade*', dica: 'Ex: Garanhuns'),
+                    child: _construirCampo(
+                      label: 'Cidade*',
+                      dica: 'Ex: Garanhuns',
+                    ),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
@@ -254,7 +347,8 @@ class _CadastroPetViewState extends State<CadastroPetView> {
                     'Conte um pouco sobre a personalidade e história do pet...',
                 maxLines: 4,
               ),
-              const SizedBox(height: 24),
+              _construirGradeFotosExemplo(),
+              const SizedBox(height: 12),
               SizedBox(
                 width: double.infinity,
                 height: 50,
