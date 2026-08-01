@@ -3,7 +3,9 @@ import 'package:carousel_slider/carousel_slider.dart';
 
 class CarouselsliderWidget extends StatefulWidget {
   final double altura;
-  const CarouselsliderWidget({super.key, required this.altura});
+  final List<int> items;
+
+  const CarouselsliderWidget({super.key, required this.altura, required this.items});
 
   @override
   State<CarouselsliderWidget> createState() => _CarouselsliderWidgetState();
@@ -12,7 +14,7 @@ class CarouselsliderWidget extends StatefulWidget {
 class _CarouselsliderWidgetState extends State<CarouselsliderWidget> {
   int _current = 0;
   final CarouselSliderController _controller = CarouselSliderController();
-  final List<int> items =[1,2,3];
+  
 
   @override
   Widget build(BuildContext context) {
@@ -22,15 +24,15 @@ class _CarouselsliderWidgetState extends State<CarouselsliderWidget> {
         CarouselSlider(
           carouselController: _controller,
           options: CarouselOptions(
-            height: widget.altura,
-            viewportFraction: 1.0,
+            height: widget.altura, 
+            viewportFraction: 1,
             onPageChanged: (index, reason) {
               setState(() {
                 _current = index;
               });
             },
           ),
-          items: items.map((i) {
+          items: widget.items.map((i) {
             return Builder(
               builder: (BuildContext context) {
                 return Container(
@@ -48,11 +50,12 @@ class _CarouselsliderWidgetState extends State<CarouselsliderWidget> {
             );
           }).toList(),
         ),
+        
         Positioned(
           bottom: 10,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: items.asMap().entries.map((entry) {
+            children: widget.items.asMap().entries.map((entry) {
               return GestureDetector(
                 onTap: () => _controller.animateToPage(entry.key),
                 child: Container(
@@ -62,8 +65,8 @@ class _CarouselsliderWidgetState extends State<CarouselsliderWidget> {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: _current == entry.key
-                        ? const Color(0xFF42A5F5)
-                        : const Color(0xFF000080),
+                        ? const Color(0xFF42A5F5) 
+                        : const Color(0xFF000080), 
                   ),
                 ),
               );
