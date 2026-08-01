@@ -1,7 +1,7 @@
 import 'package:adota_facil/firebase_options.dart';
-import 'package:adota_facil/view/pages/home_page_view.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:adota_facil/view/pages/base_page_view.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,25 +14,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const MyHomePage(title: 'Adota Facil'),
+      home: BasePageView(),
     );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  @override
-  Widget build(BuildContext context) {
-    return HomePageView();
   }
 }

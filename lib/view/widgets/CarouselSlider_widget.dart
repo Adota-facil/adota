@@ -12,7 +12,6 @@ class CarouselsliderWidget extends StatefulWidget {
 }
 
 class _CarouselsliderWidgetState extends State<CarouselsliderWidget> {
-  
   int _current = 0;
   final CarouselSliderController _controller = CarouselSliderController();
   
@@ -40,7 +39,12 @@ class _CarouselsliderWidgetState extends State<CarouselsliderWidget> {
                   width: double.infinity,
                   margin: const EdgeInsets.symmetric(horizontal: 5.0),
                   decoration: const BoxDecoration(color: Colors.amber),
-                  child: Center(child: Text('text $i', style: const TextStyle(fontSize: 16.0))),
+                  child: Center(
+                    child: Text(
+                      'text $i',
+                      style: const TextStyle(fontSize: 16.0),
+                    ),
+                  ),
                 );
               },
             );
