@@ -1,7 +1,7 @@
 import 'package:adota_facil/view/widgets/CarouselSlider_widget.dart';
 import 'package:adota_facil/view/widgets/appBar_Widget.dart';
 import 'package:adota_facil/view/widgets/custom_bottom_nav.dart';
-//import 'package:adota_facil/view/widgets/avatar_animais_widget.dart';
+import 'package:adota_facil/view/widgets/avatar_animais_widget.dart';
 import 'package:flutter/material.dart';
 
 class HomePageView extends StatelessWidget {
@@ -24,7 +24,7 @@ class HomePageView extends StatelessWidget {
           children: [
             Stack(
               children: [
-                CarouselsliderWidget(altura: 280),
+                CarouselsliderWidget(altura: 280, items: [1,2,3,4,5],),
                 Positioned(
                   left: -25,
                   height: 450,
@@ -82,7 +82,7 @@ class HomePageView extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-              child: CarouselsliderWidget(altura: 200),
+              child: CarouselsliderWidget(altura: 200, items: [1],),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -102,10 +102,11 @@ class HomePageView extends StatelessWidget {
             ),
             SingleChildScrollView(
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  /*Avatar_animals(icone: Icons.sound_dete, nome: "Cachorro"),
-                  Avatar_animals(icone: Icons.catching_pokemon, nome: "Gatos"),
-                  Avatar_animals(icone: Icons., nome: "Roedores"),*/
+                  Avatar_animals(iconeSvg: 'assets/image/lucide_dog.svg', nome: "Cachorro"),
+                  Avatar_animals(iconeSvg: 'assets/image/Group.svg', nome: "Gatos"),
+                  Avatar_animals(iconeSvg: "assets/image/material-symbols_add.svg", nome: "Outros"),
                 ],
               ),
             ),

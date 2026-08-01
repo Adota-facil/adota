@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 class Avatar_animals extends StatelessWidget {
   final String nome;
@@ -10,17 +11,28 @@ class Avatar_animals extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        ElevatedButton( 
+        ElevatedButton(
           onPressed: () {},
           style: ElevatedButton.styleFrom(
             minimumSize: Size(60, 60),
             backgroundColor: const Color(0xDDFEAA62),
             shape: CircleBorder(),
           ),
-          child: Column(children: []),
+          child: SvgPicture.asset(
+            height: 30,
+            iconeSvg,
+            colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+          ),
         ),
-        SizedBox(height: 4,),
-        Text(nome, style: TextStyle(fontWeight: FontWeight.bold, color: const Color(0xDDFEAA62), fontSize: 16),)
+        SizedBox(height: 4),
+        Text(
+          nome,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: const Color(0xDDFEAA62),
+            fontSize: 16,
+          ),
+        ),
       ],
     );
   }

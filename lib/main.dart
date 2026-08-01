@@ -1,10 +1,11 @@
+import 'package:adota_facil/firebase_options.dart';
 import 'package:adota_facil/view/pages/home_page_view.dart';
-import 'package:adota_facil/view/widgets/avatar_icon.dart';
-import 'package:adota_facil/view/widgets/buton_padrao_widget.dart';
-import 'package:adota_facil/view/widgets/buton_search.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
 }
 

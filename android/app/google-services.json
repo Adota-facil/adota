@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1049234975862",
+    "project_id": "adota-facil-8c2b9",
+    "storage_bucket": "adota-facil-8c2b9.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1049234975862:android:3a1d2a346001f2268e0357",
+        "android_client_info": {
+          "package_name": "com.example.adota_facil"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDllrDEaaTEWI3mU5_E2I5qdXQ06GQLmF4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
