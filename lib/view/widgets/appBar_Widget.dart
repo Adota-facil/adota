@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 
 // 1. Adicione o "implements PreferredSizeWidget" aqui:
 class AppbarWidget extends StatelessWidget implements PreferredSizeWidget {
-
   final String leadingName;
 
   const AppbarWidget({super.key, required this.leadingName});
@@ -34,6 +33,7 @@ class AppbarWidget extends StatelessWidget implements PreferredSizeWidget {
         actions: [Avatar_buton()],
       );
   }
+
   @override
-  Size get preferredSize => const Size.fromHeight(80.0); 
+  Size get preferredSize => const Size.fromHeight(80.0);
 }
