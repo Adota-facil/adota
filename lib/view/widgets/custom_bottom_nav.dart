@@ -93,10 +93,7 @@ class CustomBottomNav extends StatelessWidget {
         const SizedBox(height: 5),
         const Text(
           'Anunciar',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 14,
-          ),
+          style: TextStyle(color: Colors.white, fontSize: 14),
         ),
       ],
     );

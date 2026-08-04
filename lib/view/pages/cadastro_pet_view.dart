@@ -1,4 +1,10 @@
+import 'dart:convert';
+import 'dart:io';
+import 'package:adota_facil/controller/home_controller.dart';
+import 'package:adota_facil/model/search_model.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 
 class CadastroPetView extends StatefulWidget {
   const CadastroPetView({super.key});
@@ -12,8 +18,176 @@ class _CadastroPetViewState extends State<CadastroPetView> {
   bool isCastrado = true;
   bool isVacinado = true;
   String? especieSelecionada;
+  String generoSelecionado = 'Macho';
+  bool _enviando = false;
 
   final List<String> especies = ['Cachorro', 'Gato', 'Pássaro', 'Outros'];
+
+  final _nomeController = TextEditingController();
+  final _racaController = TextEditingController();
+  final _idadeController = TextEditingController();
+  final _porteController = TextEditingController();
+  final _cidadeController = TextEditingController();
+  final _estadoController = TextEditingController();
+  final _descricaoController = TextEditingController();
+
+  final _picker = ImagePicker();
+
+  File? _fotoPrincipal;
+  final List<File?> _fotosAdicionais = List<File?>.filled(4, null);
+
+  @override
+  void dispose() {
+    _nomeController.dispose();
+    _racaController.dispose();
+    _idadeController.dispose();
+    _porteController.dispose();
+    _cidadeController.dispose();
+    _estadoController.dispose();
+    _descricaoController.dispose();
+    super.dispose();
+  }
+
+  String? _validarObrigatorio(String? valor) {
+    if (valor == null || valor.trim().isEmpty) {
+      return 'Campo obrigatório';
+    }
+    return null;
+  }
+
+  Future<void> _selecionarFotoPrincipal() async {
+    final imagem = await _picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 40,
+      maxWidth: 600,
+      maxHeight: 600,
+    );
+    if (imagem != null) {
+      setState(() => _fotoPrincipal = File(imagem.path));
+    }
+  }
+
+  Future<void> _selecionarFotoAdicional(int index) async {
+    final imagem = await _picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 40,
+      maxWidth: 600,
+      maxHeight: 600,
+    );
+    if (imagem != null) {
+      setState(() => _fotosAdicionais[index] = File(imagem.path));
+    }
+  }
+
+  Future<void> _salvarPet() async {
+    if (!_formKey.currentState!.validate()) return;
+    if (especieSelecionada == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Selecione a espécie do pet')),
+      );
+      return;
+    }
+    if (_fotoPrincipal == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Selecione a foto principal do pet')),
+      );
+      return;
+    }
+
+    setState(() => _enviando = true);
+
+    final controller = context.read<HomeController>();
+
+    try {
+      final id = controller.gerarNovoId();
+
+      // Converte a foto principal em Base64
+      final fotoBase64 = base64Encode(await _fotoPrincipal!.readAsBytes());
+
+      // Converte as fotos adicionais preenchidas em Base64
+      final fotosBase64 = <String>[];
+      for (final foto in _fotosAdicionais) {
+        if (foto != null) {
+          fotosBase64.add(base64Encode(await foto.readAsBytes()));
+        }
+      }
+
+      // Confere se o documento não vai estourar o limite de 1MB do Firestore
+      final tamanhoAproximado = fotoBase64.length +
+          fotosBase64.fold<int>(0, (soma, f) => soma + f.length);
+      if (tamanhoAproximado > 900000) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'As fotos selecionadas são grandes demais. Escolha imagens menores ou em menor quantidade.',
+            ),
+          ),
+        );
+        setState(() => _enviando = false);
+        return;
+      }
+
+      final statusSaude = [
+        if (isCastrado) 'Castrado',
+        if (isVacinado) 'Vacinado',
+      ].join(', ');
+
+      final novoPet = PetModel(
+        id: id,
+        nome: _nomeController.text.trim(),
+        especie: especieSelecionada!,
+        statusSaude: statusSaude,
+        idade: _idadeController.text.trim(),
+        porte: _porteController.text.trim(),
+        genero: generoSelecionado,
+        raca: _racaController.text.trim(),
+        descricao: _descricaoController.text.trim(),
+        localizacao:
+            '${_cidadeController.text.trim()}, ${_estadoController.text.trim()}',
+        fotoBase64: fotoBase64,
+        fotosBase64: fotosBase64,
+      );
+
+      final sucesso = await controller.cadastrarAnimal(novoPet);
+
+      if (!mounted) return;
+
+      if (sucesso) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Pet cadastrado com sucesso!')),
+        );
+        _formKey.currentState!.reset();
+        _nomeController.clear();
+        _racaController.clear();
+        _idadeController.clear();
+        _porteController.clear();
+        _cidadeController.clear();
+        _estadoController.clear();
+        _descricaoController.clear();
+        setState(() {
+          especieSelecionada = null;
+          isCastrado = true;
+          isVacinado = true;
+          _fotoPrincipal = null;
+          for (var i = 0; i < _fotosAdicionais.length; i++) {
+            _fotosAdicionais[i] = null;
+          }
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(controller.erro ?? 'Erro ao cadastrar pet')),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erro ao enviar as fotos: $e')),
+      );
+    } finally {
+      if (mounted) setState(() => _enviando = false);
+    }
+  }
 
   OutlineInputBorder _estiloBorda() {
     return OutlineInputBorder(
@@ -25,6 +199,7 @@ class _CadastroPetViewState extends State<CadastroPetView> {
   Widget _construirCampo({
     required String label,
     required String dica,
+    required TextEditingController controller,
     IconData? icone,
     int maxLines = 1,
   }) {
@@ -43,7 +218,9 @@ class _CadastroPetViewState extends State<CadastroPetView> {
           ),
           const SizedBox(height: 6),
           TextFormField(
+            controller: controller,
             maxLines: maxLines,
+            validator: _validarObrigatorio,
             decoration: InputDecoration(
               hintText: dica,
               hintStyle: const TextStyle(color: Colors.black26, fontSize: 14),
@@ -118,6 +295,51 @@ class _CadastroPetViewState extends State<CadastroPetView> {
     );
   }
 
+  Widget _construirDropdownGenero() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Gênero*',
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 14,
+              color: Colors.black87,
+            ),
+          ),
+          const SizedBox(height: 6),
+          DropdownButtonFormField<String>(
+            initialValue: generoSelecionado,
+            decoration: InputDecoration(
+              prefixIcon: const Icon(Icons.wc, color: Colors.blue),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 14,
+                vertical: 12,
+              ),
+              filled: true,
+              fillColor: const Color(0xFFFAFAFA),
+              enabledBorder: _estiloBorda(),
+              focusedBorder: _estiloBorda().copyWith(
+                borderSide: const BorderSide(color: Colors.blue, width: 1.5),
+              ),
+            ),
+            items: const [
+              DropdownMenuItem(value: 'Macho', child: Text('Macho')),
+              DropdownMenuItem(value: 'Fêmea', child: Text('Fêmea')),
+            ],
+            onChanged: (String? novoValor) {
+              setState(() {
+                generoSelecionado = novoValor ?? 'Macho';
+              });
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _construirCheckboxCadastro({
     required String label,
     required bool valorAtual,
@@ -151,7 +373,7 @@ class _CadastroPetViewState extends State<CadastroPetView> {
     );
   }
 
-  Widget _construirGradeFotosExemplo() {
+  Widget _construirGradeFotos() {
     return Padding(
       padding: const EdgeInsets.only(bottom: 24.0),
       child: Column(
@@ -167,21 +389,29 @@ class _CadastroPetViewState extends State<CadastroPetView> {
           ),
           const SizedBox(height: 8),
           InkWell(
-            onTap: () {},
+            onTap: _selecionarFotoPrincipal,
             borderRadius: BorderRadius.circular(8),
             child: Container(
               width: double.infinity,
               height: 180,
+              clipBehavior: Clip.antiAlias,
               decoration: BoxDecoration(
                 color: const Color(0xFFF5F5F5),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(color: const Color(0xFFE0E0E0), width: 1.2),
               ),
               child: Stack(
+                fit: StackFit.expand,
                 children: [
-                  const Center(
-                    child: Icon(Icons.pets, color: Colors.black12, size: 64),
-                  ),
+                  _fotoPrincipal != null
+                      ? Image.file(_fotoPrincipal!, fit: BoxFit.cover)
+                      : const Center(
+                          child: Icon(
+                            Icons.pets,
+                            color: Colors.black12,
+                            size: 64,
+                          ),
+                        ),
                   Positioned(
                     bottom: 12,
                     right: 12,
@@ -211,14 +441,16 @@ class _CadastroPetViewState extends State<CadastroPetView> {
           const SizedBox(height: 12),
           Row(
             children: List.generate(4, (index) {
+              final foto = _fotosAdicionais[index];
               return Expanded(
                 child: Padding(
                   padding: EdgeInsets.only(right: index < 3 ? 12.0 : 0.0),
                   child: InkWell(
-                    onTap: () {},
+                    onTap: () => _selecionarFotoAdicional(index),
                     borderRadius: BorderRadius.circular(8),
                     child: Container(
                       height: 75,
+                      clipBehavior: Clip.antiAlias,
                       decoration: BoxDecoration(
                         color: const Color(0xFFFAFAFA),
                         borderRadius: BorderRadius.circular(8),
@@ -227,13 +459,15 @@ class _CadastroPetViewState extends State<CadastroPetView> {
                           width: 1.2,
                         ),
                       ),
-                      child: const Center(
-                        child: Icon(
-                          Icons.add_a_photo_outlined,
-                          color: Colors.blue,
-                          size: 22,
-                        ),
-                      ),
+                      child: foto != null
+                          ? Image.file(foto, fit: BoxFit.cover)
+                          : const Center(
+                              child: Icon(
+                                Icons.add_a_photo_outlined,
+                                color: Colors.blue,
+                                size: 22,
+                              ),
+                            ),
                     ),
                   ),
                 ),
@@ -247,6 +481,8 @@ class _CadastroPetViewState extends State<CadastroPetView> {
 
   @override
   Widget build(BuildContext context) {
+    final salvando = context.watch<HomeController>().salvando || _enviando;
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
@@ -273,20 +509,31 @@ class _CadastroPetViewState extends State<CadastroPetView> {
               _construirCampo(
                 label: 'Nome do Pet*',
                 dica: 'Ex: Bica',
+                controller: _nomeController,
                 icone: Icons.pets,
               ),
               _construirDropdownEspecie(),
-              _construirCampo(label: 'Raça*', dica: 'Ex: Pinscher, SRD, Persa'),
+              _construirDropdownGenero(),
+              _construirCampo(
+                label: 'Raça*',
+                dica: 'Ex: Pinscher, SRD, Persa',
+                controller: _racaController,
+              ),
               Row(
                 children: [
                   Expanded(
-                    child: _construirCampo(label: 'Idade*', dica: 'Ex: 9 anos'),
+                    child: _construirCampo(
+                      label: 'Idade*',
+                      dica: 'Ex: 9 anos',
+                      controller: _idadeController,
+                    ),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
                     child: _construirCampo(
                       label: 'Porte*',
                       dica: 'Ex: Pequeno',
+                      controller: _porteController,
                     ),
                   ),
                 ],
@@ -297,6 +544,7 @@ class _CadastroPetViewState extends State<CadastroPetView> {
                     child: _construirCampo(
                       label: 'Cidade*',
                       dica: 'Ex: Garanhuns',
+                      controller: _cidadeController,
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -304,6 +552,7 @@ class _CadastroPetViewState extends State<CadastroPetView> {
                     child: _construirCampo(
                       label: 'Estado*',
                       dica: 'Ex: Pernambuco',
+                      controller: _estadoController,
                     ),
                   ),
                 ],
@@ -345,9 +594,10 @@ class _CadastroPetViewState extends State<CadastroPetView> {
                 label: 'Descrição*',
                 dica:
                     'Conte um pouco sobre a personalidade e história do pet...',
+                controller: _descricaoController,
                 maxLines: 4,
               ),
-              _construirGradeFotosExemplo(),
+              _construirGradeFotos(),
               const SizedBox(height: 12),
               SizedBox(
                 width: double.infinity,
@@ -361,13 +611,23 @@ class _CadastroPetViewState extends State<CadastroPetView> {
                     ),
                     elevation: 0,
                   ),
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {}
-                  },
-                  child: const Text(
-                    'Salvar Pet',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
+                  onPressed: salvando ? null : _salvarPet,
+                  child: salvando
+                      ? const SizedBox(
+                          width: 22,
+                          height: 22,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : const Text(
+                          'Salvar Pet',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                 ),
               ),
             ],

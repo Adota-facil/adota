@@ -1,20 +1,27 @@
+import 'package:adota_facil/model/search_model.dart';
 import 'package:adota_facil/view/widgets/appBar_Widget.dart';
 import 'package:adota_facil/view/widgets/custom_bottom_nav.dart';
+import 'package:adota_facil/view/widgets/pet_image_widget.dart';
 import 'package:flutter/material.dart';
 
 class PerfilPet extends StatefulWidget {
-  const PerfilPet({super.key});
+  final PetModel pet;
+
+  const PerfilPet({super.key, required this.pet});
 
   @override
   State<PerfilPet> createState() => _PerfilPetState();
 }
 
 class _PerfilPetState extends State<PerfilPet> {
+
   @override
   Widget build(BuildContext context) {
+    final pet = widget.pet;
+
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppbarWidget(leadingName: "Bem vindo! \n Eduardo"),
+      appBar: AppbarWidget(leadingName: pet.nome),
       bottomNavigationBar: CustomBottomNav(currentIndex: 0, onTap: (index) {}),
 
       body: SingleChildScrollView(
@@ -29,23 +36,11 @@ class _PerfilPetState extends State<PerfilPet> {
                 // Foto Principal com cantos arredondados e tratamento de erro
                 ClipRRect(
                   borderRadius: BorderRadius.circular(16),
-                  child: Image.network(
-                    'https://unsplash.com', // Imagem real temporária
+                  child: PetImageWidget(
+                    fotoBase64: pet.fotoBase64,
+                    fotoUrl: pet.fotoUrl,
                     width: 150,
                     height: 150,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        width: 150,
-                        height: 150,
-                        color: Colors.grey[300],
-                        child: const Icon(
-                          Icons.pets,
-                          color: Colors.grey,
-                          size: 50,
-                        ),
-                      );
-                    },
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -57,72 +52,54 @@ class _PerfilPetState extends State<PerfilPet> {
                       // Nome e ícone de gênero
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
-                        children: const [
+                        children: [
                           Text(
-                            'Bica',
-                            style: TextStyle(
+                            pet.nome,
+                            style: const TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          Icon(Icons.female, color: Colors.pink),
+                          const SizedBox(width: 6),
+                          Icon(pet.iconeGenero, color: pet.corGenero),
                         ],
                       ),
-                      SizedBox(height: 8),
-                      // Tags de status
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 4,
-                        children: [
-                          Chip(
-                            label: Text(
-                              'Castrada',
-                              style: TextStyle(
-                                color: Color(0xFFA45600),
-                                fontSize: 12,
+                      const SizedBox(height: 8),
+                      // Tags de status (a partir de statusSaude, ex: "Castrado, Vacinado")
+                      if (pet.tagsSaude.isNotEmpty)
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 4,
+                          children: pet.tagsSaude.map((tag) {
+                            return Chip(
+                              label: Text(
+                                tag,
+                                style: const TextStyle(
+                                  color: Color(0xFFA45600),
+                                  fontSize: 12,
+                                ),
                               ),
-                            ),
-                            backgroundColor: Color(0xFFFDE8E4),
-                            side: BorderSide.none,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                          ),
-
-                          Chip(
-                            label: Text(
-                              'Vacinada',
-                              style: TextStyle(
-                                color: Color(0xFFA45600),
-                                fontSize: 12,
+                              backgroundColor: const Color(0xFFFDE8E4),
+                              side: BorderSide.none,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
                               ),
-                            ),
-                            backgroundColor: Color(0xFFFDE8E4),
-                            side: BorderSide.none,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                          ),
-                        ],
-                      ),
+                            );
+                          }).toList(),
+                        ),
                       const SizedBox(height: 12),
                       // Dados específicos do animal
-                      const Text(
-                        'Espécie: Pinscher',
-                        style: TextStyle(fontSize: 15),
-                      ),
-                      const Text(
-                        'Idade: 9 anos',
-                        style: TextStyle(fontSize: 15),
-                      ),
-                      const Text(
-                        'Porte: Pequeno',
-                        style: TextStyle(fontSize: 15),
-                      ),
-                      const Text('Raça: .....', style: TextStyle(fontSize: 15)),
-                      const Text(
-                        'Localização: .......',
-                        style: TextStyle(fontSize: 15),
+                      Text('Espécie: ${pet.especie}',
+                          style: const TextStyle(fontSize: 15)),
+                      Text('Idade: ${pet.idade}',
+                          style: const TextStyle(fontSize: 15)),
+                      Text('Porte: ${pet.porte}',
+                          style: const TextStyle(fontSize: 15)),
+                      Text('Raça: ${pet.raca.isNotEmpty ? pet.raca : "-"}',
+                          style: const TextStyle(fontSize: 15)),
+                      Text(
+                        'Localização: ${pet.localizacao.isNotEmpty ? pet.localizacao : "-"}',
+                        style: const TextStyle(fontSize: 15),
                       ),
                     ],
                   ),
@@ -131,92 +108,41 @@ class _PerfilPetState extends State<PerfilPet> {
             ),
             const SizedBox(height: 20),
 
-            // Carrossel/Lista de Miniaturas horizontais
-            SizedBox(
-              height: 80,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
+            // Galeria de fotos adicionais (se houver)
+            Builder(builder: (context) {
+              final galeria = pet.fotosBase64.isNotEmpty
+                  ? pet.fotosBase64
+                  : pet.fotos;
+              final usaBase64 = pet.fotosBase64.isNotEmpty;
+
+              if (galeria.isEmpty) return const SizedBox.shrink();
+
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Miniatura 1
-                  Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: Image.network(
-                        'https://unsplash.com',
-                        width: 80,
-                        height: 80,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => Container(
-                          width: 80,
-                          height: 80,
-                          color: Colors.grey[300],
-                          child: const Icon(Icons.image, color: Colors.grey),
-                        ),
-                      ),
+                  SizedBox(
+                    height: 80,
+                    child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: galeria.length,
+                      separatorBuilder: (_, __) => const SizedBox(width: 8),
+                      itemBuilder: (context, index) {
+                        return ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: PetImageWidget(
+                            fotoBase64: usaBase64 ? galeria[index] : '',
+                            fotoUrl: usaBase64 ? '' : galeria[index],
+                            width: 80,
+                            height: 80,
+                          ),
+                        );
+                      },
                     ),
                   ),
-                  // Miniatura 2
-                  Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: Image.network(
-                        'https://unsplash.com',
-                        width: 80,
-                        height: 80,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => Container(
-                          width: 80,
-                          height: 80,
-                          color: Colors.grey[300],
-                          child: const Icon(Icons.image, color: Colors.grey),
-                        ),
-                      ),
-                    ),
-                  ),
-                  // Miniatura 3
-                  Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: Image.network(
-                        'https://unsplash.com',
-                        width: 80,
-                        height: 80,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => Container(
-                          width: 80,
-                          height: 80,
-                          color: Colors.grey[300],
-                          child: const Icon(Icons.image, color: Colors.grey),
-                        ),
-                      ),
-                    ),
-                  ),
-                  // Miniatura 4
-                  Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: Image.network(
-                        'https://unsplash.com',
-                        width: 80,
-                        height: 80,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => Container(
-                          width: 80,
-                          height: 80,
-                          color: Colors.grey[300],
-                          child: const Icon(Icons.image, color: Colors.grey),
-                        ),
-                      ),
-                    ),
-                  ),
+                  const SizedBox(height: 24),
                 ],
-              ),
-            ),
-            const SizedBox(height: 24),
+              );
+            }),
 
             // Seção de Descrição
             const Text(
@@ -224,9 +150,11 @@ class _PerfilPetState extends State<PerfilPet> {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
-            const Text(
-              'Bica é uma cachorrinha doce, carinhosa e muito companheira. Ela ama a companhia das pessoas, gosta de receber carinho e tem um jeitinho que conquista qualquer um. Agora, tudo o que ela mais deseja é encontrar uma família que lhe dê muito amor, cuidado e um lar para chamar de seu.',
-              style: TextStyle(
+            Text(
+              pet.descricao.isNotEmpty
+                  ? pet.descricao
+                  : 'Sem descrição informada.',
+              style: const TextStyle(
                 fontSize: 15,
                 color: Colors.black87,
                 height: 1.4,
@@ -235,6 +163,7 @@ class _PerfilPetState extends State<PerfilPet> {
             const SizedBox(height: 24),
 
             // Card do Anunciante
+            // TODO: dados fixos até existir um model de usuário/anunciante ligado ao pet.
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -264,12 +193,12 @@ class _PerfilPetState extends State<PerfilPet> {
                         child: const Icon(Icons.person, color: Colors.grey),
                       ),
                       const SizedBox(width: 12),
-                      Expanded(
+                      const Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
+                          children: [
                             Text(
-                              'Epitácio Lindolfo da Silva Pessoa',
+                              'Anunciante',
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                             Text(
