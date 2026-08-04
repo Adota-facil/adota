@@ -1,7 +1,8 @@
+import 'package:adota_facil/controller/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:adota_facil/model/search_model.dart';
-import 'package:adota_facil/view/widgets/appBar_Widget.dart';
 import 'package:adota_facil/view/widgets/pet_card_widget.dart';
+import 'package:provider/provider.dart';
 
 class SearchPageView extends StatefulWidget {
   const SearchPageView({super.key});
@@ -11,96 +12,30 @@ class SearchPageView extends StatefulWidget {
 }
 
 class _SearchPageViewState extends State<SearchPageView> {
-  // Dados de teste formatados com a sua PetModel
-  final List<PetModel> _allPets = const [
-    PetModel(
-      id: '1',
-      nome: 'Mel',
-      especie: 'Cachorro',
-      statusSaude: 'Castrado',
-      idade: '9 anos',
-      porte: 'Porte médio',
-      genero: 'macho',
-    ),
-    PetModel(
-      id: '2',
-      nome: 'Bica',
-      especie: 'Cachorro',
-      statusSaude: 'Castrada',
-      idade: '9 anos',
-      porte: 'Porte pequeno',
-      genero: 'fêmea',
-    ),
-    PetModel(
-      id: '3',
-      nome: 'Luke',
-      especie: 'Cachorro',
-      statusSaude: 'Castrado',
-      idade: '11 anos',
-      porte: 'Porte pequeno',
-      genero: 'macho',
-    ),
-    PetModel(
-      id: '4',
-      nome: 'Branquinho',
-      especie: 'Rato',
-      statusSaude: 'Vacinado',
-      idade: '2 anos',
-      porte: 'Porte pequeno',
-      genero: 'macho',
-    ),
-    PetModel(
-      id: '5',
-      nome: 'Louro',
-      especie: 'Pássaro',
-      statusSaude: 'Vacinado',
-      idade: '2 anos',
-      porte: 'Porte pequeno',
-      genero: 'macho',
-    ),
-    PetModel(
-      id: '6',
-      nome: 'Bidu',
-      especie: 'Cachorro',
-      statusSaude: 'Vacinado',
-      idade: '12 anos',
-      porte: 'Porte grande',
-      genero: 'macho',
-    ),
-  ];
-
-  late List<PetModel> _filteredPets;
   final TextEditingController _searchController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    _filteredPets = _allPets;
-  }
+  String _termoBusca = '';
 
   void _runFilter(String enteredKeyword) {
-    if (enteredKeyword.isEmpty) {
-      setState(() {
-        _filteredPets = _allPets;
-      });
-      return;
-    }
-
-    final query = enteredKeyword.toLowerCase();
     setState(() {
-      _filteredPets = _allPets.where((pet) {
-        final nameMatches = pet.nome.toLowerCase().contains(query);
-        final infoMatches = pet.informacoesFormatadas.toLowerCase().contains(
-          query,
-        );
-        return nameMatches || infoMatches;
-      }).toList();
+      _termoBusca = enteredKeyword;
     });
   }
 
   void _clearSearch() {
     _searchController.clear();
     _runFilter('');
+  }
+
+  List<PetModel> _filtrar(List<PetModel> pets) {
+    if (_termoBusca.isEmpty) return pets;
+
+    final query = _termoBusca.toLowerCase();
+    return pets.where((pet) {
+      final nameMatches = pet.nome.toLowerCase().contains(query);
+      final infoMatches =
+          pet.informacoesFormatadas.toLowerCase().contains(query);
+      return nameMatches || infoMatches;
+    }).toList();
   }
 
   @override
@@ -111,9 +46,10 @@ class _SearchPageViewState extends State<SearchPageView> {
 
   @override
   Widget build(BuildContext context) {
+    final controller = context.watch<HomeController>();
+    final filteredPets = _filtrar(controller.animais);
+
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: const AppbarWidget(leadingName: "Buscar pets"),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         child: Column(
@@ -147,31 +83,56 @@ class _SearchPageViewState extends State<SearchPageView> {
 
             // Grid de Cards
             Expanded(
-              child: _filteredPets.isEmpty
-                  ? const Center(
-                      child: Text(
-                        'Nenhum pet encontrado.',
-                        style: TextStyle(color: Colors.grey, fontSize: 16),
-                      ),
-                    )
-                  : GridView.builder(
-                      padding: const EdgeInsets.only(top: 4, bottom: 16),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 12,
-                            mainAxisSpacing: 12,
-                            childAspectRatio: 0.80,
-                          ),
-                      itemCount: _filteredPets.length,
-                      itemBuilder: (context, index) {
-                        return PetCardWidget(pet: _filteredPets[index]);
-                      },
-                    ),
+              child: _construirConteudo(controller, filteredPets),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _construirConteudo(HomeController controller, List<PetModel> filteredPets) {
+    if (controller.carregando) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (controller.erro != null) {
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(controller.erro!),
+            const SizedBox(height: 8),
+            ElevatedButton(
+              onPressed: () => controller.carregarAnimais(),
+              child: const Text("Tentar novamente"),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (filteredPets.isEmpty) {
+      return const Center(
+        child: Text(
+          'Nenhum pet encontrado.',
+          style: TextStyle(color: Colors.grey, fontSize: 16),
+        ),
+      );
+    }
+
+    return GridView.builder(
+      padding: const EdgeInsets.only(top: 4, bottom: 16),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
+        childAspectRatio: 0.80,
+      ),
+      itemCount: filteredPets.length,
+      itemBuilder: (context, index) {
+        return PetCardWidget(pet: filteredPets[index]);
+      },
     );
   }
 }

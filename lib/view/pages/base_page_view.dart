@@ -1,3 +1,4 @@
+import 'package:adota_facil/view/pages/search_page_view.dart';
 import 'package:adota_facil/view/widgets/appBar_Widget.dart';
 import 'package:adota_facil/view/widgets/custom_bottom_nav.dart';
 import 'package:adota_facil/view/pages/home_page_view.dart';
@@ -60,7 +61,7 @@ class _BasePageViewState extends State<BasePageView> {
         //physics: const NeverScrollableScrollPhysics(),
         children: [
           HomePageView(),
-          const Center(child: Text("Index 1: Pets (Ainda vou criar)")),
+          const SearchPageView(),
           const CadastroPetView(),
           const Center(child: Text("Index 3: Perfil (Ainda vou criar)")),
           const Center(child: Text("Index 4: Config (Ainda vou criar)")),

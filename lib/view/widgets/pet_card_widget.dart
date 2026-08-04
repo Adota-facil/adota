@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:adota_facil/model/search_model.dart';
 import 'package:adota_facil/view/pages/perfil_pet_view.dart';
+import 'package:adota_facil/view/widgets/pet_image_widget.dart';
 
 class PetCardWidget extends StatelessWidget {
   final PetModel pet;
@@ -28,34 +29,60 @@ class PetCardWidget extends StatelessWidget {
           // Área da Imagem / Ícone
           Expanded(
             flex: 6,
-            child: Container(
-              width: double.infinity,
-              decoration: const BoxDecoration(
-                color: Color(0xFFD4CFCF),
-                borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-              ),
-              child: Stack(
-                children: [
-                  const Center(
-                    child: Icon(Icons.pets, size: 80, color: Color(0xFF7E7C79)),
-                  ),
-                  Positioned(
-                    top: 8,
-                    right: 8,
-                    child: Icon(
-                      pet.iconeGenero,
-                      color: pet.corGenero,
-                      size: 30,
+            child: ClipRRect(
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+              child: Container(
+                width: double.infinity,
+                decoration: const BoxDecoration(color: Color(0xFFD4CFCF)),
+                child: Stack(
+                  children: [
+                    Positioned.fill(
+                      child: PetImageWidget(
+                        fotoBase64: pet.fotoBase64,
+                        fotoUrl: pet.fotoUrl,
+                      ),
                     ),
-                  ),
-                ],
+                    Positioned(
+                      top: 8,
+                      right: 8,
+                      child: Icon(
+                        pet.iconeGenero,
+                        color: pet.corGenero,
+                        size: 30,
+                      ),
+                    ),
+                    if (pet.adotado)
+                      Positioned(
+                        top: 8,
+                        left: 8,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.green,
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: const Text(
+                            'Adotado',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
               ),
             ),
           ),
 
           // Informações e Botão
           Expanded(
-            flex: 5,
+            flex: 6,
             child: Padding(
               padding: const EdgeInsets.all(10),
               child: Column(
@@ -90,14 +117,13 @@ class PetCardWidget extends StatelessWidget {
                   // Botão Ver detalhes
                   SizedBox(
                     width: double.infinity,
-                    height: 32,
+                    height: 20,
                     child: ElevatedButton(
                       onPressed: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            // Se a tela PerfilPet aceitar o model:
-                            builder: (context) => const PerfilPet(),
+                            builder: (context) => PerfilPet(pet: pet),
                           ),
                         );
                       },
@@ -111,7 +137,7 @@ class PetCardWidget extends StatelessWidget {
                       child: const Text(
                         'Ver detalhes',
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 13,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),
