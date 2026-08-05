@@ -1,9 +1,22 @@
 import 'package:adota_facil/controller/home_controller.dart';
+import 'package:adota_facil/view/pages/curiosidades_view.dart';
 import 'package:adota_facil/view/widgets/CarouselSlider_widget.dart';
 import 'package:adota_facil/view/widgets/avatar_animais_widget.dart';
 import 'package:adota_facil/view/widgets/pet_card_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+/// Imagens de banner promocional (fixas), exibidas no carrossel do topo.
+/// Coloque os arquivos em assets/image/ com esses nomes (ou troque os
+/// caminhos abaixo pelos nomes reais que você já tem).
+const List<String> _bannersPromocionais = [
+  "assets/image/image 20.png",
+];
+
+/// Banners do segundo carrossel (também fixos/promocionais).
+const List<String> _bannersSecundarios = [
+  "assets/image/Rectangle 30.png",
+];
 
 class HomePageView extends StatelessWidget {
   const HomePageView({super.key});
@@ -17,10 +30,36 @@ class HomePageView extends StatelessWidget {
       body: SingleChildScrollView(
         // <-- Adicionado aqui
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Stack(
               children: [
-                CarouselsliderWidget(altura: 280, items: const [1, 2, 3, 4, 5]),
+                CarouselsliderWidget(
+                  altura: 280,
+                  items: _bannersPromocionais.map((caminho) {
+                    return Image.asset(
+                      caminho,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      errorBuilder: (context, error, stackTrace) {
+                        
+                        return Container(
+                          color: const Color(0xFF4998E5),
+                          alignment: Alignment.center,
+                          child: const Text(
+                            'Adote um pet e mude uma vida ❤',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  }).toList(),
+                ),
                 Positioned(
                   left: -25,
                   height: 450,
@@ -30,7 +69,12 @@ class HomePageView extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 40),
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CuriosidadesView(),
+                          ),
+                        );},
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF4998E5),
                           ),
@@ -78,7 +122,31 @@ class HomePageView extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-              child: CarouselsliderWidget(altura: 200, items: const [1]),
+              child: CarouselsliderWidget(
+                altura: 200,
+                items: _bannersSecundarios.map((caminho) {
+                  return Image.asset(
+                    caminho,
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        color: const Color(0xFFFEAA62),
+                        alignment: Alignment.center,
+                        child: const Text(
+                          'Espaço pra banner/parceiros',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                }).toList(),
+              ),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -128,9 +196,23 @@ class HomePageView extends StatelessWidget {
                 ),
               ),
             ),
-            // Lista de pets vinda do HomeController
+
+            // Título "Últimos adicionados" no mesmo padrão de "Buscar por Categoria"
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.only(left: 20, top: 20),
+              child: Text(
+                "Últimos adicionados",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: const Color(0xFF4998E5),
+                  fontSize: 25,
+                ),
+              ),
+            ),
+
+            // Lista de pets vinda do HomeController — carrossel horizontal
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12),
               child: _ListaDePets(controller: controller),
             ),
           ],
@@ -156,7 +238,7 @@ class _ListaDePets extends StatelessWidget {
 
     if (controller.erro != null) {
       return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 40),
+        padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
         child: Center(
           child: Column(
             children: [
@@ -179,19 +261,20 @@ class _ListaDePets extends StatelessWidget {
       );
     }
 
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: controller.animais.length,
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        mainAxisSpacing: 12,
-        crossAxisSpacing: 12,
-        childAspectRatio: 0.72,
+    return SizedBox(
+      height: 260,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        itemCount: controller.animais.length,
+        separatorBuilder: (context, index) => const SizedBox(width: 12),
+        itemBuilder: (context, index) {
+          return SizedBox(
+            width: 170,
+            child: PetCardWidget(pet: controller.animais[index]),
+          );
+        },
       ),
-      itemBuilder: (context, index) {
-        return PetCardWidget(pet: controller.animais[index]);
-      },
     );
   }
 }

@@ -3,9 +3,13 @@ import 'package:carousel_slider/carousel_slider.dart';
 
 class CarouselsliderWidget extends StatefulWidget {
   final double altura;
-  final List<int> items;
+  final List<Widget> items;
 
-  const CarouselsliderWidget({super.key, required this.altura, required this.items});
+  const CarouselsliderWidget({
+    super.key,
+    required this.altura,
+    required this.items,
+  });
 
   @override
   State<CarouselsliderWidget> createState() => _CarouselsliderWidgetState();
@@ -14,43 +18,43 @@ class CarouselsliderWidget extends StatefulWidget {
 class _CarouselsliderWidgetState extends State<CarouselsliderWidget> {
   int _current = 0;
   final CarouselSliderController _controller = CarouselSliderController();
-  
 
   @override
   Widget build(BuildContext context) {
+    if (widget.items.isEmpty) {
+      return SizedBox(height: widget.altura);
+    }
+
     return Stack(
       alignment: Alignment.bottomCenter,
       children: [
         CarouselSlider(
           carouselController: _controller,
           options: CarouselOptions(
-            height: widget.altura, 
+            height: widget.altura,
             viewportFraction: 1,
+            autoPlay: true,
             onPageChanged: (index, reason) {
               setState(() {
                 _current = index;
               });
             },
           ),
-          items: widget.items.map((i) {
+          items: widget.items.map((item) {
             return Builder(
               builder: (BuildContext context) {
                 return Container(
                   width: double.infinity,
-                  margin: const EdgeInsets.symmetric(horizontal: 5.0),
+                  height: double.infinity,
+                  clipBehavior: Clip.antiAlias,
                   decoration: const BoxDecoration(color: Colors.amber),
-                  child: Center(
-                    child: Text(
-                      'text $i',
-                      style: const TextStyle(fontSize: 16.0),
-                    ),
-                  ),
+                  child: item,
                 );
               },
             );
           }).toList(),
         ),
-        
+
         Positioned(
           bottom: 10,
           child: Row(
@@ -65,8 +69,8 @@ class _CarouselsliderWidgetState extends State<CarouselsliderWidget> {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: _current == entry.key
-                        ? const Color(0xFF42A5F5) 
-                        : const Color(0xFF000080), 
+                        ? const Color(0xFF42A5F5)
+                        : const Color(0xFF000080),
                   ),
                 ),
               );
