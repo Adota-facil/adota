@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-class Buton_AppBar extends StatelessWidget {
+class ButtonAppBar extends StatelessWidget {
   final String titulo;
 
 
-  const Buton_AppBar({super.key, required this.titulo});
+  const ButtonAppBar({super.key, required this.titulo});
 
   @override
   Widget build(BuildContext context) {

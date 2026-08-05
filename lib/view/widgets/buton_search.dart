@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class Buton_Search extends StatelessWidget {
-  const Buton_Search({super.key});
+class SearchFieldWidget extends StatelessWidget {
+  const SearchFieldWidget({super.key});
 
   @override
   Widget build(BuildContext context) {

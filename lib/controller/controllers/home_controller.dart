@@ -1,14 +1,8 @@
+import 'package:adota_facil/model/models/pet_model.dart';
 import 'package:adota_facil/model/models/repositories/animal_repository.dart';
 import 'package:flutter/material.dart';
-import 'package:adota_facil/model/search_model.dart';
 
-/// Controller da HomePage.
-/// Use com Provider/ChangeNotifierProvider na árvore de widgets:
-///
-/// ChangeNotifierProvider(
-///   create: (_) => HomeController(AnimalRepositoryImpl())..carregarAnimais(),
-///   child: const HomePageView(),
-/// )
+
 class HomeController extends ChangeNotifier {
   final AnimalRepository _repository;
 

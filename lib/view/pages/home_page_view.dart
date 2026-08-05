@@ -1,4 +1,4 @@
-import 'package:adota_facil/controller/home_controller.dart';
+import 'package:adota_facil/controller/controllers/home_controller.dart';
 import 'package:adota_facil/view/pages/curiosidades_view.dart';
 import 'package:adota_facil/view/widgets/CarouselSlider_widget.dart';
 import 'package:adota_facil/view/widgets/avatar_animais_widget.dart';
@@ -34,7 +34,7 @@ class HomePageView extends StatelessWidget {
           children: [
             Stack(
               children: [
-                CarouselsliderWidget(
+                CarouselSliderWidget(
                   altura: 280,
                   items: _bannersPromocionais.map((caminho) {
                     return Image.asset(
@@ -122,7 +122,7 @@ class HomePageView extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-              child: CarouselsliderWidget(
+              child: CarouselSliderWidget(
                 altura: 200,
                 items: _bannersSecundarios.map((caminho) {
                   return Image.asset(
@@ -173,21 +173,21 @@ class HomePageView extends StatelessWidget {
                   children: [
                     GestureDetector(
                       onTap: () => controller.filtrarPorCategoria("Cachorro"),
-                      child: Avatar_animals(
+                      child: AvatarAnimais(
                         iconeSvg: 'assets/image/lucide_dog.svg',
                         nome: "Cachorro",
                       ),
                     ),
                     GestureDetector(
                       onTap: () => controller.filtrarPorCategoria("Gato"),
-                      child: Avatar_animals(
+                      child: AvatarAnimais(
                         iconeSvg: 'assets/image/Group.svg',
                         nome: "Gatos",
                       ),
                     ),
                     GestureDetector(
                       onTap: () => controller.filtrarPorCategoria("Outros"),
-                      child: Avatar_animals(
+                      child: AvatarAnimais(
                         iconeSvg: "assets/image/material-symbols_add.svg",
                         nome: "Outros",
                       ),

@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:adota_facil/controller/home_controller.dart';
-import 'package:adota_facil/model/search_model.dart';
+import 'package:adota_facil/controller/controllers/home_controller.dart';
+import 'package:adota_facil/model/models/pet_model.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';

@@ -1,19 +1,19 @@
-import 'package:adota_facil/model/search_model.dart';
+import 'package:adota_facil/model/models/pet_model.dart';
 import 'package:adota_facil/view/widgets/appBar_Widget.dart';
 import 'package:adota_facil/view/widgets/custom_bottom_nav.dart';
 import 'package:adota_facil/view/widgets/pet_image_widget.dart';
 import 'package:flutter/material.dart';
 
-class PerfilPet extends StatefulWidget {
+class PerfilPetView extends StatefulWidget {
   final PetModel pet;
 
-  const PerfilPet({super.key, required this.pet});
+  const PerfilPetView({super.key, required this.pet});
 
   @override
-  State<PerfilPet> createState() => _PerfilPetState();
+  State<PerfilPetView> createState() => _PerfilPetViewState();
 }
 
-class _PerfilPetState extends State<PerfilPet> {
+class _PerfilPetViewState extends State<PerfilPetView> {
 
   @override
   Widget build(BuildContext context) {

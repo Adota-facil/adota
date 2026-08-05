@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:adota_facil/model/search_model.dart';
+import 'package:adota_facil/model/models/pet_model.dart';
 import 'package:adota_facil/view/pages/perfil_pet_view.dart';
 import 'package:adota_facil/view/widgets/pet_image_widget.dart';
+import 'package:flutter/material.dart';
 
 class PetCardWidget extends StatelessWidget {
   final PetModel pet;
@@ -123,7 +123,7 @@ class PetCardWidget extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => PerfilPet(pet: pet),
+                            builder: (context) => PerfilPetView(pet: pet),
                           ),
                         );
                       },
