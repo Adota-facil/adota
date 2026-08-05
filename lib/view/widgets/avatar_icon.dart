@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class Avatar_buton extends StatelessWidget {
-  const Avatar_buton({super.key});
+class AvatarButton extends StatelessWidget {
+  const AvatarButton({super.key});
 
   @override
   Widget build(BuildContext context) {

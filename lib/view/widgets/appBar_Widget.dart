@@ -1,7 +1,6 @@
 import 'package:adota_facil/view/widgets/avatar_icon.dart';
 import 'package:flutter/material.dart';
 
-// 1. Adicione o "implements PreferredSizeWidget" aqui:
 class AppbarWidget extends StatelessWidget implements PreferredSizeWidget {
   final String leadingName;
 
@@ -30,7 +29,7 @@ class AppbarWidget extends StatelessWidget implements PreferredSizeWidget {
           ],
         ),
         centerTitle: true,
-        actions: [Avatar_buton()],
+        actions: [AvatarButton()],
       );
   }
 
