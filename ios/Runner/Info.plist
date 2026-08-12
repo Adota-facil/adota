@@ -2,6 +2,24 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<!-- Câmera (foto do pet) -->
+	<key>NSCameraUsageDescription</key>
+	<string>Precisamos acessar a câmera para você tirar fotos dos pets</string>
+
+	<!-- Galeria (escolher foto existente) -->
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Precisamos acessar suas fotos para você escolher uma imagem do pet</string>
+
+	<!-- Salvar fotos na galeria, se o app fizer isso -->
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Precisamos salvar fotos na sua galeria</string>
+
+	<!-- Notificações push em background -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>

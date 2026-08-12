@@ -63,7 +63,6 @@ class DefaultFirebaseOptions {
     projectId: 'adota-facil-8c2b9',
     storageBucket: 'adota-facil-8c2b9.firebasestorage.app',
   );
-
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyDdaWt_r9fgquYYfdZoOMhw0JxsRckiP44',
     appId: '1:1049234975862:ios:a5e865fca3acb4818e0357',
