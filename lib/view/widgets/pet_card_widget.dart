@@ -1,12 +1,53 @@
+import 'dart:convert';
 import 'package:adota_facil/model/models/pet_model.dart';
 import 'package:adota_facil/view/pages/perfil_pet_view.dart';
-import 'package:adota_facil/view/widgets/pet_image_widget.dart';
 import 'package:flutter/material.dart';
 
 class PetCardWidget extends StatelessWidget {
   final PetModel pet;
 
   const PetCardWidget({super.key, required this.pet});
+
+  Widget _buildPetImage() {
+    if (pet.fotoBase64.isNotEmpty) {
+      try {
+        return Image.memory(
+          base64Decode(pet.fotoBase64),
+          fit: BoxFit.contain,
+          alignment: Alignment.center,
+        );
+      } catch (_) {
+        return _buildPlaceholder();
+      }
+    }
+
+    if (pet.fotoUrl.isNotEmpty) {
+      return Image.network(
+        pet.fotoUrl,
+        fit: BoxFit.contain,
+        alignment: Alignment.center,
+        errorBuilder: (context, error, stackTrace) => _buildPlaceholder(),
+        loadingBuilder: (context, child, progress) {
+          if (progress == null) return child;
+          return const Center(
+            child: SizedBox(
+              width: 24,
+              height: 24,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+          );
+        },
+      );
+    }
+
+    return _buildPlaceholder();
+  }
+
+  Widget _buildPlaceholder() {
+    return const Center(
+      child: Icon(Icons.pets, size: 40, color: Color(0xFF90A4AE)),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,20 +67,22 @@ class PetCardWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Área da Imagem / Ícone
           Expanded(
             flex: 6,
             child: ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(16),
+              ),
               child: Container(
                 width: double.infinity,
-                decoration: const BoxDecoration(color: Color(0xFFD4CFCF)),
+                height: double.infinity,
+                color: const Color(0xFFF0F4F8),
                 child: Stack(
                   children: [
                     Positioned.fill(
-                      child: PetImageWidget(
-                        fotoBase64: pet.fotoBase64,
-                        fotoUrl: pet.fotoUrl,
+                      child: Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: _buildPetImage(),
                       ),
                     ),
                     Positioned(
@@ -79,8 +122,6 @@ class PetCardWidget extends StatelessWidget {
               ),
             ),
           ),
-
-          // Informações e Botão
           Expanded(
             flex: 6,
             child: Padding(
@@ -113,8 +154,6 @@ class PetCardWidget extends StatelessWidget {
                       ),
                     ],
                   ),
-
-                  // Botão Ver detalhes
                   SizedBox(
                     width: double.infinity,
                     height: 20,
