@@ -1,6 +1,7 @@
 import 'package:adota_facil/controller/controllers/home_controller.dart';
 import 'package:adota_facil/firebase_options.dart';
 import 'package:adota_facil/model/models/repositories/animal_repository.dart';
+import 'package:adota_facil/services/armazenamento_base64.dart';
 import 'package:adota_facil/view/pages/base_page_view.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -20,8 +21,10 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (_) =>
-              HomeController(AnimalRepositoryImpl())..carregarAnimais(),
+          create: (_) => HomeController(
+            AnimalRepositoryImpl(),
+            ArmazenamentoBase64(),
+          )..carregarAnimais(),
         ),
       ],
       child: const MaterialApp(
