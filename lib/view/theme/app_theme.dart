@@ -13,16 +13,34 @@ class AppTheme {
   static const Color corBordaPadrao = Color(0xFFE0E0E0);
   static const Color corFundoCampo = Color(0xFFFAFAFA);
 
+  /// Espaçamento interno horizontal usado nos campos de formulário.
+  static const double espacamentoHorizontalCampo = 14;
+
+  /// Espaçamento interno vertical usado nos campos de formulário.
+  static const double espacamentoVerticalCampo = 12;
+
+  /// Raio de arredondamento padrão das bordas.
+  static const double raioBorda = 8;
+
+  /// Espessura da borda quando o campo não está em foco.
+  static const double larguraBordaPadrao = 1.2;
+
+  /// Espessura da borda quando o campo está em foco.
+  static const double larguraBordaFoco = 1.5;
+
   static const TextStyle rotuloCampo = TextStyle(
     fontWeight: FontWeight.w600,
     fontSize: 14,
     color: Colors.black87,
   );
 
-  static OutlineInputBorder bordaPadrao({Color? cor, double largura = 1.2}) {
+  static OutlineInputBorder bordaPadrao({Color? cor, double? largura}) {
     return OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: BorderSide(color: cor ?? corBordaPadrao, width: largura),
+      borderRadius: BorderRadius.circular(raioBorda),
+      borderSide: BorderSide(
+        color: cor ?? corBordaPadrao,
+        width: largura ?? larguraBordaPadrao,
+      ),
     );
   }
 
@@ -34,12 +52,14 @@ class AppTheme {
       hintText: dica,
       hintStyle: const TextStyle(color: Colors.black26, fontSize: 14),
       prefixIcon: icone != null ? Icon(icone, color: corPrimaria) : null,
-      contentPadding:
-          const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      contentPadding: const EdgeInsets.symmetric(
+        horizontal: espacamentoHorizontalCampo,
+        vertical: espacamentoVerticalCampo,
+      ),
       filled: true,
       fillColor: corFundoCampo,
       enabledBorder: bordaPadrao(),
-      focusedBorder: bordaPadrao(cor: corPrimaria, largura: 1.5),
+      focusedBorder: bordaPadrao(cor: corPrimaria, largura: larguraBordaFoco),
     );
   }
 }

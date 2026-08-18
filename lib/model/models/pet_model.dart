@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class PetModel {
+  /// Valor usado quando o dado de origem não informa o gênero.
+  static const String _generoPadrao = 'macho';
+
   final String id;
   final String nome;
   final String especie;
@@ -85,7 +88,7 @@ class PetModel {
       statusSaude: data['statusSaude'] ?? '',
       idade: data['idade'] ?? '',
       porte: data['porte'] ?? '',
-      genero: data['genero'] ?? 'macho',
+      genero: data['genero'] ?? _generoPadrao,
       fotoUrl: data['fotoUrl'] ?? '',
       adotado: data['adotado'] ?? false,
       criadoEm: criadoEm,
@@ -120,51 +123,47 @@ class PetModel {
     );
   }
 
+  /// Campos que toJson e toFirestore têm em comum. Os dois métodos só
+  /// diferem em como tratam `id` e `criadoEm` (JSON usa string ISO,
+  /// Firestore usa Timestamp; e o `id` do Firestore já vem do próprio
+  /// documento, então não entra aqui).
+  Map<String, dynamic> get _camposComuns => {
+        'nome': nome,
+        'especie': especie,
+        'statusSaude': statusSaude,
+        'idade': idade,
+        'porte': porte,
+        'genero': genero,
+        'fotoUrl': fotoUrl,
+        'adotado': adotado,
+        'raca': raca,
+        'descricao': descricao,
+        'localizacao': localizacao,
+        'fotos': fotos,
+        'fotoBase64': fotoBase64,
+        'fotosBase64': fotosBase64,
+      };
+
   // Converte o objeto para Map/JSON (uso genérico, ex: API REST)
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'nome': nome,
-      'especie': especie,
-      'statusSaude': statusSaude,
-      'idade': idade,
-      'porte': porte,
-      'genero': genero,
-      'fotoUrl': fotoUrl,
-      'adotado': adotado,
-      'criadoEm': criadoEm?.toIso8601String(),
-      'raca': raca,
-      'descricao': descricao,
-      'localizacao': localizacao,
-      'fotos': fotos,
-      'fotoBase64': fotoBase64,
-      'fotosBase64': fotosBase64,
-    };
-  }
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        ..._camposComuns,
+        'criadoEm': criadoEm?.toIso8601String(),
+      };
 
   // Converte o objeto para Map compatível com o Firestore
-  Map<String, dynamic> toFirestore() {
-    return {
-      'nome': nome,
-      'especie': especie,
-      'statusSaude': statusSaude,
-      'idade': idade,
-      'porte': porte,
-      'genero': genero,
-      'fotoUrl': fotoUrl,
-      'adotado': adotado,
-      'criadoEm': criadoEm != null
-          ? Timestamp.fromDate(criadoEm!)
-          : FieldValue.serverTimestamp(),
-      'raca': raca,
-      'descricao': descricao,
-      'localizacao': localizacao,
-      'fotos': fotos,
-      'fotoBase64': fotoBase64,
-      'fotosBase64': fotosBase64,
-    };
-  }
+  Map<String, dynamic> toFirestore() => {
+        ..._camposComuns,
+        'criadoEm': criadoEm != null
+            ? Timestamp.fromDate(criadoEm!)
+            : FieldValue.serverTimestamp(),
+      };
 
+  /// Cria uma cópia do objeto com alguns campos alterados, mantendo o
+  /// resto igual. Sem isso, editar um pet (ex: marcar como adotado, trocar
+  /// só a descrição) exigiria reconstruir o PetModel inteiro campo a campo
+  /// — fácil esquecer um campo e perder dado sem querer. Útil especialmente
+  /// quando a tela de edição de pet for implementada.
   PetModel copyWith({
     String? id,
     String? nome,
