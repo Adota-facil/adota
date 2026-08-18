@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class PetModel {
-  /// Valor usado quando o dado de origem não informa o gênero.
+
   static const String _generoPadrao = 'macho';
 
   final String id;
@@ -20,11 +20,8 @@ class PetModel {
   final String localizacao;
   final List<String> fotos;
 
-  /// Foto principal codificada em Base64, guardada direto no documento
-  /// do Firestore (alternativa ao Storage, que exige plano pago).
   final String fotoBase64;
 
-  /// Fotos adicionais em Base64 (mesma ideia de [fotoBase64]).
   final List<String> fotosBase64;
 
   const PetModel({
@@ -46,36 +43,32 @@ class PetModel {
     this.fotosBase64 = const [],
   });
 
-  // Getter para formatar as informações exibidas nos cards
   String get informacoesFormatadas =>
       '$especie • $statusSaude\n$idade • $porte';
 
-  /// Centraliza a checagem de gênero. Antes, `iconeGenero` e `corGenero`
-  /// repetiam a mesma condição cada um — se um dia precisar aceitar mais
-  /// uma variação de texto (ex: "F"), só muda aqui.
+  static String montarStatusSaude({
+    required bool castrado,
+    required bool vacinado,
+  }) {
+    return [
+      if (castrado) 'Castrado',
+      if (vacinado) 'Vacinado',
+    ].join(', ');
+  }
+
   bool get _ehFemea =>
       genero.toLowerCase() == 'fêmea' || genero.toLowerCase() == 'femea';
 
-  // Ícone dinâmico com base no gênero
   IconData get iconeGenero => _ehFemea ? Icons.female : Icons.male;
 
-  // Cor dinâmica com base no gênero
   Color get corGenero => _ehFemea ? Colors.pink : Colors.blue;
 
-  // Lista de tags a partir de statusSaude (ex: "Castrado, Vacinado")
   List<String> get tagsSaude => statusSaude
       .split(',')
       .map((tag) => tag.trim())
       .where((tag) => tag.isNotEmpty)
       .toList();
 
-  /// Monta o objeto a partir de um Map genérico, usado tanto por
-  /// [fromJson] quanto por [fromFirestore]. Antes, os dois construíam o
-  /// PetModel campo a campo de forma independente — um campo novo exigia
-  /// lembrar de atualizar os dois lugares, e era fácil esquecer um.
-  /// [id] e [criadoEm] variam por origem (JSON usa string, Firestore usa
-  /// Timestamp), por isso continuam sendo resolvidos por fora e passados
-  /// prontos.
   factory PetModel._fromMap(
     Map<String, dynamic> data, {
     required String id,
@@ -101,7 +94,6 @@ class PetModel {
     );
   }
 
-  // Converte JSON vindo de uma API para o modelo
   factory PetModel.fromJson(Map<String, dynamic> json) {
     return PetModel._fromMap(
       json,
@@ -112,7 +104,6 @@ class PetModel {
     );
   }
 
-  // Converte um documento do Firestore para o modelo
   factory PetModel.fromFirestore(Map<String, dynamic> data, String documentId) {
     return PetModel._fromMap(
       data,
@@ -123,10 +114,6 @@ class PetModel {
     );
   }
 
-  /// Campos que toJson e toFirestore têm em comum. Os dois métodos só
-  /// diferem em como tratam `id` e `criadoEm` (JSON usa string ISO,
-  /// Firestore usa Timestamp; e o `id` do Firestore já vem do próprio
-  /// documento, então não entra aqui).
   Map<String, dynamic> get _camposComuns => {
         'nome': nome,
         'especie': especie,
@@ -144,14 +131,12 @@ class PetModel {
         'fotosBase64': fotosBase64,
       };
 
-  // Converte o objeto para Map/JSON (uso genérico, ex: API REST)
   Map<String, dynamic> toJson() => {
         'id': id,
         ..._camposComuns,
         'criadoEm': criadoEm?.toIso8601String(),
       };
 
-  // Converte o objeto para Map compatível com o Firestore
   Map<String, dynamic> toFirestore() => {
         ..._camposComuns,
         'criadoEm': criadoEm != null
@@ -159,11 +144,6 @@ class PetModel {
             : FieldValue.serverTimestamp(),
       };
 
-  /// Cria uma cópia do objeto com alguns campos alterados, mantendo o
-  /// resto igual. Sem isso, editar um pet (ex: marcar como adotado, trocar
-  /// só a descrição) exigiria reconstruir o PetModel inteiro campo a campo
-  /// — fácil esquecer um campo e perder dado sem querer. Útil especialmente
-  /// quando a tela de edição de pet for implementada.
   PetModel copyWith({
     String? id,
     String? nome,

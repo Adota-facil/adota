@@ -1,15 +1,21 @@
 import 'package:adota_facil/model/models/pet_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-abstract class AnimalRepository {
+
+abstract class AnimalReader {
   Future<List<PetModel>> buscarAnimais();
   Future<List<PetModel>> buscarPorCategoria(String categoria);
   Future<PetModel> buscarPorId(String id);
+}
+
+
+abstract class AnimalWriter {
   Future<void> cadastrarAnimal(PetModel animal);
-
-
   String gerarNovoId();
 }
+
+abstract class AnimalRepository implements AnimalReader, AnimalWriter {}
+
 class AnimalRepositoryImpl implements AnimalRepository {
   final FirebaseFirestore _firestore;
   static const String _colecao = 'animais';

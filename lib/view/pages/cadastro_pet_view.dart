@@ -42,18 +42,25 @@ class _CadastroPetViewState extends State<CadastroPetView> {
     super.dispose();
   }
 
+  List<String? Function()> get _validacoesExtras => [
+        () => especieSelecionada == null ? 'Selecione a espécie do pet' : null,
+      ];
+
   Future<void> _salvarPet() async {
     if (!_formKey.currentState!.validate()) return;
 
-    if (especieSelecionada == null) {
-      _mostrarErro('Selecione a espécie do pet');
-      return;
+    for (final validar in _validacoesExtras) {
+      final erro = validar();
+      if (erro != null) {
+        _mostrarErro(erro);
+        return;
+      }
     }
 
-    final statusSaude = [
-      if (isCastrado) 'Castrado',
-      if (isVacinado) 'Vacinado',
-    ].join(', ');
+    final statusSaude = PetModel.montarStatusSaude(
+      castrado: isCastrado,
+      vacinado: isVacinado,
+    );
 
     final novoPet = PetModel(
       id: '',
@@ -67,8 +74,7 @@ class _CadastroPetViewState extends State<CadastroPetView> {
       descricao: _descricaoController.text.trim(),
       localizacao:
           '${_cidadeController.text.trim()}, ${_estadoController.text.trim()}',
-      // fotoUrl e fotos ficam vazias até termos upload de imagem
-      // (image_picker + Storage) — ver TODO em _construirGradeFotosExemplo.
+     
     );
 
     final controller = context.read<HomeController>();
@@ -111,9 +117,7 @@ class _CadastroPetViewState extends State<CadastroPetView> {
   }
 
   Widget _construirGradeFotosExemplo() {
-    // TODO: sem upload real de imagem ainda (precisa de image_picker +
-    // Firebase Storage). Por enquanto é só um placeholder visual, o pet é
-    // salvo sem fotoUrl/fotos.
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 24.0),
       child: Column(

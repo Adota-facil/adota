@@ -1,15 +1,22 @@
 import 'dart:io';
 
-abstract class EstrategiaArmazenamentoFoto {
-  /// Recebe o arquivo de imagem e devolve o que precisa ser salvo no PetModel.
-  Future<ResultadoArmazenamentoFoto> salvar(File arquivo, String petId);
-}
-
-/// Carrega OU uma url (Storage) OU um base64 (Firestore), nunca os dois.
 class ResultadoArmazenamentoFoto {
   final String? url;
   final String? base64;
 
-  const ResultadoArmazenamentoFoto.url(this.url) : base64 = null;
-  const ResultadoArmazenamentoFoto.base64(this.base64) : url = null;
+  const ResultadoArmazenamentoFoto._(this.url, this.base64)
+      : assert(
+          (url != null) != (base64 != null),
+          'Informe url OU base64 — nunca os dois, nunca nenhum.',
+        );
+
+  factory ResultadoArmazenamentoFoto.url(String url) =>
+      ResultadoArmazenamentoFoto._(url, null);
+
+  factory ResultadoArmazenamentoFoto.base64(String base64) =>
+      ResultadoArmazenamentoFoto._(null, base64);
+}
+
+abstract class EstrategiaArmazenamentoFoto {
+  Future<ResultadoArmazenamentoFoto> salvar(File arquivo, String petId);
 }
