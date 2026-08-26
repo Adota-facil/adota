@@ -2,22 +2,21 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
-class CarouselsliderWidget extends StatefulWidget {
+class CarouselSliderWidget extends StatefulWidget {
   final double altura;
   final List<Widget> items;
 
-  const CarouselsliderWidget({
+  const CarouselSliderWidget({
     super.key,
     required this.altura,
     required this.items,
   });
 
   @override
-  State<CarouselsliderWidget> createState() =>
-      _CarouselsliderWidgetState();
+  State<CarouselSliderWidget> createState() => _CarouselSliderWidgetState();
 }
 
-class _CarouselsliderWidgetState extends State<CarouselsliderWidget> {
+class _CarouselSliderWidgetState extends State<CarouselSliderWidget> {
   int _current = 0;
 
   @override
@@ -72,3 +71,4 @@ class _CarouselsliderWidgetState extends State<CarouselsliderWidget> {
     );
   }
 }
+
