@@ -1,11 +1,5 @@
 import 'package:flutter/material.dart';
 
-/// Estilos e decorações compartilhados dos formulários do app.
-///
-/// Antes, cada tela (ex: CadastroPetView) definia sua própria
-/// `_estiloBorda()` e repetia as mesmas cores/paddings em vários lugares.
-/// Centralizar aqui é manutenção preventiva: se um dia a identidade visual
-/// mudar, é uma edição só, e não uma caça a cada tela do app.
 class AppTheme {
   AppTheme._();
 
@@ -13,19 +7,14 @@ class AppTheme {
   static const Color corBordaPadrao = Color(0xFFE0E0E0);
   static const Color corFundoCampo = Color(0xFFFAFAFA);
 
-  /// Espaçamento interno horizontal usado nos campos de formulário.
   static const double espacamentoHorizontalCampo = 14;
 
-  /// Espaçamento interno vertical usado nos campos de formulário.
   static const double espacamentoVerticalCampo = 12;
 
-  /// Raio de arredondamento padrão das bordas.
   static const double raioBorda = 8;
 
-  /// Espessura da borda quando o campo não está em foco.
   static const double larguraBordaPadrao = 1.2;
-
-  /// Espessura da borda quando o campo está em foco.
+  
   static const double larguraBordaFoco = 1.5;
 
   static const TextStyle rotuloCampo = TextStyle(
