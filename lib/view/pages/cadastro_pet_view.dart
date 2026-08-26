@@ -17,8 +17,10 @@ class CadastroPetView extends StatefulWidget {
 
 class _CadastroPetViewState extends State<CadastroPetView> {
   final _formKey = GlobalKey<FormState>();
+
   bool isCastrado = true;
   bool isVacinado = true;
+
   String? especieSelecionada;
   String generoSelecionado = 'Macho';
 
@@ -119,7 +121,7 @@ class _CadastroPetViewState extends State<CadastroPetView> {
   Widget _construirGradeFotosExemplo() {
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 24.0),
+      padding: const EdgeInsets.only(bottom: 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -211,7 +213,7 @@ class _CadastroPetViewState extends State<CadastroPetView> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.all(24),
         child: Form(
           key: _formKey,
           child: Column(
@@ -228,7 +230,10 @@ class _CadastroPetViewState extends State<CadastroPetView> {
               const SizedBox(height: 4),
               const Text(
                 'Insira as informações e características do bichinho:',
-                style: TextStyle(fontSize: 14, color: Colors.grey),
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey,
+                ),
               ),
               const SizedBox(height: 24),
               CampoTextoFormulario(
