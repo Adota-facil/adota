@@ -71,3 +71,4 @@ class _CarouselSliderWidgetState extends State<CarouselSliderWidget> {
     );
   }
 }
+
