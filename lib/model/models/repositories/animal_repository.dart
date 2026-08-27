@@ -1,22 +1,21 @@
+import 'package:adota_facil/model/models/pet_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:adota_facil/model/search_model.dart';
 
-/// Contrato do repositório — permite trocar a implementação
-/// (Firestore, REST, mock para testes) sem alterar o controller.
-abstract class AnimalRepository {
+
+abstract class AnimalReader {
   Future<List<PetModel>> buscarAnimais();
   Future<List<PetModel>> buscarPorCategoria(String categoria);
   Future<PetModel> buscarPorId(String id);
-  Future<void> cadastrarAnimal(PetModel animal);
+}
 
-  /// Gera um ID novo (sem criar o documento ainda) — usado quando
-  /// precisamos subir as fotos pro Storage num caminho baseado no ID
-  /// antes de salvar o documento no Firestore.
+
+abstract class AnimalWriter {
+  Future<void> cadastrarAnimal(PetModel animal);
   String gerarNovoId();
 }
 
-/// Implementação via Firebase Firestore.
-/// Assume uma coleção "animais" com os campos usados em PetModel.
+abstract class AnimalRepository implements AnimalReader, AnimalWriter {}
+
 class AnimalRepositoryImpl implements AnimalRepository {
   final FirebaseFirestore _firestore;
   static const String _colecao = 'animais';

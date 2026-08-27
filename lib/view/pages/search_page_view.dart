@@ -1,7 +1,7 @@
-import 'package:adota_facil/controller/home_controller.dart';
-import 'package:flutter/material.dart';
-import 'package:adota_facil/model/search_model.dart';
+import 'package:adota_facil/controller/controllers/home_controller.dart';
+import 'package:adota_facil/model/models/pet_model.dart';
 import 'package:adota_facil/view/widgets/pet_card_widget.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class SearchPageView extends StatefulWidget {

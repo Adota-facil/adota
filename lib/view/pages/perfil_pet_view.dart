@@ -1,19 +1,19 @@
-import 'package:adota_facil/model/search_model.dart';
+import 'package:adota_facil/model/models/pet_model.dart';
 import 'package:adota_facil/view/widgets/appBar_Widget.dart';
 import 'package:adota_facil/view/widgets/custom_bottom_nav.dart';
 import 'package:adota_facil/view/widgets/pet_image_widget.dart';
 import 'package:flutter/material.dart';
 
-class PerfilPet extends StatefulWidget {
+class PerfilPetView extends StatefulWidget {
   final PetModel pet;
 
-  const PerfilPet({super.key, required this.pet});
+  const PerfilPetView({super.key, required this.pet});
 
   @override
-  State<PerfilPet> createState() => _PerfilPetState();
+  State<PerfilPetView> createState() => _PerfilPetViewState();
 }
 
-class _PerfilPetState extends State<PerfilPet> {
+class _PerfilPetViewState extends State<PerfilPetView> {
 
   @override
   Widget build(BuildContext context) {
@@ -125,7 +125,7 @@ class _PerfilPetState extends State<PerfilPet> {
                     child: ListView.separated(
                       scrollDirection: Axis.horizontal,
                       itemCount: galeria.length,
-                      separatorBuilder: (_, __) => const SizedBox(width: 8),
+                      separatorBuilder: (_, _) => const SizedBox(width: 8),
                       itemBuilder: (context, index) {
                         return ClipRRect(
                           borderRadius: BorderRadius.circular(8),
@@ -171,7 +171,7 @@ class _PerfilPetState extends State<PerfilPet> {
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.grey.withOpacity(0.1),
+                    color: Colors.grey.withValues(alpha: 0.1),
                     blurRadius: 10,
                     spreadRadius: 2,
                   ),

@@ -1,0 +1,73 @@
+* [33me25dc6b[m[33m ([m[1;31morigin/Manutenção-Preventiva[m[33m, [m[1;32mManutenção-Preventiva[m[33m)[m "Alteração da prenvitva feito"
+[31m|[m * [33ma616f79[m[33m ([m[1;31morigin/perfectiva[m[33m, [m[1;31morigin/feature/perfectiva-BotaoVoltar[m[33m)[m git commit -m "feat(perfectiva): adiciona botao de voltar dinamico no AppbarWidget"
+[31m|[m[31m/[m  
+[31m|[m * [33m3ff721e[m[33m ([m[1;31morigin/Corretiva-AJustarFotoPet[m[33m)[m ajustar exibição da imagem do pet, que ampliava e não mostrava a imagem inteira. E melhorar o layout do card.
+[31m|[m[31m/[m  
+*   [33m59d87f9[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mhome_page[m[33m, [m[1;32mManutençã-Adaptativa[m[33m)[m Merge pull request #14 from Adota-facil/home_page
+[34m|[m[35m\[m  
+[34m|[m * [33m7bbeb7a[m[33m ([m[1;31morigin/home_page[m[33m)[m Apresentar assim mesmo
+[34m|[m [35m|[m * [33m5f4e6d1[m[33m ([m[1;31morigin/Romulo-novas_telas[m[33m)[m atualização api
+[34m|[m [35m|[m * [33m14c5c99[m Atualização cadastro pet
+[34m|[m [35m|[m[34m/[m  
+[34m|[m[34m/[m[35m|[m   
+* [35m|[m [33mf9d316b[m Merge pull request #13 from Adota-facil/home_page
+[1;31m|[m[35m\[m[35m|[m 
+[1;31m|[m * [33mc77ba5a[m Commit para a API
+[1;31m|[m[1;31m/[m  
+*   [33m50fd41d[m Merge pull request #12 from Adota-facil/Romulo-novas_telas
+[1;33m|[m[1;34m\[m  
+[1;33m|[m * [33m08bc542[m pagina config, perfil de usuario e curiosidades. AInda faltam algumas coisas.
+[1;33m|[m[1;33m/[m  
+*   [33m7523e20[m Merge pull request #11 from Adota-facil/home_page
+[1;35m|[m[1;36m\[m  
+[1;35m|[m * [33mc2a94ca[m Commit de quase do quase do quase finaizado
+[1;35m|[m *   [33m4994324[m Merge remote-tracking branch 'origin/kauane_tela-de-pesquisa' into home_page
+[1;35m|[m [31m|[m[32m\[m  
+[1;35m|[m [31m|[m * [33m34c6bdf[m[33m ([m[1;31morigin/kauane_tela-de-pesquisa[m[33m)[m organiza tela de pesquisa
+[1;35m|[m [31m|[m * [33m7cc2d93[m adiciona tela de pesquisa
+* [31m|[m [32m|[m [33mef938b1[m Merge pull request #9 from Adota-facil/home_page
+[33m|[m[31m\[m[31m|[m [32m|[m 
+[33m|[m * [32m|[m [33m5997025[m Commit quase do quase pronto
+[33m|[m * [32m|[m   [33m7a80ef3[m Merge remote-tracking branch 'origin/main' into home_page
+[33m|[m [35m|[m[33m\[m [32m\[m  
+[33m|[m [35m|[m[33m/[m [32m/[m  
+[33m|[m[33m/[m[35m|[m [32m|[m   
+* [35m|[m [32m|[m   [33m76b3290[m Merge pull request #8 from Adota-facil/Romulo-basePageView
+[1;31m|[m[1;32m\[m [35m\[m [32m\[m  
+[1;31m|[m * [35m|[m [32m|[m [33m768fbef[m[33m ([m[1;31morigin/Romulo-basePageView[m[33m)[m Refatorar estrutura de navegação e implementar BasePageView
+[1;31m|[m[1;31m/[m [35m/[m [32m/[m  
+* [35m|[m [32m|[m   [33m49af7ef[m Merge pull request #7 from Adota-facil/home_page
+[1;33m|[m[1;34m\[m [35m\[m [32m\[m  
+[1;33m|[m [1;34m|[m * [32m|[m [33m97107ae[m commit quase final
+[1;33m|[m [1;34m|[m[1;34m/[m [32m/[m  
+[1;33m|[m * [32m|[m [33mcf1a1f8[m Remove import desnecessário do carousel_slider na HomePageView
+[1;33m|[m * [32m|[m   [33mc70dbe0[m Merge remote-tracking branch 'origin/main' into home_page
+[1;33m|[m [1;35m|[m[1;33m\[m [32m\[m  
+[1;33m|[m [1;35m|[m[1;33m/[m [32m/[m  
+[1;33m|[m[1;33m/[m[1;35m|[m [32m|[m   
+* [1;35m|[m [32m|[m   [33mb03fd75[m Merge pull request #6 from Adota-facil/Romulo-Cadastro_pet_view
+[32m|[m[32m\[m [1;35m\[m [32m\[m  
+[32m|[m [32m|[m[32m_[m[1;35m|[m[32m/[m  
+[32m|[m[32m/[m[32m|[m [1;35m|[m   
+[32m|[m * [1;35m|[m [33m734bc89[m[33m ([m[1;31morigin/Romulo-Cadastro_pet_view[m[33m)[m Adiciona a tela de cadastro de pet e atualiza a navegação na página inicial
+[32m|[m * [1;35m|[m [33md4205ac[m[33m ([m[1;31morigin/Romulo-Cadastro_usuario[m[33m)[m Adiciona a tela de cadastro de usuário e atualiza a navegação na página inicial
+* [32m|[m [1;35m|[m [33m5314bba[m Merge pull request #4 from Adota-facil/Romulo-perfilPet
+[33m|[m[32m\[m[32m|[m [1;35m|[m 
+[33m|[m * [1;35m|[m [33m024a8c5[m[33m ([m[1;31morigin/Romulo-perfilPet[m[33m)[m Adiciona a página de perfil do pet com detalhes e navegação
+[33m|[m[33m/[m [1;35m/[m  
+[33m|[m * [33mcf3590c[m commit Quase Final
+[33m|[m * [33ma232d5d[m home_page_quase-_inal
+[33m|[m * [33mda41f90[m[33m ([m[1;32mCarlos-AppBar[m[33m)[m commit denovo button
+[33m|[m [34m|[m * [33me8167e2[m[33m ([m[1;31morigin/Carlos-AppBar[m[33m)[m Merge pull request #3 from Adota-facil/main
+[33m|[m [34m|[m[34m/[m[33m|[m 
+[33m|[m [34m|[m[33m/[m  
+[33m|[m[33m/[m[34m|[m   
+* [34m|[m [33mbc95e04[m Merge pull request #2 from Adota-facil/Carlos-AppBar
+[1;31m|[m[34m\[m[34m|[m 
+[1;31m|[m * [33m2c175a3[m bottom Navegator
+* [1;32m|[m [33m25e6687[m Merge pull request #1 from Adota-facil/Carlos-AppBar
+[1;33m|[m[1;32m\[m[1;32m|[m 
+[1;33m|[m * [33m116cc0c[m Commit das alterações de pastas e a criação da AppBar definitiva
+[1;33m|[m * [33m4d78d51[m Segundo commit AppBar
+[1;33m|[m[1;33m/[m  
+* [33m42a5664[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m first commit

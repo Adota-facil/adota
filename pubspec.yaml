@@ -43,8 +43,9 @@ dependencies:
   cloud_firestore: ^6.7.1
   provider: ^6.1.2
   image_picker: ^1.1.2
-  http: ^1.6.0
-  web: ^1.1.1
+  firebase_analytics: ^12.5.0
+  firebase_storage: ^13.5.0
+
 
 dev_dependencies:
   flutter_test:

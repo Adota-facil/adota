@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-class Avatar_animals extends StatelessWidget {
+class AvatarAnimais extends StatelessWidget {
   final String nome;
   final String iconeSvg;
 
-  const Avatar_animals({super.key, required this.iconeSvg, required this.nome});
+  const AvatarAnimais({super.key, required this.iconeSvg, required this.nome});
 
   @override
   Widget build(BuildContext context) {

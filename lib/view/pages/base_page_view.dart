@@ -1,10 +1,10 @@
+import 'package:adota_facil/view/pages/cadastro_pet_view.dart';
 import 'package:adota_facil/view/pages/config_view.dart';
+import 'package:adota_facil/view/pages/home_page_view.dart';
 import 'package:adota_facil/view/pages/perfil_usuario_view.dart';
 import 'package:adota_facil/view/pages/search_page_view.dart';
 import 'package:adota_facil/view/widgets/appBar_Widget.dart';
 import 'package:adota_facil/view/widgets/custom_bottom_nav.dart';
-import 'package:adota_facil/view/pages/home_page_view.dart';
-import 'package:adota_facil/view/pages/cadastro_pet_view.dart';
 import 'package:flutter/material.dart';
 
 class BasePageView extends StatefulWidget {
