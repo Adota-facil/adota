@@ -40,25 +40,32 @@ class HomeController extends ChangeNotifier
 
   /// Retorna uma cópia somente-leitura — quem consome não consegue alterar
   /// a lista interna do controller por fora (ex: `animais.add(...)`).
+  @override
   List<PetModel> get animais => List.unmodifiable(_animais);
 
   String _categoriaSelecionada = categoriaTodos;
+  @override
   String get categoriaSelecionada => _categoriaSelecionada;
 
   bool _carregando = false;
+  @override
   bool get carregando => _carregando;
 
   String? _erro;
+  @override
   String? get erro => _erro;
 
   bool _salvando = false;
+  @override
   bool get salvando => _salvando;
 
+  @override
   Future<void> carregarAnimais() => _executarComCarregando(
         () async => _animais = await _repository.buscarAnimais(),
         _erroCarregarAnimais,
       );
 
+  @override
   Future<void> filtrarPorCategoria(String categoria) {
     _categoriaSelecionada = categoria;
     _analytics.logFiltroCategoriaUsado(categoria: categoria);
@@ -70,11 +77,13 @@ class HomeController extends ChangeNotifier
     );
   }
 
+  @override
   String gerarNovoId() => _repository.gerarNovoId();
 
   /// [arquivoFoto] é opcional — se vier nulo, o pet é salvo sem foto,
   /// exatamente como acontece hoje. Quando vier preenchido, a foto passa
   /// pela estratégia configurada (Base64 ou Storage) antes de salvar.
+  @override
   Future<bool> cadastrarAnimal(PetModel animal, {File? arquivoFoto}) async {
     _salvando = true;
     notifyListeners();

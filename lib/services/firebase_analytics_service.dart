@@ -28,4 +28,8 @@ class FirebaseAnalyticsService implements AnalyticsService {
     );
   }
 
- 
+  @override
+  Future<void> logTelaVisualizada({required String nomeTela}) {
+    return _analytics.logScreenView(screenName: nomeTela);
+  }
+}

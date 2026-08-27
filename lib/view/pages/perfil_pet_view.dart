@@ -125,7 +125,7 @@ class _PerfilPetViewState extends State<PerfilPetView> {
                     child: ListView.separated(
                       scrollDirection: Axis.horizontal,
                       itemCount: galeria.length,
-                      separatorBuilder: (_, __) => const SizedBox(width: 8),
+                      separatorBuilder: (_, _) => const SizedBox(width: 8),
                       itemBuilder: (context, index) {
                         return ClipRRect(
                           borderRadius: BorderRadius.circular(8),
@@ -171,7 +171,7 @@ class _PerfilPetViewState extends State<PerfilPetView> {
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.grey.withOpacity(0.1),
+                    color: Colors.grey.withValues(alpha: 0.1),
                     blurRadius: 10,
                     spreadRadius: 2,
                   ),
