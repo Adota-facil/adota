@@ -1,4 +1,5 @@
 import 'package:adota_facil/controllers/home_controller.dart';
+import 'package:adota_facil/controllers/search_controller.dart';
 import 'package:adota_facil/models/pet_model.dart';
 import 'package:adota_facil/view/widgets/pet_card_widget.dart';
 import 'package:flutter/material.dart';
@@ -12,42 +13,20 @@ class SearchPageView extends StatefulWidget {
 }
 
 class _SearchPageViewState extends State<SearchPageView> {
-  final TextEditingController _searchController = TextEditingController();
-  String _termoBusca = '';
-
-  void _runFilter(String enteredKeyword) {
-    setState(() {
-      _termoBusca = enteredKeyword;
-    });
-  }
-
-  void _clearSearch() {
-    _searchController.clear();
-    _runFilter('');
-  }
-
-  List<PetModel> _filtrar(List<PetModel> pets) {
-    if (_termoBusca.isEmpty) return pets;
-
-    final query = _termoBusca.toLowerCase();
-    return pets.where((pet) {
-      final nameMatches = pet.nome.toLowerCase().contains(query);
-      final infoMatches =
-          pet.informacoesFormatadas.toLowerCase().contains(query);
-      return nameMatches || infoMatches;
-    }).toList();
-  }
+  final TextEditingController _textEditingController = TextEditingController();
 
   @override
   void dispose() {
-    _searchController.dispose();
+    _textEditingController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final controller = context.watch<HomeController>();
-    final filteredPets = _filtrar(controller.animais);
+    final homeController = context.watch<HomeController>();
+    final searchController = context.watch<SearchPageController>();
+
+    final filteredPets = searchController.filtrarPets(homeController.animais);
 
     return Scaffold(
       body: Padding(
@@ -57,16 +36,19 @@ class _SearchPageViewState extends State<SearchPageView> {
           children: [
             // Campo de Pesquisa
             TextField(
-              controller: _searchController,
-              onChanged: _runFilter,
+              controller: _textEditingController,
+              onChanged: (value) => searchController.setTermoBusca(value),
               decoration: InputDecoration(
                 hintText: 'Pesquise por...',
                 hintStyle: TextStyle(color: Colors.grey.shade400),
                 prefixIcon: const Icon(Icons.search, color: Colors.black87),
-                suffixIcon: _searchController.text.isNotEmpty
+                suffixIcon: searchController.termoBusca.isNotEmpty
                     ? IconButton(
                         icon: const Icon(Icons.clear, color: Colors.grey),
-                        onPressed: _clearSearch,
+                        onPressed: () {
+                          _textEditingController.clear();
+                          searchController.clearSearch();
+                        },
                       )
                     : null,
                 filled: true,
@@ -82,16 +64,17 @@ class _SearchPageViewState extends State<SearchPageView> {
             const SizedBox(height: 16),
 
             // Grid de Cards
-            Expanded(
-              child: _construirConteudo(controller, filteredPets),
-            ),
+            Expanded(child: _construirConteudo(homeController, filteredPets)),
           ],
         ),
       ),
     );
   }
 
-  Widget _construirConteudo(HomeController controller, List<PetModel> filteredPets) {
+  Widget _construirConteudo(
+    HomeController controller,
+    List<PetModel> filteredPets,
+  ) {
     if (controller.carregando) {
       return const Center(child: CircularProgressIndicator());
     }
