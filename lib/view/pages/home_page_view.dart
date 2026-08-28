@@ -1,4 +1,5 @@
 import 'package:adota_facil/controller/controllers/home_controller.dart';
+import 'package:adota_facil/controllers/home_controller.dart';
 import 'package:adota_facil/view/pages/curiosidades_view.dart';
 import 'package:adota_facil/view/widgets/CarouselSlider_widget.dart';
 import 'package:adota_facil/view/widgets/avatar_animais_widget.dart';

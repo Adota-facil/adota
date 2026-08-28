@@ -1,4 +1,4 @@
-import 'package:adota_facil/model/models/pet_model.dart';
+import 'package:adota_facil/models/pet_model.dart';
 import 'package:adota_facil/view/pages/perfil_pet_view.dart';
 import 'package:adota_facil/view/widgets/pet_image_widget.dart';
 import 'package:flutter/material.dart';
