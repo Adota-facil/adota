@@ -1,5 +1,5 @@
-import 'package:adota_facil/controller/controllers/home_controller.dart';
-import 'package:adota_facil/model/models/pet_model.dart';
+import 'package:adota_facil/controllers/home_controller.dart';
+import 'package:adota_facil/models/pet_model.dart';
 import 'package:adota_facil/view/constants/pet_constantes.dart';
 import 'package:adota_facil/view/theme/app_theme.dart';
 import 'package:adota_facil/view/widgets/campo_texto_formulario.dart';
