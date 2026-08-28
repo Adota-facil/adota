@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:adota_facil/models/pet_model.dart';
+import 'package:adota_facil/models/animal_model.dart';
 
 abstract class ListaAnimaisController {
   List<PetModel> get animais;

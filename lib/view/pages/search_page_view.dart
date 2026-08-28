@@ -1,9 +1,10 @@
-import 'package:adota_facil/controllers/home_controller.dart';
-import 'package:adota_facil/models/pet_model.dart';
+import 'package:adota_facil/controllers/buscar_controller.dart';
 import 'package:adota_facil/view/widgets/pet_card_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+/// Tela de Busca: só monta o visual e lê o estado do BuscaController
+/// (que é independente do HomeController).
 class SearchPageView extends StatefulWidget {
   const SearchPageView({super.key});
 
@@ -12,31 +13,9 @@ class SearchPageView extends StatefulWidget {
 }
 
 class _SearchPageViewState extends State<SearchPageView> {
+  // Controller do widget TextField (estado de UI), não estado de
+  // negócio — por isso continua aqui, não no BuscaController.
   final TextEditingController _searchController = TextEditingController();
-  String _termoBusca = '';
-
-  void _runFilter(String enteredKeyword) {
-    setState(() {
-      _termoBusca = enteredKeyword;
-    });
-  }
-
-  void _clearSearch() {
-    _searchController.clear();
-    _runFilter('');
-  }
-
-  List<PetModel> _filtrar(List<PetModel> pets) {
-    if (_termoBusca.isEmpty) return pets;
-
-    final query = _termoBusca.toLowerCase();
-    return pets.where((pet) {
-      final nameMatches = pet.nome.toLowerCase().contains(query);
-      final infoMatches =
-          pet.informacoesFormatadas.toLowerCase().contains(query);
-      return nameMatches || infoMatches;
-    }).toList();
-  }
 
   @override
   void dispose() {
@@ -46,8 +25,7 @@ class _SearchPageViewState extends State<SearchPageView> {
 
   @override
   Widget build(BuildContext context) {
-    final controller = context.watch<HomeController>();
-    final filteredPets = _filtrar(controller.animais);
+    final controller = context.watch<BuscaController>();
 
     return Scaffold(
       body: Padding(
@@ -55,10 +33,9 @@ class _SearchPageViewState extends State<SearchPageView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Campo de Pesquisa
             TextField(
               controller: _searchController,
-              onChanged: _runFilter,
+              onChanged: controller.buscarPorTermo,
               decoration: InputDecoration(
                 hintText: 'Pesquise por...',
                 hintStyle: TextStyle(color: Colors.grey.shade400),
@@ -66,7 +43,10 @@ class _SearchPageViewState extends State<SearchPageView> {
                 suffixIcon: _searchController.text.isNotEmpty
                     ? IconButton(
                         icon: const Icon(Icons.clear, color: Colors.grey),
-                        onPressed: _clearSearch,
+                        onPressed: () {
+                          _searchController.clear();
+                          controller.buscarPorTermo('');
+                        },
                       )
                     : null,
                 filled: true,
@@ -78,20 +58,23 @@ class _SearchPageViewState extends State<SearchPageView> {
                 ),
               ),
             ),
-
             const SizedBox(height: 16),
-
-            // Grid de Cards
             Expanded(
-              child: _construirConteudo(controller, filteredPets),
+              child: _ResultadoBusca(controller: controller),
             ),
           ],
         ),
       ),
     );
   }
+}
 
-  Widget _construirConteudo(HomeController controller, List<PetModel> filteredPets) {
+class _ResultadoBusca extends StatelessWidget {
+  final BuscaController controller;
+  const _ResultadoBusca({required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
     if (controller.carregando) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -112,7 +95,9 @@ class _SearchPageViewState extends State<SearchPageView> {
       );
     }
 
-    if (filteredPets.isEmpty) {
+    final pets = controller.animaisFiltrados;
+
+    if (pets.isEmpty) {
       return const Center(
         child: Text(
           'Nenhum pet encontrado.',
@@ -129,9 +114,9 @@ class _SearchPageViewState extends State<SearchPageView> {
         mainAxisSpacing: 12,
         childAspectRatio: 0.80,
       ),
-      itemCount: filteredPets.length,
+      itemCount: pets.length,
       itemBuilder: (context, index) {
-        return PetCardWidget(pet: filteredPets[index]);
+        return PetCardWidget(pet: pets[index]);
       },
     );
   }

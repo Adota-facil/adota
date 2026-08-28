@@ -1,4 +1,3 @@
-import 'package:adota_facil/controller/controllers/home_controller.dart';
 import 'package:adota_facil/controllers/home_controller.dart';
 import 'package:adota_facil/view/pages/curiosidades_view.dart';
 import 'package:adota_facil/view/widgets/CarouselSlider_widget.dart';
@@ -6,11 +5,12 @@ import 'package:adota_facil/view/widgets/avatar_animais_widget.dart';
 import 'package:adota_facil/view/widgets/pet_card_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:web/web.dart' as web;
 
 const List<String> _bannersPromocionais = ["assets/image/image 20.png"];
 const List<String> _bannersSecundarios = ["assets/image/Rectangle 30.png"];
 
+/// Tela Home: só monta o visual e lê o estado do HomeController.
+/// Toda busca de dados e regra de negócio fica no controller/repository.
 class HomePageView extends StatelessWidget {
   const HomePageView({super.key});
 
@@ -140,21 +140,16 @@ class HomePageView extends StatelessWidget {
                 }).toList(),
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: const [
-                Padding(
-                  padding: const EdgeInsets.only(left: 20),
-                  child: Text(
-                    "Buscar por Categoria",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF4998E5),
-                      fontSize: 25,
-                    ),
-                  ),
+            const Padding(
+              padding: EdgeInsets.only(left: 20),
+              child: Text(
+                "Buscar por Categoria",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF4998E5),
+                  fontSize: 25,
                 ),
-              ],
+              ),
             ),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
@@ -188,9 +183,9 @@ class HomePageView extends StatelessWidget {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(left: 20, top: 20),
-              child: const Text(
+            const Padding(
+              padding: EdgeInsets.only(left: 20, top: 20),
+              child: Text(
                 "Últimos adicionados",
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
@@ -203,81 +198,10 @@ class HomePageView extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 12),
               child: _ListaDePets(controller: controller),
             ),
-            Padding(
-              padding: const EdgeInsets.only(left: 20, top: 20),
-              child: const Text(
-                "Curiosidades",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF4998E5),
-                  fontSize: 25,
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-              child: _construirCarrosselCuriosidades(controller),
-            ),
             const SizedBox(height: 20),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _construirCarrosselCuriosidades(HomeController controller) {
-    if (controller.carregandoCuriosidades) {
-      return const SizedBox(
-        height: 180,
-        child: Center(child: CircularProgressIndicator()),
-      );
-    }
-    if (controller.curiosidades.isEmpty) {
-      return Container(
-        height: 180,
-        width: double.infinity,
-        decoration: BoxDecoration(
-          color: const Color(0xFF4998E5),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        alignment: Alignment.center,
-        child: const Text(
-          'Nenhuma imagem disponível 🐾',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-      );
-    }
-    return CarouselsliderWidget(
-      altura: 180,
-      items: controller.curiosidades.map((curiosidade) {
-        final viewId = 'img-${curiosidade.id}';
-
-        ui.platformViewRegistry.registerViewFactory(viewId, (int viewId) {
-          final element = web.HTMLImageElement();
-          element.src = curiosidade.urlImagem;
-          element.style.width = '100%';
-          element.style.height = '100%';
-          element.style.objectFit = 'cover';
-          element.style.borderRadius = '12px';
-
-          element.onError.listen((event) {
-            element.src = 'pexels.com';
-          });
-          return element;
-        });
-        return Container(
-          width: double.infinity,
-          margin: const EdgeInsets.symmetric(horizontal: 4),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            color: const Color(0xFFECEFF1),
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: HtmlElementView(viewType: viewId),
-          ),
-        );
-      }).toList(),
     );
   }
 }
@@ -285,8 +209,9 @@ class HomePageView extends StatelessWidget {
 class _ListaDePets extends StatelessWidget {
   final HomeController controller;
   const _ListaDePets({required this.controller});
+
   @override
-  build(BuildContext context) {
+  Widget build(BuildContext context) {
     if (controller.carregando) {
       return const Padding(
         padding: EdgeInsets.symmetric(vertical: 40),
@@ -333,4 +258,3 @@ class _ListaDePets extends StatelessWidget {
     );
   }
 }
-

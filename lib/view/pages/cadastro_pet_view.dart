@@ -1,5 +1,5 @@
-import 'package:adota_facil/controllers/home_controller.dart';
-import 'package:adota_facil/models/pet_model.dart';
+import 'package:adota_facil/controllers/cadastro_pet_controller.dart';
+import 'package:adota_facil/models/animal_model.dart';
 import 'package:adota_facil/view/constants/pet_constantes.dart';
 import 'package:adota_facil/view/theme/app_theme.dart';
 import 'package:adota_facil/view/widgets/campo_texto_formulario.dart';
@@ -76,10 +76,9 @@ class _CadastroPetViewState extends State<CadastroPetView> {
       descricao: _descricaoController.text.trim(),
       localizacao:
           '${_cidadeController.text.trim()}, ${_estadoController.text.trim()}',
-     
     );
 
-    final controller = context.read<HomeController>();
+    final controller = context.read<CadastroPetController>();
     final sucesso = await controller.cadastrarAnimal(novoPet);
 
     if (!mounted) return;
@@ -119,7 +118,6 @@ class _CadastroPetViewState extends State<CadastroPetView> {
   }
 
   Widget _construirGradeFotosExemplo() {
-
     return Padding(
       padding: const EdgeInsets.only(bottom: 24),
       child: Column(
@@ -208,7 +206,7 @@ class _CadastroPetViewState extends State<CadastroPetView> {
 
   @override
   Widget build(BuildContext context) {
-    final salvando = context.watch<HomeController>().salvando;
+    final salvando = context.watch<CadastroPetController>().salvando;
 
     return Scaffold(
       backgroundColor: Colors.white,

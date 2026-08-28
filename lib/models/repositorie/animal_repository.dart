@@ -1,4 +1,5 @@
-import 'package:adota_facil/models/pet_model.dart';
+
+import 'package:adota_facil/models/animal_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 
