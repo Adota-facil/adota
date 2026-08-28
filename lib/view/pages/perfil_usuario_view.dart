@@ -1,3 +1,4 @@
+import 'package:adota_facil/controllers/perfil_usuario_controller.dart';
 import 'package:flutter/material.dart';
 
 class PerfilUsuarioView extends StatefulWidget {
@@ -8,12 +9,8 @@ class PerfilUsuarioView extends StatefulWidget {
 }
 
 class _PerfilUsuarioViewState extends State<PerfilUsuarioView> {
-  OutlineInputBorder estiloBorda() {
-    return OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: const BorderSide(color: Color(0xFFE0E0E0), width: 1.2),
-    );
-  }
+  // Instância do Controller
+  final PerfilUsuarioController _controller = PerfilUsuarioController();
 
   Widget _construirItemInformacao({
     required String label,
@@ -48,10 +45,7 @@ class _PerfilUsuarioViewState extends State<PerfilUsuarioView> {
                 const SizedBox(width: 12),
                 Text(
                   valor,
-                  style: const TextStyle(
-                    fontSize: 15,
-                    color: Colors.black54,
-                  ),
+                  style: const TextStyle(fontSize: 15, color: Colors.black54),
                 ),
               ],
             ),
@@ -78,45 +72,41 @@ class _PerfilUsuarioViewState extends State<PerfilUsuarioView> {
                       const CircleAvatar(
                         radius: 50,
                         backgroundColor: Color(0xFFFAFAFA),
-                        child: Icon(
-                          Icons.person,
-                          size: 60,
-                          color: Colors.blue,
-                        ),
+                        child: Icon(Icons.person, size: 60, color: Colors.blue),
                       ),
                       Positioned(
                         bottom: 0,
                         right: 0,
-                        child: Container(
-                          padding: const EdgeInsets.all(6),
-                          decoration: const BoxDecoration(
-                            color: Colors.blue,
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.edit,
-                            color: Colors.white,
-                            size: 16,
+                        child: GestureDetector(
+                          onTap: () => _controller.editarFotoPerfil(context),
+                          child: Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: const BoxDecoration(
+                              color: Colors.blue,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.edit,
+                              color: Colors.white,
+                              size: 16,
+                            ),
                           ),
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 12),
-                  const Text(
-                    'Eduardo',
-                    style: TextStyle(
+                  Text(
+                    _controller.nomeExibicao,
+                    style: const TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
                       color: Colors.black87,
                     ),
                   ),
-                  const Text(
-                    'Membro desde 2026',
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: Colors.grey,
-                    ),
+                  Text(
+                    _controller.tempoMembro,
+                    style: const TextStyle(fontSize: 13, color: Colors.grey),
                   ),
                 ],
               ),
@@ -133,17 +123,17 @@ class _PerfilUsuarioViewState extends State<PerfilUsuarioView> {
             const SizedBox(height: 16),
             _construirItemInformacao(
               label: 'Nome Completo',
-              valor: 'Eduardo da Silva',
+              valor: _controller.nomeCompleto,
               icone: Icons.person_outline,
             ),
             _construirItemInformacao(
               label: 'E-mail',
-              valor: 'eduardo@email.com',
+              valor: _controller.email,
               icone: Icons.email_outlined,
             ),
             _construirItemInformacao(
               label: 'WhatsApp',
-              valor: '(87) 99999-9999',
+              valor: _controller.whatsapp,
               icone: Icons.phone_android,
             ),
             Row(
@@ -151,7 +141,7 @@ class _PerfilUsuarioViewState extends State<PerfilUsuarioView> {
                 Expanded(
                   child: _construirItemInformacao(
                     label: 'Estado',
-                    valor: 'PE',
+                    valor: _controller.estado,
                     icone: Icons.map_outlined,
                   ),
                 ),
@@ -159,7 +149,7 @@ class _PerfilUsuarioViewState extends State<PerfilUsuarioView> {
                 Expanded(
                   child: _construirItemInformacao(
                     label: 'Cidade',
-                    valor: 'Garanhuns',
+                    valor: _controller.cidade,
                     icone: Icons.location_city,
                   ),
                 ),
@@ -176,7 +166,7 @@ class _PerfilUsuarioViewState extends State<PerfilUsuarioView> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                onPressed: () {},
+                onPressed: () => _controller.sairDaConta(context),
                 child: const Text(
                   'Sair da Conta',
                   style: TextStyle(
