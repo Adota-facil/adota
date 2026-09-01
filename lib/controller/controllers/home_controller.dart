@@ -1,5 +1,5 @@
 import 'package:adota_facil/model/models/pet_model.dart';
-import 'package:adota_facil/model/models/repositories/animal_repository.dart';
+import 'package:adota_facil/model/repositories/animal_repository.dart';
 import 'package:flutter/material.dart';
 
 

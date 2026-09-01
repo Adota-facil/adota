@@ -1,29 +1,26 @@
 import 'package:adota_facil/controller/controllers/home_controller.dart';
-import 'package:adota_facil/view/pages/curiosidades_view.dart';
-import 'package:adota_facil/view/widgets/CarouselSlider_widget.dart';
+//import 'package:adota_facil/view/pages/curiosidades_view.dart';
+//import 'package:adota_facil/view/widgets/CarouselSlider_widget.dart';
 import 'package:adota_facil/view/widgets/avatar_animais_widget.dart';
 import 'package:adota_facil/view/widgets/pet_card_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-/// Imagens de banner promocional (fixas), exibidas no carrossel do topo.
-/// Coloque os arquivos em assets/image/ com esses nomes (ou troque os
-/// caminhos abaixo pelos nomes reais que você já tem).
-const List<String> _bannersPromocionais = [
-  "assets/image/image 20.png",
-];
 
-/// Banners do segundo carrossel (também fixos/promocionais).
-const List<String> _bannersSecundarios = [
+/*const List<String> _bannersPromocionais = [
+  "assets/image/image 20.png",
+];*/
+
+/*const List<String> _bannersSecundarios = [
   "assets/image/Rectangle 30.png",
-];
+];*/
 
 class HomePageView extends StatelessWidget {
   const HomePageView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final controller = context.watch<HomeController>();
+   // final controller = context.watch<HomeController>();
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -32,9 +29,9 @@ class HomePageView extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Stack(
+            /*Stack(
               children: [
-                CarouselSliderWidget(
+               /* CarouselSliderWidget(
                   altura: 280,
                   items: _bannersPromocionais.map((caminho) {
                     return Image.asset(
@@ -59,8 +56,8 @@ class HomePageView extends StatelessWidget {
                       },
                     );
                   }).toList(),
-                ),
-                Positioned(
+                ),*/
+                /*Positioned(
                   left: -25,
                   height: 450,
                   child: Row(
@@ -117,10 +114,10 @@ class HomePageView extends StatelessWidget {
                       ),
                     ],
                   ),
-                ),
+                ),*/
               ],
-            ),
-            Padding(
+            ),*/
+            /*Padding(
               padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
               child: CarouselSliderWidget(
                 altura: 200,
@@ -147,8 +144,8 @@ class HomePageView extends StatelessWidget {
                   );
                 }).toList(),
               ),
-            ),
-            Row(
+            ),*/
+            /*Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Padding(
@@ -221,8 +218,8 @@ class HomePageView extends StatelessWidget {
     );
   }
 }
-
-class _ListaDePets extends StatelessWidget {
+*/
+/*class _ListaDePets extends StatelessWidget {
   final HomeController controller;
 
   const _ListaDePets({required this.controller});
@@ -277,4 +274,4 @@ class _ListaDePets extends StatelessWidget {
       ),
     );
   }
-}
+}*/
