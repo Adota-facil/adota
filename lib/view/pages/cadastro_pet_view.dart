@@ -21,13 +21,13 @@ class _CadastroPetViewState extends State<CadastroPetView> {
   bool isVacinado = true;
   String? especieSelecionada;
   String generoSelecionado = 'Macho';
+  String? porteSelecionado;
+  String? estadoSelecionado;
 
   final _nomeController = TextEditingController();
   final _racaController = TextEditingController();
   final _idadeController = TextEditingController();
-  final _porteController = TextEditingController();
   final _cidadeController = TextEditingController();
-  final _estadoController = TextEditingController();
   final _descricaoController = TextEditingController();
 
   @override
@@ -35,15 +35,15 @@ class _CadastroPetViewState extends State<CadastroPetView> {
     _nomeController.dispose();
     _racaController.dispose();
     _idadeController.dispose();
-    _porteController.dispose();
     _cidadeController.dispose();
-    _estadoController.dispose();
     _descricaoController.dispose();
     super.dispose();
   }
 
   List<String? Function()> get _validacoesExtras => [
         () => especieSelecionada == null ? 'Selecione a espécie do pet' : null,
+        () => porteSelecionado == null ? 'Selecione o porte do pet' : null,
+        () => estadoSelecionado == null ? 'Selecione o estado' : null,
       ];
 
   Future<void> _salvarPet() async {
@@ -68,13 +68,11 @@ class _CadastroPetViewState extends State<CadastroPetView> {
       especie: especieSelecionada!,
       statusSaude: statusSaude,
       idade: _idadeController.text.trim(),
-      porte: _porteController.text.trim(),
+      porte: porteSelecionado!,
       genero: generoSelecionado,
       raca: _racaController.text.trim(),
       descricao: _descricaoController.text.trim(),
-      localizacao:
-          '${_cidadeController.text.trim()}, ${_estadoController.text.trim()}',
-     
+      localizacao: '${_cidadeController.text.trim()}, $estadoSelecionado',
     );
 
     final controller = context.read<HomeController>();
@@ -95,12 +93,12 @@ class _CadastroPetViewState extends State<CadastroPetView> {
     _nomeController.clear();
     _racaController.clear();
     _idadeController.clear();
-    _porteController.clear();
     _cidadeController.clear();
-    _estadoController.clear();
     _descricaoController.clear();
     setState(() {
       especieSelecionada = null;
+      porteSelecionado = null;
+      estadoSelecionado = null;
       isCastrado = true;
       isVacinado = true;
     });
@@ -117,7 +115,6 @@ class _CadastroPetViewState extends State<CadastroPetView> {
   }
 
   Widget _construirGradeFotosExemplo() {
-
     return Padding(
       padding: const EdgeInsets.only(bottom: 24.0),
       child: Column(
@@ -271,31 +268,30 @@ class _CadastroPetViewState extends State<CadastroPetView> {
                   const SizedBox(width: 16),
                   Expanded(
                     child: CampoTextoFormulario(
-                      label: 'Porte*',
-                      dica: 'Ex: Pequeno',
-                      controller: _porteController,
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: CampoTextoFormulario(
                       label: 'Cidade*',
                       dica: 'Ex: Garanhuns',
                       controller: _cidadeController,
                     ),
                   ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: CampoTextoFormulario(
-                      label: 'Estado*',
-                      dica: 'Ex: Pernambuco',
-                      controller: _estadoController,
-                    ),
-                  ),
                 ],
+              ),
+              DropdownFormulario<String>(
+                label: 'Porte*',
+                dica: 'Selecione o porte',
+                icone: Icons.straighten,
+                itens: PetConstantes.portes,
+                valorSelecionado: porteSelecionado,
+                onChanged: (valor) =>
+                    setState(() => porteSelecionado = valor),
+              ),
+              DropdownFormulario<String>(
+                label: 'Estado*',
+                dica: 'Selecione o estado',
+                icone: Icons.map,
+                itens: PetConstantes.estados,
+                valorSelecionado: estadoSelecionado,
+                onChanged: (valor) =>
+                    setState(() => estadoSelecionado = valor),
               ),
               const Text('Condições de Saúde*', style: AppTheme.rotuloCampo),
               const SizedBox(height: 12),
