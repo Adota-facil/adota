@@ -21,7 +21,7 @@ class _PerfilPetViewState extends State<PerfilPetView> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppbarWidget(leadingName: pet.nome),
+      appBar: AppbarWidget(leadingName: pet.nome, mostrarBotaoVoltar: true),
       bottomNavigationBar: CustomBottomNav(currentIndex: 0, onTap: (index) {}),
 
       body: SingleChildScrollView(
