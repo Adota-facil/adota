@@ -3,9 +3,6 @@ import 'dart:io';
 import 'package:adota_facil/services/estrategia_armazenamento_foto.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
-/// Faz upload da foto para o Firebase Storage e guarda a url resultante.
-/// Alternativa ao ArmazenamentoBase64 — exige plano pago (Blaze) ativo
-/// no projeto Firebase.
 class ArmazenamentoFirebaseStorage implements EstrategiaArmazenamentoFoto {
   @override
   Future<ResultadoArmazenamentoFoto> salvar(File arquivo, String petId) async {

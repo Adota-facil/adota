@@ -1,3 +1,4 @@
+import 'package:adota_facil/controllers/cadastro_usuario_controller.dart';
 import 'package:adota_facil/view/widgets/appBar_Widget.dart';
 import 'package:adota_facil/view/widgets/custom_bottom_nav.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +11,14 @@ class CadastroUsuarioView extends StatefulWidget {
 }
 
 class _CadastroUsuarioViewState extends State<CadastroUsuarioView> {
-  final _formKey = GlobalKey<FormState>();
+  // Instância do Controller
+  final CadastroUsuarioController _controller = CadastroUsuarioController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   OutlineInputBorder _estiloBorda() {
     return OutlineInputBorder(
@@ -22,6 +30,8 @@ class _CadastroUsuarioViewState extends State<CadastroUsuarioView> {
   Widget _construirCampo({
     required String label,
     required String dica,
+    required TextEditingController textController,
+    String? Function(String?)? validator,
     IconData? icone,
     bool ocultarTexto = false,
   }) {
@@ -40,6 +50,8 @@ class _CadastroUsuarioViewState extends State<CadastroUsuarioView> {
           ),
           const SizedBox(height: 6),
           TextFormField(
+            controller: textController,
+            validator: validator,
             obscureText: ocultarTexto,
             decoration: InputDecoration(
               hintText: dica,
@@ -73,7 +85,7 @@ class _CadastroUsuarioViewState extends State<CadastroUsuarioView> {
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
         child: Form(
-          key: _formKey,
+          key: _controller.formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -95,26 +107,35 @@ class _CadastroUsuarioViewState extends State<CadastroUsuarioView> {
                 label: 'Seu nome*',
                 dica: 'Digite seu nome completo',
                 icone: Icons.person,
+                textController: _controller.nomeController,
+                validator: _controller.validarNome,
               ),
               _construirCampo(
                 label: 'CPF*',
                 dica: '000.000.000-00',
                 icone: Icons.badge_outlined,
+                textController: _controller.cpfController,
+                validator: _controller.validarCPF,
               ),
               _construirCampo(
                 label: 'Email*',
                 dica: 'exemplo@email.com',
                 icone: Icons.email,
+                textController: _controller.emailController,
+                validator: _controller.validarEmail,
               ),
               _construirCampo(
                 label: 'Confirmação de Email*',
                 dica: 'Repita o email inserido',
                 icone: Icons.mail_outline,
+                textController: _controller.confirmarEmailController,
+                validator: _controller.validarConfirmacaoEmail,
               ),
               _construirCampo(
                 label: 'Whatsapp*',
                 dica: '(00) 00000-0000',
                 icone: Icons.phone,
+                textController: _controller.whatsappController,
               ),
               Row(
                 children: [
@@ -122,6 +143,7 @@ class _CadastroUsuarioViewState extends State<CadastroUsuarioView> {
                     child: _construirCampo(
                       label: 'Cidade*',
                       dica: 'Ex: Garanhuns',
+                      textController: _controller.cidadeController,
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -129,6 +151,7 @@ class _CadastroUsuarioViewState extends State<CadastroUsuarioView> {
                     child: _construirCampo(
                       label: 'Estado*',
                       dica: 'Ex: Pernambuco',
+                      textController: _controller.estadoController,
                     ),
                   ),
                 ],
@@ -138,16 +161,20 @@ class _CadastroUsuarioViewState extends State<CadastroUsuarioView> {
                 dica: 'Crie uma senha forte',
                 icone: Icons.lock,
                 ocultarTexto: true,
+                textController: _controller.senhaController,
+                validator: _controller.validarSenha,
               ),
               _construirCampo(
                 label: 'Confirmação de Senha*',
                 dica: 'Repita a senha criada',
                 icone: Icons.lock_outline,
                 ocultarTexto: true,
+                textController: _controller.confirmarSenhaController,
+                validator: _controller.validarConfirmacaoSenha,
               ),
               Transform.translate(
-                offset: Offset(0, -8),
-                child: Text(
+                offset: const Offset(0, -8),
+                child: const Text(
                   'Deve ter pelo menos 8 caracteres, incluindo letras e números.',
                   style: TextStyle(color: Colors.black38, fontSize: 11),
                 ),
@@ -165,8 +192,15 @@ class _CadastroUsuarioViewState extends State<CadastroUsuarioView> {
                     ),
                     elevation: 0,
                   ),
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {}
+                  onPressed: () async {
+                    bool sucesso = await _controller.cadastrarUsuario();
+                    if (sucesso && context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Cadastro realizado com sucesso!'),
+                        ),
+                      );
+                    }
                   },
                   child: const Text(
                     'Concluir Cadastro',

@@ -1,8 +1,9 @@
 import 'dart:io';
 
-import 'package:adota_facil/controller/controllers/home_controller_interfaces.dart';
-import 'package:adota_facil/model/models/pet_model.dart';
-import 'package:adota_facil/model/models/repositories/animal_repository.dart';
+
+import 'package:adota_facil/controllers/home_controller_interfaces.dart';
+import 'package:adota_facil/models/pet_model.dart';
+import 'package:adota_facil/models/repositories/animal_repository.dart';
 import 'package:adota_facil/services/analytics_service.dart';
 import 'package:adota_facil/services/estrategia_armazenamento_foto.dart';
 import 'package:flutter/material.dart';
@@ -58,6 +59,10 @@ class HomeController extends ChangeNotifier
   bool _salvando = false;
   @override
   bool get salvando => _salvando;
+
+ // bool get carregandoCuriosidades => null;
+
+  get curiosidades => null;
 
   @override
   Future<void> carregarAnimais() => _executarComCarregando(
