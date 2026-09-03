@@ -1,4 +1,6 @@
-import 'package:adota_facil/controller/controllers/home_controller.dart';
+
+import 'dart:ui_web' as ui;
+
 import 'package:adota_facil/controllers/home_controller.dart';
 import 'package:adota_facil/view/pages/curiosidades_view.dart';
 import 'package:adota_facil/view/widgets/CarouselSlider_widget.dart';
@@ -216,7 +218,7 @@ class HomePageView extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-              child: _construirCarrosselCuriosidades(controller),
+              //child: _construirCarrosselCuriosidades(controller),
             ),
             const SizedBox(height: 20),
           ],
@@ -225,7 +227,7 @@ class HomePageView extends StatelessWidget {
     );
   }
 
-  Widget _construirCarrosselCuriosidades(HomeController controller) {
+  /*Widget _construirCarrosselCuriosidades(HomeController controller) {
     if (controller.carregandoCuriosidades) {
       return const SizedBox(
         height: 180,
@@ -247,7 +249,7 @@ class HomePageView extends StatelessWidget {
         ),
       );
     }
-    return CarouselsliderWidget(
+    return CarouselSliderWidget(
       altura: 180,
       items: controller.curiosidades.map((curiosidade) {
         final viewId = 'img-${curiosidade.id}';
@@ -279,7 +281,7 @@ class HomePageView extends StatelessWidget {
         );
       }).toList(),
     );
-  }
+  }*/
 }
 
 class _ListaDePets extends StatelessWidget {

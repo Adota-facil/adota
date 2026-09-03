@@ -60,6 +60,10 @@ class HomeController extends ChangeNotifier
   @override
   bool get salvando => _salvando;
 
+ // bool get carregandoCuriosidades => null;
+
+  get curiosidades => null;
+
   @override
   Future<void> carregarAnimais() => _executarComCarregando(
         () async => _animais = await _repository.buscarAnimais(),
