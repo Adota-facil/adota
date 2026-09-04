@@ -1,6 +1,3 @@
-
-import 'dart:ui_web' as ui;
-
 import 'package:adota_facil/controllers/home_controller.dart';
 import 'package:adota_facil/view/pages/curiosidades_view.dart';
 import 'package:adota_facil/view/widgets/CarouselSlider_widget.dart';
@@ -8,7 +5,7 @@ import 'package:adota_facil/view/widgets/avatar_animais_widget.dart';
 import 'package:adota_facil/view/widgets/pet_card_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:web/web.dart' as web;
+
 
 const List<String> _bannersPromocionais = ["assets/image/image 20.png"];
 const List<String> _bannersSecundarios = ["assets/image/Rectangle 30.png"];
