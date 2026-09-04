@@ -32,8 +32,9 @@ class _SearchPageViewState extends State<SearchPageView> {
     final query = _termoBusca.toLowerCase();
     return pets.where((pet) {
       final nameMatches = pet.nome.toLowerCase().contains(query);
-      final infoMatches =
-          pet.informacoesFormatadas.toLowerCase().contains(query);
+      final infoMatches = pet.informacoesFormatadas.toLowerCase().contains(
+        query,
+      );
       return nameMatches || infoMatches;
     }).toList();
   }
@@ -55,7 +56,6 @@ class _SearchPageViewState extends State<SearchPageView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Campo de Pesquisa
             TextField(
               controller: _searchController,
               onChanged: _runFilter,
@@ -82,16 +82,17 @@ class _SearchPageViewState extends State<SearchPageView> {
             const SizedBox(height: 16),
 
             // Grid de Cards
-            Expanded(
-              child: _construirConteudo(controller, filteredPets),
-            ),
+            Expanded(child: _construirConteudo(controller, filteredPets)),
           ],
         ),
       ),
     );
   }
 
-  Widget _construirConteudo(HomeController controller, List<PetModel> filteredPets) {
+  Widget _construirConteudo(
+    HomeController controller,
+    List<PetModel> filteredPets,
+  ) {
     if (controller.carregando) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -127,7 +128,7 @@ class _SearchPageViewState extends State<SearchPageView> {
         crossAxisCount: 2,
         crossAxisSpacing: 12,
         mainAxisSpacing: 12,
-        childAspectRatio: 0.80,
+        childAspectRatio: 0.68,
       ),
       itemCount: filteredPets.length,
       itemBuilder: (context, index) {
