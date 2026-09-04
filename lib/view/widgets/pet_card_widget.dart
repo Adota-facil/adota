@@ -91,7 +91,7 @@ class PetCardWidget extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   pet.informacoesFormatadas,
-                  style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+                  style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),

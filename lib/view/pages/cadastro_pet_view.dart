@@ -57,9 +57,38 @@ class _CadastroPetViewState extends State<CadastroPetView> {
       return;
     }
 
+    // Exibe o menu para o usuário escolher entre Câmera ou Galeria
+    final ImageSource? origem = await showModalBottomSheet<ImageSource>(
+      context: context,
+      builder: (context) => SafeArea(
+        child: Wrap(
+          children: [
+            ListTile(
+              leading: const Icon(
+                Icons.camera_alt,
+                color: AppTheme.corPrimaria,
+              ),
+              title: const Text('Tirar foto com a câmera'),
+              onTap: () => Navigator.of(context).pop(ImageSource.camera),
+            ),
+            ListTile(
+              leading: const Icon(
+                Icons.photo_library,
+                color: AppTheme.corPrimaria,
+              ),
+              title: const Text('Escolher da galeria'),
+              onTap: () => Navigator.of(context).pop(ImageSource.gallery),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    if (origem == null) return;
+
     try {
       final XFile? imagemOrigem = await _picker.pickImage(
-        source: ImageSource.gallery,
+        source: origem,
         maxWidth: 600,
         maxHeight: 600,
         imageQuality: 60,
@@ -71,6 +100,7 @@ class _CadastroPetViewState extends State<CadastroPetView> {
 
       if (!mounted) return;
 
+      // Chama a SUA tela/widget de ajuste de imagem existente
       final Uint8List? imagemCortadaBytes = await Navigator.of(context).push(
         MaterialPageRoute(builder: (context) => AjusteFoto(imageBytes: bytes)),
       );
@@ -88,7 +118,7 @@ class _CadastroPetViewState extends State<CadastroPetView> {
         });
       }
     } catch (e) {
-      _mostrarErro('Erro ao selecionar imagem: $e');
+      _mostrarErro('Erro ao capturar imagem: $e');
     }
   }
 
