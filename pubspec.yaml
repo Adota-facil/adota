@@ -31,6 +31,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  firebase_core: ^4.12.1
+  firebase_analytics: ^12.5.0
+  firebase_storage: ^13.5.0
+    
   carousel_slider: ^5.1.2
 
     
@@ -39,12 +43,9 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   flutter_svg: ^2.3.0
-  firebase_core: ^4.12.1
   cloud_firestore: ^6.7.1
   provider: ^6.1.2
   image_picker: ^1.2.3
-  firebase_analytics: ^12.5.0
-  firebase_storage: ^13.5.0
   image_cropper: ^12.2.1
   crop_your_image: ^2.0.0
   image: ^4.9.2
