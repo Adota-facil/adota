@@ -6,7 +6,6 @@ import 'package:adota_facil/view/pages/search_page_view.dart';
 import 'package:adota_facil/view/widgets/appBar_Widget.dart';
 import 'package:adota_facil/view/widgets/custom_bottom_nav.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 
 class BasePageView extends StatefulWidget {
   const BasePageView({super.key});
@@ -16,9 +15,13 @@ class BasePageView extends StatefulWidget {
 }
 
 class _BasePageViewState extends State<BasePageView> {
+  static const double _alturaNav = 140;
+  static const double _limiarParaAlternar = 8.0;
+
   int _currentIndex = 0;
   final PageController _pageController = PageController();
   bool _mostrarNav = true;
+  double _deltaAcumulado = 0;
 
   final List<String> _titulosAppBar = [
     "Adota Pet",
@@ -32,6 +35,7 @@ class _BasePageViewState extends State<BasePageView> {
     setState(() {
       _currentIndex = index;
       _mostrarNav = true; // sempre visível ao trocar de aba
+      _deltaAcumulado = 0;
     });
   }
 
@@ -43,12 +47,20 @@ class _BasePageViewState extends State<BasePageView> {
     );
   }
 
-  bool _aoRolar(UserScrollNotification notification) {
-    if (notification.direction == ScrollDirection.reverse && _mostrarNav) {
-      setState(() => _mostrarNav = false); // deslizando pra cima -> esconde
-    } else if (notification.direction == ScrollDirection.forward &&
-        !_mostrarNav) {
-      setState(() => _mostrarNav = true); // deslizando pra baixo -> mostra
+  bool _aoRolar(ScrollNotification notification) {
+    if (notification is ScrollUpdateNotification) {
+      final delta = notification.scrollDelta ?? 0;
+      _deltaAcumulado += delta;
+
+      if (_deltaAcumulado > _limiarParaAlternar && _mostrarNav) {
+        setState(() => _mostrarNav = false); // rolando pra baixo -> esconde
+        _deltaAcumulado = 0;
+      } else if (_deltaAcumulado < -_limiarParaAlternar && !_mostrarNav) {
+        setState(() => _mostrarNav = true); // rolando pra cima -> mostra
+        _deltaAcumulado = 0;
+      }
+    } else if (notification is ScrollEndNotification) {
+      _deltaAcumulado = 0;
     }
     return false; // deixa a notificação continuar subindo normalmente
   }
@@ -66,33 +78,33 @@ class _BasePageViewState extends State<BasePageView> {
       appBar: AppbarWidget(
         leadingName: _titulosAppBar[_currentIndex],
       ),
-      bottomNavigationBar: ClipRect(
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 250),
-          curve: Curves.easeInOut,
-          height: _mostrarNav ? 140 : 0,
-          child: OverflowBox(
-            maxHeight: 140,
-            alignment: Alignment.bottomCenter,
-            child: CustomBottomNav(
-              currentIndex: _currentIndex,
-              onTap: _onBottomNavTap,
-            ),
-          ),
-        ),
-      ),
-      body: NotificationListener<UserScrollNotification>(
+      body: NotificationListener<ScrollNotification>(
         onNotification: _aoRolar,
-        child: PageView(
-          controller: _pageController,
-          onPageChanged: _onPageChanged,
-          //physics: const NeverScrollableScrollPhysics(),
+        child: Stack(
           children: [
-            HomePageView(),
-            const SearchPageView(),
-            const CadastroPetView(),
-            const PerfilUsuarioView(),
-            const ConfigView(),
+            PageView(
+              controller: _pageController,
+              onPageChanged: _onPageChanged,
+              //physics: const NeverScrollableScrollPhysics(),
+              children: [
+                HomePageView(),
+                const SearchPageView(),
+                const CadastroPetView(),
+                const PerfilUsuarioView(),
+                const ConfigView(),
+              ],
+            ),
+            AnimatedPositioned(
+              duration: const Duration(milliseconds: 320),
+              curve: Curves.easeOutCubic,
+              left: 0,
+              right: 0,
+              bottom: _mostrarNav ? 0 : -_alturaNav,
+              child: CustomBottomNav(
+                currentIndex: _currentIndex,
+                onTap: _onBottomNavTap,
+              ),
+            ),
           ],
         ),
       ),

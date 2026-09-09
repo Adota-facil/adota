@@ -123,7 +123,7 @@ class _SearchPageViewState extends State<SearchPageView> {
     }
 
     return GridView.builder(
-      padding: const EdgeInsets.only(top: 4, bottom: 16),
+      padding: const EdgeInsets.only(top: 4, bottom: 150), // espaço extra: nav flutuante fica por cima
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         crossAxisSpacing: 12,

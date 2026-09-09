@@ -217,7 +217,7 @@ class HomePageView extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
               //child: _construirCarrosselCuriosidades(controller),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 150), // espaço extra: nav flutuante fica por cima
           ],
         ),
       ),
@@ -332,4 +332,3 @@ class _ListaDePets extends StatelessWidget {
     );
   }
 }
-
