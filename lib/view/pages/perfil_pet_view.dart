@@ -1,6 +1,5 @@
 import 'package:adota_facil/models/pet_model.dart';
 import 'package:adota_facil/view/widgets/appBar_Widget.dart';
-import 'package:adota_facil/view/widgets/custom_bottom_nav.dart';
 import 'package:adota_facil/view/widgets/pet_image_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -22,7 +21,6 @@ class _PerfilPetViewState extends State<PerfilPetView> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppbarWidget(leadingName: pet.nome, mostrarBotaoVoltar: true),
-      bottomNavigationBar: CustomBottomNav(currentIndex: 0, onTap: (index) {}),
 
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
