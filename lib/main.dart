@@ -1,4 +1,5 @@
 import 'package:adota_facil/controllers/home_controller.dart';
+import 'package:adota_facil/controllers/notificacao_controller.dart';
 import 'package:adota_facil/firebase_options.dart';
 import 'package:adota_facil/models/repositories/animal_repository.dart';
 import 'package:adota_facil/services/armazenamento_base64.dart';
@@ -21,11 +22,16 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        // Precisa vir ANTES do HomeController na lista: o create do
+        // HomeController lê esse provider via context.read() logo abaixo.
+        ChangeNotifierProvider(create: (_) => NotificacaoController()),
         ChangeNotifierProvider(
-          create: (_) => HomeController(
+          create: (context) => HomeController(
             AnimalRepositoryImpl(),
             ArmazenamentoBase64(),
             FirebaseAnalyticsService(),
+            aoAtualizarAnimais:
+                context.read<NotificacaoController>().atualizarPets,
           )..carregarAnimais(),
         ),
       ],

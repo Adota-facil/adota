@@ -1,5 +1,8 @@
+import 'package:adota_facil/controllers/notificacao_controller.dart';
 import 'package:adota_facil/view/widgets/avatar_icon.dart';
+import 'package:adota_facil/view/widgets/notificacoes_sheet.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class AppbarWidget extends StatelessWidget implements PreferredSizeWidget {
   final String leadingName;
@@ -59,7 +62,60 @@ class AppbarWidget extends StatelessWidget implements PreferredSizeWidget {
           ],
         ),
         centerTitle: true,
-        actions: [AvatarButton()],
+        actions: [
+          Consumer<NotificacaoController>(
+            builder: (context, notificacao, _) {
+              final count = notificacao.naoLidas;
+              return Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  IconButton(
+                    icon: const Icon(
+                      Icons.notifications_none,
+                      color: Color(0xFFEF9737),
+                    ),
+                    onPressed: () {
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.vertical(top: Radius.circular(20)),
+                        ),
+                        builder: (_) => const NotificacoesSheet(),
+                      );
+                      notificacao.marcarComoLidas();
+                    },
+                  ),
+                  if (count > 0)
+                    Positioned(
+                      right: 6,
+                      top: 6,
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        constraints:
+                            const BoxConstraints(minWidth: 16, minHeight: 16),
+                        decoration: const BoxDecoration(
+                          color: Colors.red,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Text(
+                          count > 9 ? '9+' : '$count',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              );
+            },
+          ),
+          AvatarButton(),
+        ],
       );
   }
 

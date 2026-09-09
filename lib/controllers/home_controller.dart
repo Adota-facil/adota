@@ -28,6 +28,13 @@ class HomeController extends ChangeNotifier
   final EstrategiaArmazenamentoFoto _estrategiaFoto;
   final AnalyticsService _analytics;
 
+  /// Callback opcional chamado sempre que carregarAnimais() busca a lista
+  /// COMPLETA de pets (não é chamado por filtrarPorCategoria, que só
+  /// carrega um subconjunto). Usado hoje pra alimentar o
+  /// NotificacaoController, mas o HomeController não sabe disso — só
+  /// conhece a função.
+  final void Function(List<PetModel>)? _aoAtualizarAnimais;
+
   /// [DIP] O construtor recebe as dependências como as interfaces
   /// abstratas (AnimalRepository, EstrategiaArmazenamentoFoto,
   /// AnalyticsService), nunca as classes concretas. O HomeController não
@@ -35,7 +42,12 @@ class HomeController extends ChangeNotifier
   /// Storage, nem qual provedor de analytics está registrando os
   /// eventos — só conhece os contratos. Quem decide a implementação
   /// concreta é o main.dart (o "composition root" do app).
-  HomeController(this._repository, this._estrategiaFoto, this._analytics);
+  HomeController(
+    this._repository,
+    this._estrategiaFoto,
+    this._analytics, {
+    void Function(List<PetModel>)? aoAtualizarAnimais,
+  }) : _aoAtualizarAnimais = aoAtualizarAnimais;
 
   List<PetModel> _animais = [];
 
@@ -66,7 +78,10 @@ class HomeController extends ChangeNotifier
 
   @override
   Future<void> carregarAnimais() => _executarComCarregando(
-        () async => _animais = await _repository.buscarAnimais(),
+        () async {
+          _animais = await _repository.buscarAnimais();
+          _aoAtualizarAnimais?.call(_animais);
+        },
         _erroCarregarAnimais,
       );
 
