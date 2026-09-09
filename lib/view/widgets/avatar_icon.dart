@@ -5,17 +5,12 @@ class AvatarButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        IconButton(
-          onPressed: () {},
-          icon: Icon(Icons.notifications, color: const Color(0xFFEF9737)),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(right: 20),
-          child: CircleAvatar(radius: 30, child: Icon(Icons.person, size: 40,)),
-        ),
-      ],
+    return Padding(
+      padding: const EdgeInsets.only(right: 20),
+      child: CircleAvatar(
+        radius: 30,
+        child: Icon(Icons.person, size: 40),
+      ),
     );
   }
 }

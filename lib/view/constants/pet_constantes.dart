@@ -4,7 +4,6 @@ class PetConstantes {
   static const List<String> especies = [
     'Cachorro',
     'Gato',
-    'Pássaro',
     'Outros',
   ];
 
