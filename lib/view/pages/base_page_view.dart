@@ -48,6 +48,10 @@ class _BasePageViewState extends State<BasePageView> {
   }
 
   bool _aoRolar(ScrollNotification notification) {
+    // Ignora o swipe horizontal do PageView (troca de aba) — só reage
+    // a rolagem vertical de conteúdo dentro da página atual.
+    if (notification.metrics.axis != Axis.vertical) return false;
+
     if (notification is ScrollUpdateNotification) {
       final delta = notification.scrollDelta ?? 0;
       _deltaAcumulado += delta;
