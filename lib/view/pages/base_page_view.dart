@@ -6,6 +6,7 @@ import 'package:adota_facil/view/pages/search_page_view.dart';
 import 'package:adota_facil/view/widgets/appBar_Widget.dart';
 import 'package:adota_facil/view/widgets/custom_bottom_nav.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 class BasePageView extends StatefulWidget {
   const BasePageView({super.key});
@@ -17,6 +18,7 @@ class BasePageView extends StatefulWidget {
 class _BasePageViewState extends State<BasePageView> {
   int _currentIndex = 0;
   final PageController _pageController = PageController();
+  bool _mostrarNav = true;
 
   final List<String> _titulosAppBar = [
     "Adota Pet",
@@ -29,6 +31,7 @@ class _BasePageViewState extends State<BasePageView> {
   void _onPageChanged(int index) {
     setState(() {
       _currentIndex = index;
+      _mostrarNav = true; // sempre visível ao trocar de aba
     });
   }
 
@@ -38,6 +41,16 @@ class _BasePageViewState extends State<BasePageView> {
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
     );
+  }
+
+  bool _aoRolar(UserScrollNotification notification) {
+    if (notification.direction == ScrollDirection.reverse && _mostrarNav) {
+      setState(() => _mostrarNav = false); // deslizando pra cima -> esconde
+    } else if (notification.direction == ScrollDirection.forward &&
+        !_mostrarNav) {
+      setState(() => _mostrarNav = true); // deslizando pra baixo -> mostra
+    }
+    return false; // deixa a notificação continuar subindo normalmente
   }
 
   @override
@@ -53,21 +66,35 @@ class _BasePageViewState extends State<BasePageView> {
       appBar: AppbarWidget(
         leadingName: _titulosAppBar[_currentIndex],
       ),
-      bottomNavigationBar: CustomBottomNav(
-        currentIndex: _currentIndex,
-        onTap: _onBottomNavTap,
+      bottomNavigationBar: ClipRect(
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeInOut,
+          height: _mostrarNav ? 140 : 0,
+          child: OverflowBox(
+            maxHeight: 140,
+            alignment: Alignment.bottomCenter,
+            child: CustomBottomNav(
+              currentIndex: _currentIndex,
+              onTap: _onBottomNavTap,
+            ),
+          ),
+        ),
       ),
-      body: PageView(
-        controller: _pageController,
-        onPageChanged: _onPageChanged,
-        //physics: const NeverScrollableScrollPhysics(),
-        children: [
-          HomePageView(),
-          const SearchPageView(),
-          const CadastroPetView(),
-          const PerfilUsuarioView(),
-          const ConfigView(),
-        ],
+      body: NotificationListener<UserScrollNotification>(
+        onNotification: _aoRolar,
+        child: PageView(
+          controller: _pageController,
+          onPageChanged: _onPageChanged,
+          //physics: const NeverScrollableScrollPhysics(),
+          children: [
+            HomePageView(),
+            const SearchPageView(),
+            const CadastroPetView(),
+            const PerfilUsuarioView(),
+            const ConfigView(),
+          ],
+        ),
       ),
     );
   }
