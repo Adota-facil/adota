@@ -24,6 +24,11 @@ class PetModel {
 
   final List<String> fotosBase64;
 
+  /// uid (Firebase Auth) do usuário que cadastrou este pet.
+  /// Referencia `usuarios/{donoId}`. String vazia = pet legado, cadastrado
+  /// antes da existência de usuários/autenticação.
+  final String donoId;
+
   const PetModel({
     required this.id,
     required this.nome,
@@ -41,6 +46,7 @@ class PetModel {
     this.fotos = const [],
     this.fotoBase64 = '',
     this.fotosBase64 = const [],
+    this.donoId = '',
   });
 
   String get informacoesFormatadas =>
@@ -91,6 +97,7 @@ class PetModel {
       fotos: List<String>.from(data['fotos'] ?? const []),
       fotoBase64: data['fotoBase64'] ?? '',
       fotosBase64: List<String>.from(data['fotosBase64'] ?? const []),
+      donoId: data['donoId'] ?? '',
     );
   }
 
@@ -129,6 +136,7 @@ class PetModel {
         'fotos': fotos,
         'fotoBase64': fotoBase64,
         'fotosBase64': fotosBase64,
+        'donoId': donoId,
       };
 
   Map<String, dynamic> toJson() => {
@@ -161,6 +169,7 @@ class PetModel {
     List<String>? fotos,
     String? fotoBase64,
     List<String>? fotosBase64,
+    String? donoId,
   }) {
     return PetModel(
       id: id ?? this.id,
@@ -179,6 +188,7 @@ class PetModel {
       fotos: fotos ?? this.fotos,
       fotoBase64: fotoBase64 ?? this.fotoBase64,
       fotosBase64: fotosBase64 ?? this.fotosBase64,
+      donoId: donoId ?? this.donoId,
     );
   }
 }

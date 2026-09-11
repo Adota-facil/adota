@@ -1,6 +1,14 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import 'package:adota_facil/models/repositories/usuario_repository.dart';
+
 class CadastroUsuarioController {
+  final UsuarioRepository _repository;
+
+  CadastroUsuarioController({UsuarioRepository? repository})
+      : _repository = repository ?? UsuarioRepositoryImpl();
+
   final formKey = GlobalKey<FormState>();
   final nomeController = TextEditingController();
   final cpfController = TextEditingController();
@@ -11,6 +19,12 @@ class CadastroUsuarioController {
   final estadoController = TextEditingController();
   final senhaController = TextEditingController();
   final confirmarSenhaController = TextEditingController();
+
+  bool _cadastrando = false;
+  bool get cadastrando => _cadastrando;
+
+  String? _erro;
+  String? get erro => _erro;
 
   // Validações de Regra de Negócio
   String? validarNome(String? value) {
@@ -48,13 +62,39 @@ class CadastroUsuarioController {
     return null;
   }
 
-  // Ação principal de cadastro
+  /// Cria o usuário no Firebase Authentication e o documento em
+  /// `usuarios/{uid}`. Retorna true se o cadastro deu certo.
   Future<bool> cadastrarUsuario() async {
-    if (formKey.currentState!.validate()) {
-      print("Enviando cadastro para o banco de dados...");
+    if (!formKey.currentState!.validate()) return false;
+
+    _cadastrando = true;
+    _erro = null;
+
+    try {
+      await _repository.cadastrarUsuario(
+        nome: nomeController.text.trim(),
+        cpf: cpfController.text.trim(),
+        email: emailController.text.trim(),
+        senha: senhaController.text,
+        whatsapp: whatsappController.text.trim(),
+        cidade: cidadeController.text.trim(),
+        estado: estadoController.text.trim(),
+      );
       return true;
+    } on FirebaseAuthException catch (e) {
+      _erro = switch (e.code) {
+        'email-already-in-use' => 'Este e-mail já está cadastrado.',
+        'weak-password' => 'Senha muito fraca.',
+        'invalid-email' => 'E-mail inválido.',
+        _ => 'Não foi possível concluir o cadastro.',
+      };
+      return false;
+    } catch (e) {
+      _erro = 'Não foi possível concluir o cadastro.';
+      return false;
+    } finally {
+      _cadastrando = false;
     }
-    return false;
   }
 
   void dispose() {

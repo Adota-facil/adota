@@ -5,6 +5,7 @@ import 'package:adota_facil/controllers/home_controller_interfaces.dart';
 import 'package:adota_facil/models/pet_model.dart';
 import 'package:adota_facil/models/repositories/animal_repository.dart';
 import 'package:adota_facil/services/analytics_service.dart';
+import 'package:adota_facil/services/autenticacao_service.dart';
 import 'package:adota_facil/services/estrategia_armazenamento_foto.dart';
 import 'package:flutter/material.dart';
 
@@ -23,10 +24,13 @@ class HomeController extends ChangeNotifier
       'Não foi possível carregar os animais dessa categoria.';
   static const String _erroCadastrarAnimal =
       'Não foi possível cadastrar o animal.';
+  static const String _erroSemUsuarioLogado =
+      'Você precisa estar logado para cadastrar um pet.';
 
   final AnimalRepository _repository;
   final EstrategiaArmazenamentoFoto _estrategiaFoto;
   final AnalyticsService _analytics;
+  final AutenticacaoService _autenticacao;
 
   /// Callback opcional chamado sempre que carregarAnimais() busca a lista
   /// COMPLETA de pets (não é chamado por filtrarPorCategoria, que só
@@ -37,15 +41,17 @@ class HomeController extends ChangeNotifier
 
   /// [DIP] O construtor recebe as dependências como as interfaces
   /// abstratas (AnimalRepository, EstrategiaArmazenamentoFoto,
-  /// AnalyticsService), nunca as classes concretas. O HomeController não
-  /// sabe se os dados vêm do Firestore, se a foto vira Base64 ou vai pro
-  /// Storage, nem qual provedor de analytics está registrando os
-  /// eventos — só conhece os contratos. Quem decide a implementação
-  /// concreta é o main.dart (o "composition root" do app).
+  /// AnalyticsService, AutenticacaoService), nunca as classes concretas.
+  /// O HomeController não sabe se os dados vêm do Firestore, se a foto
+  /// vira Base64 ou vai pro Storage, qual provedor de analytics está
+  /// registrando os eventos, nem quem está por trás do login — só
+  /// conhece os contratos. Quem decide a implementação concreta é o
+  /// main.dart (o "composition root" do app).
   HomeController(
     this._repository,
     this._estrategiaFoto,
-    this._analytics, {
+    this._analytics,
+    this._autenticacao, {
     void Function(List<PetModel>)? aoAtualizarAnimais,
   }) : _aoAtualizarAnimais = aoAtualizarAnimais;
 
@@ -103,14 +109,26 @@ class HomeController extends ChangeNotifier
   /// [arquivoFoto] é opcional — se vier nulo, o pet é salvo sem foto,
   /// exatamente como acontece hoje. Quando vier preenchido, a foto passa
   /// pela estratégia configurada (Base64 ou Storage) antes de salvar.
+  ///
+  /// O [donoId] é sempre resolvido aqui a partir do usuário logado —
+  /// quem chama este método (a view) não precisa saber de Firebase Auth
+  /// nem passar esse dado manualmente.
   @override
   Future<bool> cadastrarAnimal(PetModel animal, {File? arquivoFoto}) async {
+    final uid = _autenticacao.uidUsuarioLogado;
+    if (uid == null) {
+      _erro = _erroSemUsuarioLogado;
+      notifyListeners();
+      return false;
+    }
+
     _salvando = true;
     notifyListeners();
     try {
+      final animalComDono = animal.copyWith(donoId: uid);
       final animalParaSalvar = arquivoFoto != null
-          ? await _prepararComFoto(animal, arquivoFoto)
-          : animal;
+          ? await _prepararComFoto(animalComDono, arquivoFoto)
+          : animalComDono;
 
       await _repository.cadastrarAnimal(animalParaSalvar);
       await carregarAnimais();

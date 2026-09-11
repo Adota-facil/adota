@@ -4,6 +4,7 @@ import 'package:adota_facil/firebase_options.dart';
 import 'package:adota_facil/models/repositories/animal_repository.dart';
 import 'package:adota_facil/services/armazenamento_base64.dart';
 import 'package:adota_facil/services/firebase_analytics_service.dart';
+import 'package:adota_facil/services/firebase_autenticacao_service.dart';
 import 'package:adota_facil/view/pages/base_page_view.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -30,6 +31,7 @@ class MyApp extends StatelessWidget {
             AnimalRepositoryImpl(),
             ArmazenamentoBase64(),
             FirebaseAnalyticsService(),
+            FirebaseAutenticacaoService(),
             aoAtualizarAnimais:
                 context.read<NotificacaoController>().atualizarPets,
           )..carregarAnimais(),
