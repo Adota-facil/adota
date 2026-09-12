@@ -1,7 +1,6 @@
-import 'package:adota_facil/controllers/cadastro_usuario_controller.dart';
-import 'package:adota_facil/view/widgets/appBar_Widget.dart';
-import 'package:adota_facil/view/widgets/custom_bottom_nav.dart';
+import 'package:adota_facil/controllers/auth_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class CadastroUsuarioView extends StatefulWidget {
   const CadastroUsuarioView({super.key});
@@ -11,207 +10,261 @@ class CadastroUsuarioView extends StatefulWidget {
 }
 
 class _CadastroUsuarioViewState extends State<CadastroUsuarioView> {
-  // Instância do Controller
-  final CadastroUsuarioController _controller = CadastroUsuarioController();
+  final _formKey = GlobalKey<FormState>();
+  final _nomeController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _telefoneController = TextEditingController();
+  final _estadoController = TextEditingController();
+  final _cidadeController = TextEditingController();
+  final _senhaController = TextEditingController();
+  final _confirmarSenhaController = TextEditingController();
+
+  String _tipo = 'adotante';
+  String _tipoAnunciante = 'Protetor Independente';
+  bool _senhaVisivel = false;
+
+  static const _tiposAnunciante = ['Protetor Independente', 'ONG', 'Abrigo'];
 
   @override
   void dispose() {
-    _controller.dispose();
+    _nomeController.dispose();
+    _emailController.dispose();
+    _telefoneController.dispose();
+    _estadoController.dispose();
+    _cidadeController.dispose();
+    _senhaController.dispose();
+    _confirmarSenhaController.dispose();
     super.dispose();
   }
 
-  OutlineInputBorder _estiloBorda() {
-    return OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: const BorderSide(color: Color(0xFFE0E0E0), width: 1.2),
-    );
-  }
+  Future<void> _cadastrar() async {
+    if (!_formKey.currentState!.validate()) return;
 
-  Widget _construirCampo({
-    required String label,
-    required String dica,
-    required TextEditingController textController,
-    String? Function(String?)? validator,
-    IconData? icone,
-    bool ocultarTexto = false,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: const TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 14,
-              color: Colors.black87,
-            ),
-          ),
-          const SizedBox(height: 6),
-          TextFormField(
-            controller: textController,
-            validator: validator,
-            obscureText: ocultarTexto,
-            decoration: InputDecoration(
-              hintText: dica,
-              hintStyle: const TextStyle(color: Colors.black26, fontSize: 14),
-              prefixIcon: icone != null
-                  ? Icon(icone, color: Colors.blue)
-                  : null,
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 14,
-                vertical: 12,
-              ),
-              filled: true,
-              fillColor: const Color(0xFFFAFAFA),
-              enabledBorder: _estiloBorda(),
-              focusedBorder: _estiloBorda().copyWith(
-                borderSide: const BorderSide(color: Colors.blue, width: 1.5),
-              ),
-            ),
-          ),
-        ],
-      ),
+    final authController = context.read<AuthController>();
+    final sucesso = await authController.cadastrar(
+      nome: _nomeController.text.trim(),
+      email: _emailController.text.trim(),
+      senha: _senhaController.text,
+      tipo: _tipo,
+      tipoAnunciante: _tipo == 'adotante' ? null : _tipoAnunciante,
+      telefone: _telefoneController.text.trim().isEmpty
+          ? null
+          : _telefoneController.text.trim(),
+      estado: _estadoController.text.trim(),
+      cidade: _cidadeController.text.trim(),
     );
+
+    if (!mounted) return;
+    if (sucesso) {
+      Navigator.of(context).pop();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(authController.erro ?? 'Erro ao cadastrar.')),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final authController = context.watch<AuthController>();
+    final precisaTipoAnunciante = _tipo != 'adotante';
+
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppbarWidget(leadingName: "Bem vindo! \n Eduardo"),
-      bottomNavigationBar: CustomBottomNav(currentIndex: 0, onTap: (index) {}),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Color(0xFFEF9737)),
+        title: const Text(
+          'Criar conta',
+          style: TextStyle(
+            color: Color(0xFFEF9737),
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
+        ),
+      ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.all(24),
         child: Form(
-          key: _controller.formKey,
+          key: _formKey,
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Text(
-                'Bem vindo ao Adota Pet',
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blue,
+              const SizedBox(height: 8),
+              TextFormField(
+                controller: _nomeController,
+                decoration: const InputDecoration(
+                  labelText: 'Nome',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (valor) => (valor == null || valor.trim().isEmpty)
+                    ? 'Informe seu nome.'
+                    : null,
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _emailController,
+                keyboardType: TextInputType.emailAddress,
+                decoration: const InputDecoration(
+                  labelText: 'E-mail',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (valor) {
+                  if (valor == null || valor.trim().isEmpty) {
+                    return 'Informe seu e-mail.';
+                  }
+                  if (!valor.contains('@')) return 'E-mail inválido.';
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _telefoneController,
+                keyboardType: TextInputType.phone,
+                decoration: const InputDecoration(
+                  labelText: 'Telefone (opcional)',
+                  border: OutlineInputBorder(),
                 ),
               ),
-              const SizedBox(height: 4),
-              const Text(
-                'Digite seus dados para realizar o cadastro:',
-                style: TextStyle(fontSize: 14, color: Colors.grey),
-              ),
-              const SizedBox(height: 24),
-              _construirCampo(
-                label: 'Seu nome*',
-                dica: 'Digite seu nome completo',
-                icone: Icons.person,
-                textController: _controller.nomeController,
-                validator: _controller.validarNome,
-              ),
-              _construirCampo(
-                label: 'CPF*',
-                dica: '000.000.000-00',
-                icone: Icons.badge_outlined,
-                textController: _controller.cpfController,
-                validator: _controller.validarCPF,
-              ),
-              _construirCampo(
-                label: 'Email*',
-                dica: 'exemplo@email.com',
-                icone: Icons.email,
-                textController: _controller.emailController,
-                validator: _controller.validarEmail,
-              ),
-              _construirCampo(
-                label: 'Confirmação de Email*',
-                dica: 'Repita o email inserido',
-                icone: Icons.mail_outline,
-                textController: _controller.confirmarEmailController,
-                validator: _controller.validarConfirmacaoEmail,
-              ),
-              _construirCampo(
-                label: 'Whatsapp*',
-                dica: '(00) 00000-0000',
-                icone: Icons.phone,
-                textController: _controller.whatsappController,
-              ),
+              const SizedBox(height: 16),
               Row(
                 children: [
                   Expanded(
-                    child: _construirCampo(
-                      label: 'Cidade*',
-                      dica: 'Ex: Garanhuns',
-                      textController: _controller.cidadeController,
+                    child: TextFormField(
+                      controller: _estadoController,
+                      decoration: const InputDecoration(
+                        labelText: 'Estado (opcional)',
+                        border: OutlineInputBorder(),
+                      ),
                     ),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
-                    child: _construirCampo(
-                      label: 'Estado*',
-                      dica: 'Ex: Pernambuco',
-                      textController: _controller.estadoController,
+                    child: TextFormField(
+                      controller: _cidadeController,
+                      decoration: const InputDecoration(
+                        labelText: 'Cidade (opcional)',
+                        border: OutlineInputBorder(),
+                      ),
                     ),
                   ),
                 ],
               ),
-              _construirCampo(
-                label: 'Senha*',
-                dica: 'Crie uma senha forte',
-                icone: Icons.lock,
-                ocultarTexto: true,
-                textController: _controller.senhaController,
-                validator: _controller.validarSenha,
-              ),
-              _construirCampo(
-                label: 'Confirmação de Senha*',
-                dica: 'Repita a senha criada',
-                icone: Icons.lock_outline,
-                ocultarTexto: true,
-                textController: _controller.confirmarSenhaController,
-                validator: _controller.validarConfirmacaoSenha,
-              ),
-              Transform.translate(
-                offset: const Offset(0, -8),
-                child: const Text(
-                  'Deve ter pelo menos 8 caracteres, incluindo letras e números.',
-                  style: TextStyle(color: Colors.black38, fontSize: 11),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _senhaController,
+                obscureText: !_senhaVisivel,
+                decoration: InputDecoration(
+                  labelText: 'Senha',
+                  border: const OutlineInputBorder(),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _senhaVisivel ? Icons.visibility_off : Icons.visibility,
+                    ),
+                    onPressed: () =>
+                        setState(() => _senhaVisivel = !_senhaVisivel),
+                  ),
                 ),
+                validator: (valor) {
+                  if (valor == null || valor.isEmpty) return 'Crie uma senha.';
+                  if (valor.length < 6) return 'Mínimo de 6 caracteres.';
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _confirmarSenhaController,
+                obscureText: !_senhaVisivel,
+                decoration: const InputDecoration(
+                  labelText: 'Confirmar senha',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (valor) {
+                  if (valor != _senhaController.text) {
+                    return 'As senhas não coincidem.';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                'Você quer...',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+              ),
+              const SizedBox(height: 8),
+              _seletorTipo(),
+              if (precisaTipoAnunciante) ...[
+                const SizedBox(height: 16),
+                DropdownButtonFormField<String>(
+                  initialValue: _tipoAnunciante,
+                  decoration: const InputDecoration(
+                    labelText: 'Tipo de anunciante',
+                    border: OutlineInputBorder(),
+                  ),
+                  items: _tiposAnunciante
+                      .map(
+                        (tipo) =>
+                            DropdownMenuItem(value: tipo, child: Text(tipo)),
+                      )
+                      .toList(),
+                  onChanged: (valor) =>
+                      setState(() => _tipoAnunciante = valor!),
+                ),
+              ],
+              const SizedBox(height: 28),
+              ElevatedButton(
+                onPressed: authController.carregando ? null : _cadastrar,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFEF9737),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: authController.carregando
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2,
+                        ),
+                      )
+                    : const Text(
+                        'Criar conta',
+                        style: TextStyle(color: Colors.white, fontSize: 16),
+                      ),
               ),
               const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    elevation: 0,
-                  ),
-                  onPressed: () async {
-                    bool sucesso = await _controller.cadastrarUsuario();
-                    if (sucesso && context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Cadastro realizado com sucesso!'),
-                        ),
-                      );
-                    }
-                  },
-                  child: const Text(
-                    'Concluir Cadastro',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _seletorTipo() {
+    const opcoes = {
+      'adotante': 'Adotar',
+      'anunciante': 'Anunciar pets',
+      'ambos': 'Ambos',
+    };
+    return Wrap(
+      spacing: 8,
+      children: opcoes.entries.map((entrada) {
+        final selecionado = _tipo == entrada.key;
+        return ChoiceChip(
+          label: Text(entrada.value),
+          selected: selecionado,
+          onSelected: (_) => setState(() => _tipo = entrada.key),
+          selectedColor: const Color(0xFFEF9737).withValues(alpha: 0.2),
+          labelStyle: TextStyle(
+            color: selecionado ? const Color(0xFFA45600) : Colors.black87,
+            fontWeight: selecionado ? FontWeight.bold : FontWeight.normal,
+          ),
+        );
+      }).toList(),
     );
   }
 }

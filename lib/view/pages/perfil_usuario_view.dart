@@ -1,5 +1,9 @@
+import 'package:adota_facil/controllers/auth_controller.dart';
 import 'package:adota_facil/controllers/perfil_usuario_controller.dart';
+import 'package:adota_facil/models/repositories/usuario_repository.dart';
+import 'package:adota_facil/view/pages/login_view.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class PerfilUsuarioView extends StatefulWidget {
   const PerfilUsuarioView({super.key});
@@ -9,8 +13,26 @@ class PerfilUsuarioView extends StatefulWidget {
 }
 
 class _PerfilUsuarioViewState extends State<PerfilUsuarioView> {
-  // Instância do Controller
-  final PerfilUsuarioController _controller = PerfilUsuarioController();
+  late final PerfilUsuarioController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = PerfilUsuarioController(
+      context.read<AuthController>(),
+      UsuarioRepositoryImpl(),
+    );
+    _controller.addListener(_aoMudarController);
+  }
+
+  void _aoMudarController() => setState(() {});
+
+  @override
+  void dispose() {
+    _controller.removeListener(_aoMudarController);
+    _controller.dispose();
+    super.dispose();
+  }
 
   Widget _construirItemInformacao({
     required String label,
@@ -57,6 +79,62 @@ class _PerfilUsuarioViewState extends State<PerfilUsuarioView> {
 
   @override
   Widget build(BuildContext context) {
+    if (!_controller.logado) {
+      return Scaffold(
+        backgroundColor: Colors.white,
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.person_outline, size: 64, color: Colors.grey),
+                const SizedBox(height: 16),
+                const Text(
+                  'Você ainda não tem uma conta',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'Entre ou crie uma conta pra favoritar pets e anunciar os seus.',
+                  style: TextStyle(color: Colors.grey),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const LoginView()),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFEF9737),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: const Text(
+                    'Entrar / Criar conta',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    if (_controller.carregando) {
+      return const Scaffold(
+        backgroundColor: Colors.white,
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(

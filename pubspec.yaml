@@ -51,6 +51,7 @@ dependencies:
   crop_your_image: ^2.0.0
   image: ^4.9.2
   shared_preferences: ^2.5.5
+  firebase_auth: ^6.6.1
 
 
 dev_dependencies:
