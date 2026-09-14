@@ -52,6 +52,7 @@ dependencies:
   image: ^4.9.2
   shared_preferences: ^2.5.5
   firebase_auth: ^6.6.1
+  path_provider: ^2.1.6
 
 
 dev_dependencies:

@@ -1,4 +1,6 @@
+import 'package:adota_facil/controllers/auth_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ConfigView extends StatefulWidget {
   const ConfigView({super.key});
@@ -8,7 +10,6 @@ class ConfigView extends StatefulWidget {
 }
 
 class _ConfigViewState extends State<ConfigView> {
-
   Widget _construirSecao({required String titulo, required List<Widget> itens}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -29,9 +30,7 @@ class _ConfigViewState extends State<ConfigView> {
             borderRadius: BorderRadius.circular(8),
             border: Border.all(color: const Color(0xFFE0E0E0), width: 1.2),
           ),
-          child: Column(
-            children: itens,
-          ),
+          child: Column(children: itens),
         ),
         const SizedBox(height: 24),
       ],
@@ -123,8 +122,77 @@ class _ConfigViewState extends State<ConfigView> {
     );
   }
 
+  Future<void> _confirmarSaida(BuildContext context) async {
+    final confirmou = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Sair da conta'),
+        content: const Text('Tem certeza que deseja encerrar a sessão?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: const Text('Sair', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmou != true || !context.mounted) return;
+
+    await context.read<AuthController>().logout();
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Sessão encerrada com sucesso.')),
+    );
+  }
+
+  Future<void> _confirmarExclusao(BuildContext context) async {
+    final confirmou = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Excluir conta'),
+        content: const Text(
+          'Essa ação é permanente e não pode ser desfeita. Seus dados de '
+          'perfil serão apagados. Deseja continuar?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: const Text('Excluir', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmou != true || !context.mounted) return;
+
+    final authController = context.read<AuthController>();
+    final sucesso = await authController.excluirConta();
+    if (!context.mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          sucesso
+              ? 'Conta excluída.'
+              : (authController.erro ?? 'Não foi possível excluir a conta.'),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final authController = context.watch<AuthController>();
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
@@ -157,18 +225,33 @@ class _ConfigViewState extends State<ConfigView> {
                 ),
               ],
             ),
-            _construirSecao(
-              titulo: 'Zona de Perigo',
-              itens: [
-                _construirOpcaoClique(
-                  icone: Icons.delete_forever_outlined,
-                  titulo: 'Excluir Conta',
-                  subtitulo: 'Apagar permanentemente seus dados do aplicativo',
-                  corIcone: Colors.red,
-                  onTap: () {},
-                ),
-              ],
-            ),
+            if (authController.logado)
+              _construirSecao(
+                titulo: 'Conta',
+                itens: [
+                  _construirOpcaoClique(
+                    icone: Icons.logout,
+                    titulo: 'Sair da Conta',
+                    subtitulo: 'Encerrar a sessão neste dispositivo',
+                    corIcone: Colors.red,
+                    onTap: () => _confirmarSaida(context),
+                  ),
+                ],
+              ),
+            if (authController.logado)
+              _construirSecao(
+                titulo: 'Zona de Perigo',
+                itens: [
+                  _construirOpcaoClique(
+                    icone: Icons.delete_forever_outlined,
+                    titulo: 'Excluir Conta',
+                    subtitulo:
+                        'Apagar permanentemente seus dados do aplicativo',
+                    corIcone: Colors.red,
+                    onTap: () => _confirmarExclusao(context),
+                  ),
+                ],
+              ),
             Center(
               child: Text(
                 'Adota Fácil v1.0.0',

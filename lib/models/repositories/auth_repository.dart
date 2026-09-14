@@ -5,8 +5,8 @@ abstract class AuthRepository {
   Stream<String?> get mudancasDeUsuario;
   Future<String> cadastrar({required String email, required String senha});
   Future<String> login({required String email, required String senha});
-  Future<void> excluirContaAtual();
   Future<void> logout();
+  Future<void> excluirConta();
 }
 
 class AuthRepositoryImpl implements AuthRepository {
@@ -41,10 +41,10 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<void> excluirContaAtual() async {
-    await _auth.currentUser?.delete();
-  }
+  Future<void> logout() => _auth.signOut();
 
   @override
-  Future<void> logout() => _auth.signOut();
+  Future<void> excluirConta() async {
+    await _auth.currentUser?.delete();
+  }
 }

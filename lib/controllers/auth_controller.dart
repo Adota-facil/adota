@@ -35,14 +35,13 @@ class AuthController extends ChangeNotifier {
     String? cidade,
   }) async {
     _setCarregando(true);
-    String? uidCriado;
     try {
-      uidCriado = await _authRepository.cadastrar(email: email, senha: senha);
+      final uid = await _authRepository.cadastrar(email: email, senha: senha);
       final usuario = UsuarioModel(
-        id: uidCriado,
+        id: uid,
         nome: nome,
         email: email,
-        whatsapp: telefone,
+        telefone: telefone,
         tipo: tipo,
         tipoAnunciante: tipoAnunciante,
         estado: estado ?? '',
@@ -52,13 +51,6 @@ class AuthController extends ChangeNotifier {
       _erro = null;
       return true;
     } catch (e) {
-      if (uidCriado != null) {
-        try {
-          await _authRepository.excluirContaAtual();
-        } catch (_) {
-          // Mantém a mensagem original; a conta poderá ser removida depois.
-        }
-      }
       _erro = _mensagemDeErro(e);
       return false;
     } finally {
@@ -85,6 +77,28 @@ class AuthController extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Apaga o documento em `usuarios` ANTES de apagar a conta no Auth —
+  /// depois que a conta de Auth some, request.auth deixa de existir e as
+  /// regras de segurança do Firestore bloqueariam o delete do documento.
+  Future<bool> excluirConta() async {
+    final uid = usuarioId;
+    if (uid == null) return false;
+
+    _setCarregando(true);
+    try {
+      await _usuarioRepository.deletar(uid);
+      await _authRepository.excluirConta();
+      _erro = null;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _erro = _mensagemDeErro(e);
+      return false;
+    } finally {
+      _setCarregando(false);
+    }
+  }
+
   String _mensagemDeErro(Object e) {
     if (e is FirebaseAuthException) {
       switch (e.code) {
@@ -98,30 +112,12 @@ class AuthController extends ChangeNotifier {
         case 'wrong-password':
         case 'invalid-credential':
           return 'E-mail ou senha incorretos.';
-        case 'network-request-failed':
-          return 'Sem conexão com a internet.';
-        case 'operation-not-allowed':
-          return 'Ative o login por e-mail e senha no Firebase Authentication.';
+        case 'requires-recent-login':
+          return 'Por segurança, saia e entre na conta de novo antes de excluir.';
         default:
           return 'Não foi possível completar a operação.';
       }
     }
-
-    if (e is FirebaseException) {
-      switch (e.code) {
-        case 'permission-denied':
-          return 'O banco recusou o cadastro. Verifique as regras do Firestore.';
-        case 'unavailable':
-          return 'O banco está indisponível. Tente novamente.';
-        case 'failed-precondition':
-          return 'O Firestore ainda não está configurado para este projeto.';
-        case 'network-request-failed':
-          return 'Sem conexão com a internet.';
-        default:
-          return 'Não foi possível salvar seu perfil no banco de dados.';
-      }
-    }
-
     return 'Não foi possível completar a operação.';
   }
 
