@@ -1,7 +1,9 @@
 import 'package:adota_facil/controllers/auth_controller.dart';
 import 'package:adota_facil/controllers/perfil_usuario_controller.dart';
 import 'package:adota_facil/models/repositories/usuario_repository.dart';
+import 'package:adota_facil/services/armazenamento_base64.dart';
 import 'package:adota_facil/view/pages/login_view.dart';
+import 'package:adota_facil/view/widgets/pet_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -21,6 +23,7 @@ class _PerfilUsuarioViewState extends State<PerfilUsuarioView> {
     _controller = PerfilUsuarioController(
       context.read<AuthController>(),
       UsuarioRepositoryImpl(),
+      ArmazenamentoBase64(),
     );
     _controller.addListener(_aoMudarController);
   }
@@ -147,11 +150,44 @@ class _PerfilUsuarioViewState extends State<PerfilUsuarioView> {
                 children: [
                   Stack(
                     children: [
-                      const CircleAvatar(
-                        radius: 50,
-                        backgroundColor: Color(0xFFFAFAFA),
-                        child: Icon(Icons.person, size: 60, color: Colors.blue),
+                      ClipOval(
+                        child: SizedBox(
+                          width: 100,
+                          height: 100,
+                          child: _controller.temFoto
+                              ? PetImageWidget(
+                                  fotoBase64: _controller.fotoBase64,
+                                  fotoUrl: _controller.fotoUrl,
+                                  fit: BoxFit.cover,
+                                )
+                              : Container(
+                                  color: const Color(0xFFFAFAFA),
+                                  alignment: Alignment.center,
+                                  child: const Icon(
+                                    Icons.person,
+                                    size: 60,
+                                    color: Colors.blue,
+                                  ),
+                                ),
+                        ),
                       ),
+                      if (_controller.carregandoFoto)
+                        Positioned.fill(
+                          child: ClipOval(
+                            child: Container(
+                              color: Colors.black38,
+                              alignment: Alignment.center,
+                              child: const SizedBox(
+                                width: 28,
+                                height: 28,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2.5,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
                       Positioned(
                         bottom: 0,
                         right: 0,

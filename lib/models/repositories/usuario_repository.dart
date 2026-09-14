@@ -8,6 +8,7 @@ abstract class UsuarioRepository {
   Future<void> salvar(UsuarioModel usuario);
   Future<void> adicionarFavorito(String usuarioId, String petId);
   Future<void> removerFavorito(String usuarioId, String petId);
+  Future<void> deletar(String id);
 
   /// Stream em tempo real — útil pra tela de favoritos refletir
   /// mudanças na hora, sem precisar recarregar manualmente.
@@ -15,12 +16,8 @@ abstract class UsuarioRepository {
 }
 
 class UsuarioRepositoryImpl implements UsuarioRepository {
-  final CollectionReference<Map<String, dynamic>> _colecao;
-
-  UsuarioRepositoryImpl({FirebaseFirestore? firestore})
-    : _colecao = (firestore ?? FirebaseFirestore.instance).collection(
-        'usuarios',
-      );
+  final CollectionReference<Map<String, dynamic>> _colecao =
+      FirebaseFirestore.instance.collection('usuarios');
 
   @override
   Future<UsuarioModel?> buscarPorId(String id) async {
@@ -42,7 +39,6 @@ class UsuarioRepositoryImpl implements UsuarioRepository {
   Future<void> adicionarFavorito(String usuarioId, String petId) {
     return _colecao.doc(usuarioId).update({
       'favoritos': FieldValue.arrayUnion([petId]),
-      'petsFavoritos': FieldValue.arrayUnion([petId]),
     });
   }
 
@@ -50,8 +46,12 @@ class UsuarioRepositoryImpl implements UsuarioRepository {
   Future<void> removerFavorito(String usuarioId, String petId) {
     return _colecao.doc(usuarioId).update({
       'favoritos': FieldValue.arrayRemove([petId]),
-      'petsFavoritos': FieldValue.arrayRemove([petId]),
     });
+  }
+
+  @override
+  Future<void> deletar(String id) {
+    return _colecao.doc(id).delete();
   }
 
   @override
