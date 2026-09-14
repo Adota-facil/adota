@@ -1,0 +1,37 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "animais",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {"fieldPath": "especie", "order": "ASCENDING"},
+        {"fieldPath": "criadoEm", "order": "DESCENDING"}
+      ]
+    },
+    {
+      "collectionGroup": "animais",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {"fieldPath": "anuncianteId", "order": "ASCENDING"},
+        {"fieldPath": "criadoEm", "order": "DESCENDING"}
+      ]
+    },
+    {
+      "collectionGroup": "solicitacoesAdocao",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {"fieldPath": "anuncianteId", "order": "ASCENDING"},
+        {"fieldPath": "criadoEm", "order": "DESCENDING"}
+      ]
+    },
+    {
+      "collectionGroup": "solicitacoesAdocao",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {"fieldPath": "adotanteId", "order": "ASCENDING"},
+        {"fieldPath": "criadoEm", "order": "DESCENDING"}
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

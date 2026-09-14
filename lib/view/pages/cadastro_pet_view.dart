@@ -8,6 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:adota_facil/controllers/auth_controller.dart';
 import 'package:adota_facil/view/widgets/ajuste_foto_widget.dart';
 import 'package:adota_facil/view/theme/app_theme.dart';
 import 'package:adota_facil/view/widgets/campo_texto_formulario.dart';
@@ -21,6 +22,8 @@ class CadastroPetView extends StatefulWidget {
 }
 
 class _CadastroPetViewState extends State<CadastroPetView> {
+  static const int _tamanhoMaximoFotos = 600 * 1024;
+
   final _formKey = GlobalKey<FormState>();
   final ImagePicker _picker = ImagePicker();
 
@@ -160,6 +163,25 @@ class _CadastroPetViewState extends State<CadastroPetView> {
       return;
     }
 
+    final anuncianteId = context.read<AuthController>().usuarioId;
+    if (anuncianteId == null) {
+      _mostrarErro('Entre na sua conta para anunciar um animal.');
+      return;
+    }
+
+    final tamanhoFotos = _fotosBytes.fold<int>(
+      0,
+      (total, bytes) => total + bytes.length,
+    );
+    if (tamanhoFotos > _tamanhoMaximoFotos) {
+      _mostrarErro(
+        'As fotos ocupam muito espaço. Remova uma foto ou escolha imagens menores.',
+      );
+      return;
+    }
+
+    final controller = context.read<HomeController>();
+
     try {
       final fotosEmBase64 = await _converterFotosParaBase64();
 
@@ -182,9 +204,9 @@ class _CadastroPetViewState extends State<CadastroPetView> {
         fotoBase64: fotosEmBase64.isNotEmpty ? fotosEmBase64.first : '',
         fotosBase64: fotosEmBase64,
         adotado: false,
+        anuncianteId: anuncianteId,
       );
 
-      final controller = context.read<HomeController>();
       final sucesso = await controller.cadastrarAnimal(novoPet);
 
       if (!mounted) return;

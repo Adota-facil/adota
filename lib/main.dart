@@ -1,7 +1,10 @@
+import 'package:adota_facil/controllers/auth_controller.dart';
 import 'package:adota_facil/controllers/home_controller.dart';
 import 'package:adota_facil/controllers/notificacao_controller.dart';
 import 'package:adota_facil/firebase_options.dart';
 import 'package:adota_facil/models/repositories/animal_repository.dart';
+import 'package:adota_facil/models/repositories/auth_repository.dart';
+import 'package:adota_facil/models/repositories/usuario_repository.dart';
 import 'package:adota_facil/services/armazenamento_base64.dart';
 import 'package:adota_facil/services/firebase_analytics_service.dart';
 import 'package:adota_facil/view/pages/base_page_view.dart';
@@ -33,6 +36,12 @@ class MyApp extends StatelessWidget {
             aoAtualizarAnimais:
                 context.read<NotificacaoController>().atualizarPets,
           )..carregarAnimais(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => AuthController(
+            AuthRepositoryImpl(),
+            UsuarioRepositoryImpl(),
+          ),
         ),
       ],
       child: const MaterialApp(

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class PetModel {
-
   static const String _generoPadrao = 'macho';
 
   final String id;
@@ -18,6 +17,7 @@ class PetModel {
   final String raca;
   final String descricao;
   final String localizacao;
+  final String anuncianteId;
   final List<String> fotos;
 
   final String fotoBase64;
@@ -38,6 +38,7 @@ class PetModel {
     this.raca = '',
     this.descricao = '',
     this.localizacao = '',
+    this.anuncianteId = '',
     this.fotos = const [],
     this.fotoBase64 = '',
     this.fotosBase64 = const [],
@@ -50,10 +51,7 @@ class PetModel {
     required bool castrado,
     required bool vacinado,
   }) {
-    return [
-      if (castrado) 'Castrado',
-      if (vacinado) 'Vacinado',
-    ].join(', ');
+    return [if (castrado) 'Castrado', if (vacinado) 'Vacinado'].join(', ');
   }
 
   bool get _ehFemea =>
@@ -74,6 +72,7 @@ class PetModel {
     required String id,
     required DateTime? criadoEm,
   }) {
+    final fotosBase64 = List<String>.from(data['fotosBase64'] ?? const []);
     return PetModel(
       id: id,
       nome: data['nome'] ?? '',
@@ -88,9 +87,12 @@ class PetModel {
       raca: data['raca'] ?? '',
       descricao: data['descricao'] ?? '',
       localizacao: data['localizacao'] ?? '',
+      anuncianteId: data['anuncianteId'] ?? '',
       fotos: List<String>.from(data['fotos'] ?? const []),
-      fotoBase64: data['fotoBase64'] ?? '',
-      fotosBase64: List<String>.from(data['fotosBase64'] ?? const []),
+      fotoBase64:
+          data['fotoBase64'] ??
+          (fotosBase64.isNotEmpty ? fotosBase64.first : ''),
+      fotosBase64: fotosBase64,
     );
   }
 
@@ -115,34 +117,35 @@ class PetModel {
   }
 
   Map<String, dynamic> get _camposComuns => {
-        'nome': nome,
-        'especie': especie,
-        'statusSaude': statusSaude,
-        'idade': idade,
-        'porte': porte,
-        'genero': genero,
-        'fotoUrl': fotoUrl,
-        'adotado': adotado,
-        'raca': raca,
-        'descricao': descricao,
-        'localizacao': localizacao,
-        'fotos': fotos,
-        'fotoBase64': fotoBase64,
-        'fotosBase64': fotosBase64,
-      };
+    'nome': nome,
+    'especie': especie,
+    'statusSaude': statusSaude,
+    'idade': idade,
+    'porte': porte,
+    'genero': genero,
+    'fotoUrl': fotoUrl,
+    'adotado': adotado,
+    'raca': raca,
+    'descricao': descricao,
+    'localizacao': localizacao,
+    'anuncianteId': anuncianteId,
+    'fotos': fotos,
+    if (fotosBase64.isEmpty || fotoBase64.isEmpty) 'fotoBase64': fotoBase64,
+    'fotosBase64': fotosBase64,
+  };
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        ..._camposComuns,
-        'criadoEm': criadoEm?.toIso8601String(),
-      };
+    'id': id,
+    ..._camposComuns,
+    'criadoEm': criadoEm?.toIso8601String(),
+  };
 
   Map<String, dynamic> toFirestore() => {
-        ..._camposComuns,
-        'criadoEm': criadoEm != null
-            ? Timestamp.fromDate(criadoEm!)
-            : FieldValue.serverTimestamp(),
-      };
+    ..._camposComuns,
+    'criadoEm': criadoEm != null
+        ? Timestamp.fromDate(criadoEm!)
+        : FieldValue.serverTimestamp(),
+  };
 
   PetModel copyWith({
     String? id,
@@ -158,6 +161,7 @@ class PetModel {
     String? raca,
     String? descricao,
     String? localizacao,
+    String? anuncianteId,
     List<String>? fotos,
     String? fotoBase64,
     List<String>? fotosBase64,
@@ -176,6 +180,7 @@ class PetModel {
       raca: raca ?? this.raca,
       descricao: descricao ?? this.descricao,
       localizacao: localizacao ?? this.localizacao,
+      anuncianteId: anuncianteId ?? this.anuncianteId,
       fotos: fotos ?? this.fotos,
       fotoBase64: fotoBase64 ?? this.fotoBase64,
       fotosBase64: fotosBase64 ?? this.fotosBase64,
