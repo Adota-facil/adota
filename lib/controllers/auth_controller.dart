@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:adota_facil/models/repositories/auth_repository.dart';
 import 'package:adota_facil/models/repositories/usuario_repository.dart';
 import 'package:adota_facil/models/usuario_model.dart';
@@ -7,8 +9,17 @@ import 'package:flutter/material.dart';
 class AuthController extends ChangeNotifier {
   final AuthRepository _authRepository;
   final UsuarioRepository _usuarioRepository;
+  late final StreamSubscription<String?> _inscricaoAuth;
 
-  AuthController(this._authRepository, this._usuarioRepository);
+  AuthController(this._authRepository, this._usuarioRepository) {
+    // Essencial: sem isso, uma sessão restaurada automaticamente pelo
+    // Firebase (ex: logo após um hot restart, ou ao reabrir o app) nunca
+    // avisa o resto do app que o usuário já está logado — só um login ou
+    // logout feito manualmente disparava notifyListeners() antes.
+    _inscricaoAuth = _authRepository.mudancasDeUsuario.listen((_) {
+      notifyListeners();
+    });
+  }
 
   bool _carregando = false;
   bool get carregando => _carregando;
@@ -124,5 +135,11 @@ class AuthController extends ChangeNotifier {
   void _setCarregando(bool valor) {
     _carregando = valor;
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _inscricaoAuth.cancel();
+    super.dispose();
   }
 }
