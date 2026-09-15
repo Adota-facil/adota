@@ -3,6 +3,7 @@ import 'package:adota_facil/controllers/perfil_usuario_controller.dart';
 import 'package:adota_facil/models/repositories/usuario_repository.dart';
 import 'package:adota_facil/services/armazenamento_base64.dart';
 import 'package:adota_facil/view/pages/login_view.dart';
+import 'package:adota_facil/view/pages/meus_anuncios_view.dart';
 import 'package:adota_facil/view/widgets/pet_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -270,6 +271,20 @@ class _PerfilUsuarioViewState extends State<PerfilUsuarioView> {
               ],
             ),
             const SizedBox(height: 16),
+            if (_controller.ehAnunciante) ...[
+              const SizedBox(height: 8),
+              const Text(
+                'Meus Anúncios',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFFEF9737),
+                ),
+              ),
+              const SizedBox(height: 8),
+              const MeusAnunciosView(mostrarAppBar: false),
+              const SizedBox(height: 12),
+            ],
             SizedBox(
               width: double.infinity,
               height: 50,

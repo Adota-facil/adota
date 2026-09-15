@@ -63,14 +63,29 @@ class AnimalRepositoryImpl implements AnimalRepository {
 
   @override
   Future<List<PetModel>> buscarPorAnunciante(String anuncianteId) async {
+    // Sem orderBy aqui de propósito: where + orderBy em campos diferentes
+    // exige um índice composto no Firestore. Pra lista de um único
+    // anunciante (tipicamente pequena), ordenar em Dart depois de buscar
+    // evita essa dependência sem custo perceptível.
     final snapshot = await _firestore
         .collection(_colecao)
         .where('anuncianteId', isEqualTo: anuncianteId)
-        .orderBy('criadoEm', descending: true)
         .get();
-    return snapshot.docs
+
+    final pets = snapshot.docs
         .map((doc) => PetModel.fromFirestore(doc.data(), doc.id))
         .toList();
+
+    pets.sort((a, b) {
+      final dataA = a.criadoEm;
+      final dataB = b.criadoEm;
+      if (dataA == null && dataB == null) return 0;
+      if (dataA == null) return 1;
+      if (dataB == null) return -1;
+      return dataB.compareTo(dataA);
+    });
+
+    return pets;
   }
 
   @override
