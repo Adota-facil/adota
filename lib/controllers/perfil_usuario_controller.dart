@@ -43,6 +43,7 @@ class PerfilUsuarioController extends ChangeNotifier {
           : '-';
   String get estado => (_usuario?.estado.isNotEmpty ?? false) ? _usuario!.estado : '-';
   String get cidade => (_usuario?.cidade.isNotEmpty ?? false) ? _usuario!.cidade : '-';
+  bool get ehAnunciante => _usuario?.ehAnunciante ?? false;
 
   String get fotoUrl => _usuario?.fotoUrl ?? '';
   String get fotoBase64 => _usuario?.fotoBase64 ?? '';

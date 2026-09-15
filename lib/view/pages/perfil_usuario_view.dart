@@ -3,6 +3,7 @@ import 'package:adota_facil/controllers/perfil_usuario_controller.dart';
 import 'package:adota_facil/models/repositories/usuario_repository.dart';
 import 'package:adota_facil/services/armazenamento_base64.dart';
 import 'package:adota_facil/view/pages/login_view.dart';
+import 'package:adota_facil/view/pages/meus_anuncios_view.dart';
 import 'package:adota_facil/view/widgets/pet_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -270,6 +271,34 @@ class _PerfilUsuarioViewState extends State<PerfilUsuarioView> {
               ],
             ),
             const SizedBox(height: 16),
+            if (_controller.ehAnunciante) ...[
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: OutlinedButton.icon(
+                  style: OutlinedButton.styleFrom(
+                    side: const BorderSide(color: Color(0xFFEF9737)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const MeusAnunciosView()),
+                    );
+                  },
+                  icon: const Icon(Icons.pets, color: Color(0xFFEF9737)),
+                  label: const Text(
+                    'Meus Anúncios',
+                    style: TextStyle(
+                      color: Color(0xFFEF9737),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+            ],
             SizedBox(
               width: double.infinity,
               height: 50,
