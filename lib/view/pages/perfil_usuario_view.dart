@@ -272,31 +272,17 @@ class _PerfilUsuarioViewState extends State<PerfilUsuarioView> {
             ),
             const SizedBox(height: 16),
             if (_controller.ehAnunciante) ...[
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: OutlinedButton.icon(
-                  style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: Color(0xFFEF9737)),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const MeusAnunciosView()),
-                    );
-                  },
-                  icon: const Icon(Icons.pets, color: Color(0xFFEF9737)),
-                  label: const Text(
-                    'Meus Anúncios',
-                    style: TextStyle(
-                      color: Color(0xFFEF9737),
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+              const SizedBox(height: 8),
+              const Text(
+                'Meus Anúncios',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFFEF9737),
                 ),
               ),
+              const SizedBox(height: 8),
+              const MeusAnunciosView(mostrarAppBar: false),
               const SizedBox(height: 12),
             ],
             SizedBox(

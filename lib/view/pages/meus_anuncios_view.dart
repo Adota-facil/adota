@@ -7,7 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class MeusAnunciosView extends StatefulWidget {
-  const MeusAnunciosView({super.key});
+  final bool mostrarAppBar;
+
+  const MeusAnunciosView({super.key, this.mostrarAppBar = true});
 
   @override
   State<MeusAnunciosView> createState() => _MeusAnunciosViewState();
@@ -31,6 +33,7 @@ class _MeusAnunciosViewState extends State<MeusAnunciosView> {
   @override
   void dispose() {
     _controller.removeListener(_aoMudar);
+    _controller.dispose();
     super.dispose();
   }
 
@@ -73,8 +76,88 @@ class _MeusAnunciosViewState extends State<MeusAnunciosView> {
     );
   }
 
+  Future<void> _editar(PetModel pet) async {
+    final nome = TextEditingController(text: pet.nome);
+    final raca = TextEditingController(text: pet.raca);
+    final idade = TextEditingController(text: pet.idade);
+    final localizacao = TextEditingController(text: pet.localizacao);
+    final descricao = TextEditingController(text: pet.descricao);
+
+    final atualizado = await showDialog<PetModel>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Editar anúncio'),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _campoEdicao(nome, 'Nome do pet'),
+              _campoEdicao(raca, 'Raça'),
+              _campoEdicao(idade, 'Idade'),
+              _campoEdicao(localizacao, 'Localização'),
+              _campoEdicao(descricao, 'Descrição', maxLines: 4),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop(
+              pet.copyWith(
+                nome: nome.text.trim(),
+                raca: raca.text.trim(),
+                idade: idade.text.trim(),
+                localizacao: localizacao.text.trim(),
+                descricao: descricao.text.trim(),
+              ),
+            ),
+            child: const Text('Salvar'),
+          ),
+        ],
+      ),
+    );
+
+    nome.dispose();
+    raca.dispose();
+    idade.dispose();
+    localizacao.dispose();
+    descricao.dispose();
+
+    if (atualizado == null || !mounted) return;
+    final sucesso = await _controller.editar(atualizado);
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          sucesso ? 'Anúncio atualizado.' : 'Não foi possível atualizar.',
+        ),
+      ),
+    );
+  }
+
+  Widget _campoEdicao(
+    TextEditingController controller,
+    String label, {
+    int maxLines = 1,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: TextField(
+        controller: controller,
+        maxLines: maxLines,
+        decoration: InputDecoration(labelText: label),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final corpo = _construirCorpo();
+    if (!widget.mostrarAppBar) return corpo;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -90,7 +173,7 @@ class _MeusAnunciosViewState extends State<MeusAnunciosView> {
           ),
         ),
       ),
-      body: _construirCorpo(),
+      body: corpo,
     );
   }
 
@@ -112,12 +195,17 @@ class _MeusAnunciosViewState extends State<MeusAnunciosView> {
     return ListView.separated(
       padding: const EdgeInsets.all(16),
       itemCount: _controller.pets.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 12),
+      shrinkWrap: !widget.mostrarAppBar,
+      physics: widget.mostrarAppBar
+          ? null
+          : const NeverScrollableScrollPhysics(),
+      separatorBuilder: (_, _) => const SizedBox(height: 12),
       itemBuilder: (context, index) {
         final pet = _controller.pets[index];
         return _CartaoAnuncio(
           pet: pet,
           onAlternarAdotado: () => _alternarAdotado(pet),
+          onEditar: () => _editar(pet),
           onRemover: () => _confirmarRemocao(pet),
         );
       },
@@ -128,11 +216,13 @@ class _MeusAnunciosViewState extends State<MeusAnunciosView> {
 class _CartaoAnuncio extends StatelessWidget {
   final PetModel pet;
   final VoidCallback onAlternarAdotado;
+  final VoidCallback onEditar;
   final VoidCallback onRemover;
 
   const _CartaoAnuncio({
     required this.pet,
     required this.onAlternarAdotado,
+    required this.onEditar,
     required this.onRemover,
   });
 
@@ -228,6 +318,11 @@ class _CartaoAnuncio extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 8),
+                    IconButton(
+                      onPressed: onEditar,
+                      icon: const Icon(Icons.edit_outlined, color: Colors.blue),
+                      tooltip: 'Editar anúncio',
+                    ),
                     IconButton(
                       onPressed: onRemover,
                       icon: const Icon(Icons.delete_outline, color: Colors.red),

@@ -8,6 +8,7 @@ class MeusAnunciosController extends ChangeNotifier {
   final AnimalRepository _animalRepository;
 
   MeusAnunciosController(this._authController, this._animalRepository) {
+    _authController.addListener(_aoMudarAuth);
     carregar();
   }
 
@@ -20,9 +21,18 @@ class MeusAnunciosController extends ChangeNotifier {
   String? _erro;
   String? get erro => _erro;
 
+  void _aoMudarAuth() {
+    carregar();
+  }
+
   Future<void> carregar() async {
     final uid = _authController.usuarioId;
-    if (uid == null) return;
+    if (uid == null) {
+      _pets = [];
+      _erro = null;
+      notifyListeners();
+      return;
+    }
 
     _carregando = true;
     notifyListeners();
@@ -59,5 +69,23 @@ class MeusAnunciosController extends ChangeNotifier {
     } catch (e) {
       return false;
     }
+  }
+
+  Future<bool> editar(PetModel pet) async {
+    try {
+      await _animalRepository.atualizarAnimal(pet);
+      final indice = _pets.indexWhere((item) => item.id == pet.id);
+      if (indice != -1) _pets[indice] = pet;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  @override
+  void dispose() {
+    _authController.removeListener(_aoMudarAuth);
+    super.dispose();
   }
 }
