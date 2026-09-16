@@ -4,6 +4,7 @@ import 'package:adota_facil/controllers/home_controller.dart';
 import 'package:adota_facil/models/pet_model.dart';
 import 'package:adota_facil/view/constants/pet_constantes.dart';
 import 'package:adota_facil/view/widgets/dropdown_formulario.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -60,7 +61,6 @@ class _CadastroPetViewState extends State<CadastroPetView> {
       return;
     }
 
-    // Exibe o menu para o usuário escolher entre Câmera ou Galeria
     final ImageSource? origem = await showModalBottomSheet<ImageSource>(
       context: context,
       builder: (context) => SafeArea(
@@ -103,7 +103,6 @@ class _CadastroPetViewState extends State<CadastroPetView> {
 
       if (!mounted) return;
 
-      // Chama a SUA tela/widget de ajuste de imagem existente
       final Uint8List? imagemCortadaBytes = await Navigator.of(context).push(
         MaterialPageRoute(builder: (context) => AjusteFoto(imageBytes: bytes)),
       );
@@ -169,6 +168,19 @@ class _CadastroPetViewState extends State<CadastroPetView> {
       return;
     }
 
+    String anuncianteNome = '';
+    try {
+      final docUsuario = await FirebaseFirestore.instance
+          .collection('usuarios')
+          .doc(anuncianteId)
+          .get();
+      if (docUsuario.exists && docUsuario.data() != null) {
+        final dados = docUsuario.data()!;
+        anuncianteNome =
+            dados['nome'] ?? dados['name'] ?? dados['nomeCompleto'] ?? '';
+      }
+    } catch (_) {}
+
     final tamanhoFotos = _fotosBytes.fold<int>(
       0,
       (total, bytes) => total + bytes.length,
@@ -205,6 +217,7 @@ class _CadastroPetViewState extends State<CadastroPetView> {
         fotosBase64: fotosEmBase64,
         adotado: false,
         anuncianteId: anuncianteId,
+        usuarioNome: anuncianteNome,
       );
 
       final sucesso = await controller.cadastrarAnimal(novoPet);
