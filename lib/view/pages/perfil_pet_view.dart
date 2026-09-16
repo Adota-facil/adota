@@ -1,6 +1,7 @@
 import 'package:adota_facil/controllers/auth_controller.dart';
 import 'package:adota_facil/controllers/perfil_pet_controller.dart';
 import 'package:adota_facil/models/pet_model.dart';
+import 'package:adota_facil/view/pages/editar_pet_view.dart';
 import 'package:adota_facil/view/widgets/appBar_Widget.dart';
 import 'package:adota_facil/view/widgets/pet_image_widget.dart';
 import 'package:flutter/material.dart';
@@ -109,6 +110,12 @@ class PerfilPetView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final usuarioAtualId = context.watch<AuthController>().usuarioId;
+    final bool eDonoDoPet =
+        usuarioAtualId != null &&
+        usuarioAtualId.isNotEmpty &&
+        usuarioAtualId == pet.anuncianteId;
+
     return ChangeNotifierProvider(
       create: (_) => PerfilPetController()..carregarDadosAnunciante(pet),
       child: Scaffold(
@@ -119,6 +126,39 @@ class PerfilPetView extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              if (eDonoDoPet) ...[
+                Container(
+                  width: double.infinity,
+                  margin: const EdgeInsets.only(bottom: 16),
+                  child: OutlinedButton.icon(
+                    onPressed: () async {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => EditarPetView(pet: pet),
+                        ),
+                      );
+                    },
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFF1976D2),
+                      side: const BorderSide(color: Color(0xFF1976D2)),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    icon: const Icon(Icons.edit_outlined, size: 18),
+                    label: const Text(
+                      'Editar informações do pet',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

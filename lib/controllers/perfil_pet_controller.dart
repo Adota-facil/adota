@@ -7,7 +7,6 @@ class PerfilPetController extends ChangeNotifier {
   String? fotoAnunciante;
   bool carregandoAnunciante = true;
 
-  // Variáveis para as avaliações
   int quantidadeAvaliacoes = 0;
   double mediaAvaliacao = 0.0;
 
@@ -18,7 +17,6 @@ class PerfilPetController extends ChangeNotifier {
 
     if (pet.anuncianteId.isNotEmpty) {
       try {
-        // 1. Busca dados do usuário (Nome e Foto caso venham vazios no pet)
         final docUsuario = await FirebaseFirestore.instance
             .collection('usuarios')
             .doc(pet.anuncianteId)
@@ -37,7 +35,6 @@ class PerfilPetController extends ChangeNotifier {
           fotoAnunciante = dados['fotoUrl'] ?? dados['fotoBase64'];
         }
 
-        // 2. Busca as avaliações deste anunciante no Firestore
         final snapshotAvaliacoes = await FirebaseFirestore.instance
             .collection('avaliacoes')
             .where('anuncianteId', isEqualTo: pet.anuncianteId)
@@ -72,7 +69,6 @@ class PerfilPetController extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Função para enviar uma nova avaliação
   Future<bool> avaliarAnunciante({
     required String anuncianteId,
     required String avaliadorId,
@@ -88,11 +84,9 @@ class PerfilPetController extends ChangeNotifier {
         'criadoEm': FieldValue.serverTimestamp(),
       });
 
-      // Recarrega os dados para atualizar a média na tela na hora
       carregandoAnunciante = true;
       notifyListeners();
 
-      // Simples objeto temporário apenas para atualizar a busca
       await carregarDadosAnunciante(
         PetModel(
           id: '',
