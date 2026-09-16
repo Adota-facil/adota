@@ -83,6 +83,45 @@ class AuthController extends ChangeNotifier {
     }
   }
 
+  Future<bool> loginComGoogle({
+    String tipo = 'adotante',
+    String? tipoAnunciante,
+    String? telefone,
+    String? estado,
+    String? cidade,
+  }) async {
+    _setCarregando(true);
+    try {
+      final credencial = await _authRepository.loginComGoogle();
+      final usuario = credencial.user;
+      if (usuario == null) return false;
+
+      final perfilExistente = await _usuarioRepository.buscarPorId(usuario.uid);
+      if (perfilExistente == null) {
+        await _usuarioRepository.salvar(
+          UsuarioModel(
+            id: usuario.uid,
+            nome: usuario.displayName ?? 'Usuário Google',
+            email: usuario.email ?? '',
+            fotoUrl: usuario.photoURL ?? '',
+            telefone: telefone,
+            tipo: tipo,
+            tipoAnunciante: tipoAnunciante,
+            estado: estado ?? '',
+            cidade: cidade ?? '',
+          ),
+        );
+      }
+      _erro = null;
+      return true;
+    } catch (e) {
+      _erro = _mensagemDeErro(e);
+      return false;
+    } finally {
+      _setCarregando(false);
+    }
+  }
+
   Future<void> logout() async {
     await _authRepository.logout();
     notifyListeners();
@@ -125,6 +164,12 @@ class AuthController extends ChangeNotifier {
           return 'E-mail ou senha incorretos.';
         case 'requires-recent-login':
           return 'Por segurança, saia e entre na conta de novo antes de excluir.';
+        case 'operation-not-allowed':
+          return 'O login com Google não está habilitado no Firebase.';
+        case 'network-request-failed':
+          return 'Verifique sua conexão com a internet e tente novamente.';
+        case 'account-exists-with-different-credential':
+          return 'Já existe uma conta com este e-mail usando outro método de login.';
         default:
           return 'Não foi possível completar a operação.';
       }

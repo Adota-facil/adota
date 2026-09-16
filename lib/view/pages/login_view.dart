@@ -42,6 +42,20 @@ class _LoginViewState extends State<LoginView> {
     }
   }
 
+  Future<void> _entrarComGoogle() async {
+    final authController = context.read<AuthController>();
+    final sucesso = await authController.loginComGoogle();
+
+    if (!mounted) return;
+    if (sucesso) {
+      Navigator.of(context).pop();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(authController.erro ?? 'Erro ao entrar com Google.')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final authController = context.watch<AuthController>();
@@ -129,6 +143,20 @@ class _LoginViewState extends State<LoginView> {
                         'Entrar',
                         style: TextStyle(color: Colors.white, fontSize: 16),
                       ),
+              ),
+              const SizedBox(height: 16),
+              OutlinedButton.icon(
+                onPressed: authController.carregando ? null : _entrarComGoogle,
+                icon: const Icon(Icons.account_circle_outlined),
+                label: const Text('Continuar com Google'),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  side: const BorderSide(color: Color(0xFF4285F4)),
+                  foregroundColor: const Color(0xFF4285F4),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
               ),
               const SizedBox(height: 16),
               TextButton(

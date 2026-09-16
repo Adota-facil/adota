@@ -1,10 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 abstract class AuthRepository {
   String? get uidAtual;
   Stream<String?> get mudancasDeUsuario;
   Future<String> cadastrar({required String email, required String senha});
   Future<String> login({required String email, required String senha});
+  Future<UserCredential> loginComGoogle();
   Future<void> logout();
   Future<void> excluirConta();
 }
@@ -38,6 +41,23 @@ class AuthRepositoryImpl implements AuthRepository {
       password: senha,
     );
     return credencial.user!.uid;
+  }
+
+  @override
+  Future<UserCredential> loginComGoogle() async {
+    final provedor = GoogleAuthProvider();
+    if (kIsWeb) {
+      return _auth.signInWithPopup(provedor);
+    }
+
+    final googleSignIn = GoogleSignIn.instance;
+    await googleSignIn.initialize();
+    final contaGoogle = await googleSignIn.authenticate();
+    final autenticacaoGoogle = contaGoogle.authentication;
+    final credencial = GoogleAuthProvider.credential(
+      idToken: autenticacaoGoogle.idToken,
+    );
+    return _auth.signInWithCredential(credencial);
   }
 
   @override
