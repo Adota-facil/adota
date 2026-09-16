@@ -99,95 +99,152 @@ class _EditarPetViewState extends State<EditarPetView> {
         leadingName: 'Editar Pet',
         mostrarBotaoVoltar: true,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Atualize os dados do pet',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _nomeController,
-                decoration: const InputDecoration(
-                  labelText: 'Nome do Pet',
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) => value == null || value.isEmpty
-                    ? 'Por favor, informe o nome'
-                    : null,
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _idadeController,
-                decoration: const InputDecoration(
-                  labelText: 'Idade',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _porteController,
-                decoration: const InputDecoration(
-                  labelText: 'Porte',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _racaController,
-                decoration: const InputDecoration(
-                  labelText: 'Raça',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _localizacaoController,
-                decoration: const InputDecoration(
-                  labelText: 'Localização',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _descricaoController,
-                maxLines: 4,
-                decoration: const InputDecoration(
-                  labelText: 'Descrição',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF1976D2),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 550),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Text(
+                    'Atualize os dados do pet',
+                    style: TextStyle(
+                      fontSize: 23,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Modifique as informações abaixo e salve as alterações.',
+                    style: TextStyle(fontSize: 13, color: Colors.grey),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 28),
+
+                  _buildTextField(
+                    controller: _nomeController,
+                    label: 'Nome do Pet',
+                    icon: Icons.pets,
+                    validator: (value) => value == null || value.isEmpty
+                        ? 'Por favor, informe o nome'
+                        : null,
+                  ),
+                  const SizedBox(height: 18),
+
+                  _buildTextField(
+                    controller: _idadeController,
+                    label: 'Idade',
+                    icon: Icons.cake_outlined,
+                  ),
+                  const SizedBox(height: 18),
+
+                  _buildTextField(
+                    controller: _porteController,
+                    label: 'Porte (Ex: Pequeno, Médio, Grande)',
+                    icon: Icons.straighten,
+                  ),
+                  const SizedBox(height: 18),
+
+                  _buildTextField(
+                    controller: _racaController,
+                    label: 'Raça',
+                    icon: Icons.category_outlined,
+                  ),
+                  const SizedBox(height: 18),
+
+                  _buildTextField(
+                    controller: _localizacaoController,
+                    label: 'Localização',
+                    icon: Icons.location_on_outlined,
+                  ),
+                  const SizedBox(height: 18),
+
+                  _buildTextField(
+                    controller: _descricaoController,
+                    label: 'Descrição',
+                    icon: Icons.description_outlined,
+                    maxLines: 4,
+                  ),
+                  const SizedBox(height: 32),
+
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF1976D2),
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      onPressed: _salvando ? null : _atualizarPet,
+                      child: _salvando
+                          ? const SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2.5,
+                              ),
+                            )
+                          : const Text(
+                              'Salvar Alterações',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                     ),
                   ),
-                  onPressed: _salvando ? null : _atualizarPet,
-                  child: _salvando
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text(
-                          'Salvar Alterações',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    int maxLines = 1,
+    String? Function(String?)? validator,
+  }) {
+    return TextFormField(
+      controller: controller,
+      maxLines: maxLines,
+      validator: validator,
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: maxLines == 1
+            ? Icon(icon, color: const Color(0xFF1976D2), size: 20)
+            : null,
+        filled: true,
+        fillColor: Colors.grey.shade50,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 16,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.grey.shade300),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.grey.shade300),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Color(0xFF1976D2), width: 1.5),
         ),
       ),
     );

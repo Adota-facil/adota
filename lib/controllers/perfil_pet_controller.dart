@@ -35,25 +35,7 @@ class PerfilPetController extends ChangeNotifier {
           fotoAnunciante = dados['fotoUrl'] ?? dados['fotoBase64'];
         }
 
-        final snapshotAvaliacoes = await FirebaseFirestore.instance
-            .collection('avaliacoes')
-            .where('anuncianteId', isEqualTo: pet.anuncianteId)
-            .get();
-
-        if (snapshotAvaliacoes.docs.isNotEmpty) {
-          quantidadeAvaliacoes = snapshotAvaliacoes.docs.length;
-          double somaNotas = 0.0;
-
-          for (var doc in snapshotAvaliacoes.docs) {
-            final nota = (doc.data()['nota'] ?? 0).toDouble();
-            somaNotas += nota;
-          }
-
-          mediaAvaliacao = somaNotas / quantidadeAvaliacoes;
-        } else {
-          quantidadeAvaliacoes = 0;
-          mediaAvaliacao = 0.0;
-        }
+        await _recalcularMediaAvaliacoes(pet.anuncianteId);
       } catch (e) {
         if (nomeAnunciante.isEmpty) {
           nomeAnunciante = 'Protetor Independente';
@@ -67,6 +49,33 @@ class PerfilPetController extends ChangeNotifier {
 
     carregandoAnunciante = false;
     notifyListeners();
+  }
+
+  Future<void> _recalcularMediaAvaliacoes(String anuncianteId) async {
+    try {
+      final snapshotAvaliacoes = await FirebaseFirestore.instance
+          .collection('avaliacoes')
+          .where('anuncianteId', isEqualTo: anuncianteId)
+          .get();
+
+      if (snapshotAvaliacoes.docs.isNotEmpty) {
+        quantidadeAvaliacoes = snapshotAvaliacoes.docs.length;
+        double somaNotas = 0.0;
+
+        for (var doc in snapshotAvaliacoes.docs) {
+          final nota = (doc.data()['nota'] ?? 0).toDouble();
+          somaNotas += nota;
+        }
+
+        mediaAvaliacao = somaNotas / quantidadeAvaliacoes;
+      } else {
+        quantidadeAvaliacoes = 0;
+        mediaAvaliacao = 0.0;
+      }
+    } catch (e) {
+      quantidadeAvaliacoes = 0;
+      mediaAvaliacao = 0.0;
+    }
   }
 
   Future<bool> avaliarAnunciante({
@@ -84,22 +93,9 @@ class PerfilPetController extends ChangeNotifier {
         'criadoEm': FieldValue.serverTimestamp(),
       });
 
-      carregandoAnunciante = true;
-      notifyListeners();
+      await _recalcularMediaAvaliacoes(anuncianteId);
 
-      await carregarDadosAnunciante(
-        PetModel(
-          id: '',
-          nome: '',
-          especie: '',
-          statusSaude: '',
-          idade: '',
-          porte: '',
-          genero: '',
-          anuncianteId: anuncianteId,
-          usuarioNome: nomeAnunciante,
-        ),
-      );
+      notifyListeners();
 
       return true;
     } catch (e) {

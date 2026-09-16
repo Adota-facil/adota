@@ -3,6 +3,7 @@ import 'package:adota_facil/controllers/perfil_pet_controller.dart';
 import 'package:adota_facil/models/pet_model.dart';
 import 'package:adota_facil/view/pages/editar_pet_view.dart';
 import 'package:adota_facil/view/widgets/appBar_Widget.dart';
+import 'package:adota_facil/view/widgets/card_anunciante_widget.dart'; // <--- Importação necessária aqui
 import 'package:adota_facil/view/widgets/pet_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -16,6 +17,17 @@ class PerfilPetView extends StatelessWidget {
     BuildContext context,
     PerfilPetController controller,
   ) {
+    final usuarioAtualId = context.read<AuthController>().usuarioId;
+    if (usuarioAtualId != null && usuarioAtualId == pet.anuncianteId) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Você não pode avaliar a si mesmo!'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
     double notaSelecionada = 5.0;
     final comentarioController = TextEditingController();
 
@@ -71,12 +83,9 @@ class PerfilPetView extends StatelessWidget {
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
                   onPressed: () async {
-                    final usuarioId =
-                        context.read<AuthController>().usuarioId ?? 'anônimo';
-
                     final sucesso = await controller.avaliarAnunciante(
                       anuncianteId: pet.anuncianteId,
-                      avaliadorId: usuarioId,
+                      avaliadorId: usuarioAtualId ?? 'anônimo',
                       nota: notaSelecionada,
                       comentario: comentarioController.text.trim(),
                     );
@@ -126,38 +135,39 @@ class PerfilPetView extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (eDonoDoPet) ...[
-                Container(
-                  width: double.infinity,
-                  margin: const EdgeInsets.only(bottom: 16),
-                  child: OutlinedButton.icon(
-                    onPressed: () async {
-                      await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => EditarPetView(pet: pet),
+              if (eDonoDoPet)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton.icon(
+                      onPressed: () async {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => EditarPetView(pet: pet),
+                          ),
+                        );
+                      },
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: const Color(0xFF1976D2),
+                        side: const BorderSide(color: Color(0xFF1976D2)),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                      );
-                    },
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: const Color(0xFF1976D2),
-                      side: const BorderSide(color: Color(0xFF1976D2)),
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
                       ),
-                    ),
-                    icon: const Icon(Icons.edit_outlined, size: 18),
-                    label: const Text(
-                      'Editar informações do pet',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
+                      icon: const Icon(Icons.edit_outlined, size: 18),
+                      label: const Text(
+                        'Editar informações do pet',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ],
 
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -259,7 +269,7 @@ class PerfilPetView extends StatelessWidget {
 
               Consumer<PerfilPetController>(
                 builder: (context, controller, child) {
-                  return _CardAnunciante(
+                  return CardAnuncianteWidget(
                     nomeAnunciante: controller.carregandoAnunciante
                         ? 'Carregando...'
                         : controller.nomeAnunciante,
@@ -267,6 +277,7 @@ class PerfilPetView extends StatelessWidget {
                     fotoPerfilUrl: controller.fotoAnunciante,
                     quantidadeAvaliacoes: controller.quantidadeAvaliacoes,
                     mediaAvaliacao: controller.mediaAvaliacao,
+                    eDonoDoPet: eDonoDoPet,
                     onAvaliarTapped: () =>
                         _mostrarDialogAvaliacao(context, controller),
                     onContatoPressed: () {},
@@ -310,241 +321,6 @@ class PerfilPetView extends StatelessWidget {
         ),
         const SizedBox(height: 24),
       ],
-    );
-  }
-}
-
-class _CardAnunciante extends StatelessWidget {
-  final String nomeAnunciante;
-  final String localizacao;
-  final String? fotoPerfilUrl;
-  final int quantidadeAvaliacoes;
-  final double mediaAvaliacao;
-  final VoidCallback onAvaliarTapped;
-  final VoidCallback onContatoPressed;
-
-  const _CardAnunciante({
-    required this.nomeAnunciante,
-    required this.localizacao,
-    this.fotoPerfilUrl,
-    required this.quantidadeAvaliacoes,
-    required this.mediaAvaliacao,
-    required this.onAvaliarTapped,
-    required this.onContatoPressed,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade300, width: 1),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'RESPONSÁVEL PELO PET',
-            style: TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFFE65100),
-              letterSpacing: 0.5,
-            ),
-          ),
-          const SizedBox(height: 4),
-          const Text(
-            'Sobre o anunciante',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-            ),
-          ),
-          const Divider(height: 20, color: Color(0xFFEEEEEE)),
-          Row(
-            children: [
-              CircleAvatar(
-                radius: 28,
-                backgroundColor: Colors.grey[200],
-                backgroundImage:
-                    (fotoPerfilUrl != null && fotoPerfilUrl!.isNotEmpty)
-                    ? NetworkImage(fotoPerfilUrl!)
-                    : null,
-                child: (fotoPerfilUrl == null || fotoPerfilUrl!.isEmpty)
-                    ? const Icon(Icons.person, color: Colors.grey, size: 32)
-                    : null,
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      nomeAnunciante,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    const Text(
-                      'Protetor independente',
-                      style: TextStyle(color: Colors.grey, fontSize: 13),
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.location_on_outlined,
-                          size: 14,
-                          color: Colors.blue,
-                        ),
-                        const SizedBox(width: 4),
-                        Expanded(
-                          child: Text(
-                            localizacao.isNotEmpty
-                                ? localizacao
-                                : 'Localização informada',
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: Colors.blue,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 6),
-
-                    InkWell(
-                      onTap: onAvaliarTapped,
-                      child: Row(
-                        children: [
-                          if (quantidadeAvaliacoes > 0) ...[
-                            Row(
-                              children: List.generate(5, (index) {
-                                return Icon(
-                                  index < mediaAvaliacao.floor()
-                                      ? Icons.star
-                                      : Icons.star_border,
-                                  size: 14,
-                                  color: Colors.amber,
-                                );
-                              }),
-                            ),
-                            const SizedBox(width: 6),
-                            Text(
-                              '${mediaAvaliacao.toStringAsFixed(1)} ($quantidadeAvaliacoes ${quantidadeAvaliacoes == 1 ? 'avaliação' : 'avaliações'})',
-                              style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black54,
-                              ),
-                            ),
-                          ] else ...[
-                            Row(
-                              children: List.generate(
-                                5,
-                                (_) => const Icon(
-                                  Icons.star_border,
-                                  size: 14,
-                                  color: Colors.amber,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 6),
-                            const Text(
-                              'Toque para avaliar',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.blue,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: const Color(0xFFE3F2FD),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              children: const [
-                Icon(
-                  Icons.verified_user_outlined,
-                  color: Color(0xFF1565C0),
-                  size: 20,
-                ),
-                SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    'Converse pelo WhatsApp e confirme todas as informações antes de combinar a adoção.',
-                    style: TextStyle(
-                      color: Color(0xFF0D47A1),
-                      fontSize: 12,
-                      height: 1.3,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const Divider(height: 24, color: Color(0xFFEEEEEE)),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                'Tem interesse neste pet?',
-                style: TextStyle(color: Colors.black54, fontSize: 13),
-              ),
-              ElevatedButton.icon(
-                onPressed: onContatoPressed,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF1976D2),
-                  elevation: 0,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 10,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                icon: const Icon(Icons.chat, color: Colors.white, size: 16),
-                label: const Text(
-                  'Entrar em contato',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
     );
   }
 }

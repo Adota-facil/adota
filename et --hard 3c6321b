@@ -1,0 +1,20 @@
+[33m01d4dcb[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mdesign-anunciante[m[33m, [m[1;32mmain[m[33m)[m HEAD@{0}: reset: moving to HEAD~1
+[33ma71493b[m[33m ([m[1;31morigin/design-anunciante[m[33m)[m HEAD@{1}: reset: moving to HEAD
+[33ma71493b[m[33m ([m[1;31morigin/design-anunciante[m[33m)[m HEAD@{2}: pull: Fast-forward
+[33mfc28fd5[m HEAD@{3}: checkout: moving from design-anunciante to design-anunciante
+[33mfc28fd5[m HEAD@{4}: reset: moving to HEAD~1
+[33m01d4dcb[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mdesign-anunciante[m[33m, [m[1;32mmain[m[33m)[m HEAD@{5}: reset: moving to HEAD~1
+[33ma71493b[m[33m ([m[1;31morigin/design-anunciante[m[33m)[m HEAD@{6}: reset: moving to HEAD~1
+[33m4f20daf[m HEAD@{7}: reset: moving to HEAD~1
+[33m3c6321b[m HEAD@{8}: commit: adiciona funcionalidade e tela de edição de perfil do pet com validação de permissão
+[33m4f20daf[m HEAD@{9}: commit: adiciona interatividade e exibição de avaliações no perfil do pet
+[33ma71493b[m[33m ([m[1;31morigin/design-anunciante[m[33m)[m HEAD@{10}: merge origin/main: updating HEAD
+[33ma71493b[m[33m ([m[1;31morigin/design-anunciante[m[33m)[m HEAD@{11}: checkout: moving from WhatsApp to design-anunciante
+[33m535331a[m[33m ([m[1;31morigin/wh[m[33m, [m[1;31morigin/WhatsApp[m[33m, [m[1;32mWhatsApp[m[33m)[m HEAD@{12}: commit: funcionalidade do WhatsApp
+[33m01d4dcb[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mdesign-anunciante[m[33m, [m[1;32mmain[m[33m)[m HEAD@{13}: checkout: moving from main to WhatsApp
+[33m01d4dcb[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mdesign-anunciante[m[33m, [m[1;32mmain[m[33m)[m HEAD@{14}: reset: moving to HEAD~1
+[33m37576a9[m HEAD@{15}: Branch: renamed refs/heads/feature/entrar-contato to refs/heads/main
+[33m37576a9[m HEAD@{17}: commit: implementa contato via WhatsApp dinâmico no perfil do pet
+[33m01d4dcb[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mdesign-anunciante[m[33m, [m[1;32mmain[m[33m)[m HEAD@{18}: checkout: moving from main to feature/entrar-contato
+[33m01d4dcb[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mdesign-anunciante[m[33m, [m[1;32mmain[m[33m)[m HEAD@{19}: checkout: moving from main to main
+[33m01d4dcb[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mdesign-anunciante[m[33m, [m[1;32mmain[m[33m)[m HEAD@{20}: clone: from https://github.com/Adota-facil/adota.git
