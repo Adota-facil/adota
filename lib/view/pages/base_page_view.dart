@@ -34,7 +34,7 @@ class _BasePageViewState extends State<BasePageView> {
   void _onPageChanged(int index) {
     setState(() {
       _currentIndex = index;
-      _mostrarNav = true; // sempre visível ao trocar de aba
+      _mostrarNav = true;
       _deltaAcumulado = 0;
     });
   }
@@ -48,8 +48,6 @@ class _BasePageViewState extends State<BasePageView> {
   }
 
   bool _aoRolar(ScrollNotification notification) {
-    // Ignora o swipe horizontal do PageView (troca de aba) — só reage
-    // a rolagem vertical de conteúdo dentro da página atual.
     if (notification.metrics.axis != Axis.vertical) return false;
 
     if (notification is ScrollUpdateNotification) {
@@ -57,16 +55,17 @@ class _BasePageViewState extends State<BasePageView> {
       _deltaAcumulado += delta;
 
       if (_deltaAcumulado > _limiarParaAlternar && _mostrarNav) {
-        setState(() => _mostrarNav = false); // rolando pra baixo -> esconde
+        setState(() => _mostrarNav = false);
         _deltaAcumulado = 0;
       } else if (_deltaAcumulado < -_limiarParaAlternar && !_mostrarNav) {
-        setState(() => _mostrarNav = true); // rolando pra cima -> mostra
+        setState(() => _mostrarNav = true);
         _deltaAcumulado = 0;
       }
     } else if (notification is ScrollEndNotification) {
       _deltaAcumulado = 0;
     }
-    return false; // deixa a notificação continuar subindo normalmente
+
+    return false;
   }
 
   @override
@@ -89,7 +88,6 @@ class _BasePageViewState extends State<BasePageView> {
             PageView(
               controller: _pageController,
               onPageChanged: _onPageChanged,
-              //physics: const NeverScrollableScrollPhysics(),
               children: [
                 HomePageView(),
                 const SearchPageView(),
