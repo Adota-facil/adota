@@ -18,10 +18,9 @@ class PetModel {
   final String descricao;
   final String localizacao;
   final String anuncianteId;
+  final String usuarioNome; // <--- Adicionado aqui
   final List<String> fotos;
-
   final String fotoBase64;
-
   final List<String> fotosBase64;
 
   const PetModel({
@@ -39,6 +38,7 @@ class PetModel {
     this.descricao = '',
     this.localizacao = '',
     this.anuncianteId = '',
+    this.usuarioNome = '', // <--- Adicionado aqui
     this.fotos = const [],
     this.fotoBase64 = '',
     this.fotosBase64 = const [],
@@ -88,6 +88,7 @@ class PetModel {
       descricao: data['descricao'] ?? '',
       localizacao: data['localizacao'] ?? '',
       anuncianteId: data['anuncianteId'] ?? '',
+      usuarioNome: data['usuarioNome'] ?? '', // <--- Adicionado aqui
       fotos: List<String>.from(data['fotos'] ?? const []),
       fotoBase64:
           data['fotoBase64'] ??
@@ -129,6 +130,7 @@ class PetModel {
     'descricao': descricao,
     'localizacao': localizacao,
     'anuncianteId': anuncianteId,
+    'usuarioNome': usuarioNome, // <--- Adicionado aqui
     'fotos': fotos,
     if (fotosBase64.isEmpty || fotoBase64.isEmpty) 'fotoBase64': fotoBase64,
     'fotosBase64': fotosBase64,
@@ -162,6 +164,7 @@ class PetModel {
     String? descricao,
     String? localizacao,
     String? anuncianteId,
+    String? usuarioNome, // <--- Adicionado aqui
     List<String>? fotos,
     String? fotoBase64,
     List<String>? fotosBase64,
@@ -181,6 +184,7 @@ class PetModel {
       descricao: descricao ?? this.descricao,
       localizacao: localizacao ?? this.localizacao,
       anuncianteId: anuncianteId ?? this.anuncianteId,
+      usuarioNome: usuarioNome ?? this.usuarioNome, // <--- Adicionado aqui
       fotos: fotos ?? this.fotos,
       fotoBase64: fotoBase64 ?? this.fotoBase64,
       fotosBase64: fotosBase64 ?? this.fotosBase64,
