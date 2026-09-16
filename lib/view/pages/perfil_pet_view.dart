@@ -1,188 +1,240 @@
+import 'package:adota_facil/controllers/auth_controller.dart';
+import 'package:adota_facil/controllers/perfil_pet_controller.dart';
 import 'package:adota_facil/models/pet_model.dart';
 import 'package:adota_facil/view/widgets/appBar_Widget.dart';
 import 'package:adota_facil/view/widgets/pet_image_widget.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class PerfilPetView extends StatefulWidget {
+class PerfilPetView extends StatelessWidget {
   final PetModel pet;
 
   const PerfilPetView({super.key, required this.pet});
 
-  @override
-  State<PerfilPetView> createState() => _PerfilPetViewState();
-}
+  void _mostrarDialogAvaliacao(
+    BuildContext context,
+    PerfilPetController controller,
+  ) {
+    double notaSelecionada = 5.0;
+    final comentarioController = TextEditingController();
 
-class _PerfilPetViewState extends State<PerfilPetView> {
-  String _nomeAnunciante = '';
-  String? _fotoAnunciante;
-  bool _carregandoAnunciante = true;
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setStateModal) {
+            return AlertDialog(
+              title: const Text('Avaliar Protetor'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    'O que você achou do atendimento deste anunciante?',
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(5, (index) {
+                      return IconButton(
+                        icon: Icon(
+                          index < notaSelecionada
+                              ? Icons.star
+                              : Icons.star_border,
+                          color: Colors.amber,
+                          size: 32,
+                        ),
+                        onPressed: () {
+                          setStateModal(() {
+                            notaSelecionada = (index + 1).toDouble();
+                          });
+                        },
+                      );
+                    }),
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: comentarioController,
+                    decoration: const InputDecoration(
+                      labelText: 'Comentário (opcional)',
+                      border: OutlineInputBorder(),
+                    ),
+                    maxLines: 3,
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancelar'),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+                  onPressed: () async {
+                    final usuarioId =
+                        context.read<AuthController>().usuarioId ?? 'anônimo';
 
-  @override
-  void initState() {
-    super.initState();
-    _carregarDadosAnunciante();
-  }
+                    final sucesso = await controller.avaliarAnunciante(
+                      anuncianteId: pet.anuncianteId,
+                      avaliadorId: usuarioId,
+                      nota: notaSelecionada,
+                      comentario: comentarioController.text.trim(),
+                    );
 
-  Future<void> _carregarDadosAnunciante() async {
-    // 1. Se o pet já veio com o nome do usuário salvo internamente
-    if (widget.pet.usuarioNome.isNotEmpty) {
-      setState(() {
-        _nomeAnunciante = widget.pet.usuarioNome;
-        _carregandoAnunciante = false;
-      });
-      return;
-    }
+                    if (!context.mounted) return;
+                    Navigator.pop(context);
 
-    // 2. Caso contrário, busca direto no Firestore na coleção de usuários usando o anuncianteId
-    if (widget.pet.anuncianteId.isEmpty) {
-      setState(() {
-        _nomeAnunciante = 'Protetor Independente';
-        _carregandoAnunciante = false;
-      });
-      return;
-    }
-
-    try {
-      final doc = await FirebaseFirestore.instance
-          .collection('usuarios') // Ajuste o nome da coleção se necessário (ex: 'users')
-          .doc(widget.pet.anuncianteId)
-          .get();
-
-      if (doc.exists && doc.data() != null) {
-        final dados = doc.data()!;
-        setState(() {
-          _nomeAnunciante = dados['nome'] ?? dados['name'] ?? 'Protetor Independente';
-          _fotoAnunciante = dados['fotoUrl'] ?? dados['fotoBase64'];
-          _carregandoAnunciante = false;
-        });
-      } else {
-        setState(() {
-          _nomeAnunciante = 'Protetor Independente';
-          _carregandoAnunciante = false;
-        });
-      }
-    } catch (e) {
-      setState(() {
-        _nomeAnunciante = 'Protetor Independente';
-        _carregandoAnunciante = false;
-      });
-    }
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          sucesso
+                              ? 'Avaliação enviada com sucesso!'
+                              : 'Erro ao enviar avaliação.',
+                        ),
+                        backgroundColor: sucesso ? Colors.green : Colors.red,
+                      ),
+                    );
+                  },
+                  child: const Text(
+                    'Enviar',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final pet = widget.pet;
-
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppbarWidget(leadingName: pet.nome, mostrarBotaoVoltar: true),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Perfil Principal (Foto + Informações lado a lado)
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
-                  child: PetImageWidget(
-                    fotoBase64: pet.fotoBase64,
-                    fotoUrl: pet.fotoUrl,
-                    width: 150,
-                    height: 150,
+    return ChangeNotifierProvider(
+      create: (_) => PerfilPetController()..carregarDadosAnunciante(pet),
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppbarWidget(leadingName: pet.nome, mostrarBotaoVoltar: true),
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: PetImageWidget(
+                      fotoBase64: pet.fotoBase64,
+                      fotoUrl: pet.fotoUrl,
+                      width: 150,
+                      height: 150,
+                    ),
                   ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Text(
-                            pet.nome,
-                            style: const TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Text(
+                              pet.nome,
+                              style: const TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: 6),
-                          Icon(pet.iconeGenero, color: pet.corGenero),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      if (pet.tagsSaude.isNotEmpty)
-                        Wrap(
-                          spacing: 8,
-                          runSpacing: 4,
-                          children: pet.tagsSaude.map((tag) {
-                            return Chip(
-                              label: Text(
-                                tag,
-                                style: const TextStyle(
-                                  color: Color(0xFFA45600),
-                                  fontSize: 12,
-                                ),
-                              ),
-                              backgroundColor: const Color(0xFFFDE8E4),
-                              side: BorderSide.none,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                            );
-                          }).toList(),
+                            const SizedBox(width: 6),
+                            Icon(pet.iconeGenero, color: pet.corGenero),
+                          ],
                         ),
-                      const SizedBox(height: 12),
-                      Text('Espécie: ${pet.especie}', style: const TextStyle(fontSize: 15)),
-                      Text('Idade: ${pet.idade}', style: const TextStyle(fontSize: 15)),
-                      Text('Porte: ${pet.porte}', style: const TextStyle(fontSize: 15)),
-                      Text('Raça: ${pet.raca.isNotEmpty ? pet.raca : "-"}', style: const TextStyle(fontSize: 15)),
-                      Text(
-                        'Localização: ${pet.localizacao.isNotEmpty ? pet.localizacao : "-"}',
-                        style: const TextStyle(fontSize: 15),
-                      ),
-                    ],
+                        const SizedBox(height: 8),
+                        if (pet.tagsSaude.isNotEmpty)
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 4,
+                            children: pet.tagsSaude.map((tag) {
+                              return Chip(
+                                label: Text(
+                                  tag,
+                                  style: const TextStyle(
+                                    color: Color(0xFFA45600),
+                                    fontSize: 12,
+                                  ),
+                                ),
+                                backgroundColor: const Color(0xFFFDE8E4),
+                                side: BorderSide.none,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        const SizedBox(height: 12),
+                        Text(
+                          'Espécie: ${pet.especie}',
+                          style: const TextStyle(fontSize: 15),
+                        ),
+                        Text(
+                          'Idade: ${pet.idade}',
+                          style: const TextStyle(fontSize: 15),
+                        ),
+                        Text(
+                          'Porte: ${pet.porte}',
+                          style: const TextStyle(fontSize: 15),
+                        ),
+                        Text(
+                          'Raça: ${pet.raca.isNotEmpty ? pet.raca : "-"}',
+                          style: const TextStyle(fontSize: 15),
+                        ),
+                        Text(
+                          'Localização: ${pet.localizacao.isNotEmpty ? pet.localizacao : "-"}',
+                          style: const TextStyle(fontSize: 15),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-
-            // Galeria de fotos adicionais
-            _buildGaleriaFotos(pet),
-
-            // Seção de Descrição
-            const Text(
-              'Descrição',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              pet.descricao.isNotEmpty ? pet.descricao : 'Sem descrição informada.',
-              style: const TextStyle(
-                fontSize: 15,
-                color: Colors.black87,
-                height: 1.4,
+                ],
               ),
-            ),
-            const SizedBox(height: 24),
+              const SizedBox(height: 20),
+              _buildGaleriaFotos(pet),
+              const Text(
+                'Descrição',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                pet.descricao.isNotEmpty
+                    ? pet.descricao
+                    : 'Sem descrição informada.',
+                style: const TextStyle(
+                  fontSize: 15,
+                  color: Colors.black87,
+                  height: 1.4,
+                ),
+              ),
+              const SizedBox(height: 24),
 
-            // Card do Anunciante com os dados reais
-            _CardAnunciante(
-              nomeAnunciante: _carregandoAnunciante ? 'Carregando...' : _nomeAnunciante,
-              localizacao: pet.localizacao,
-              fotoPerfilUrl: _fotoAnunciante,
-              quantidadeAvaliacoes: 0,
-              mediaAvaliacao: 0.0,
-              onContatoPressed: () {
-                // Ação ao clicar em entrar em contato / WhatsApp
-              },
-            ),
-          ],
+              Consumer<PerfilPetController>(
+                builder: (context, controller, child) {
+                  return _CardAnunciante(
+                    nomeAnunciante: controller.carregandoAnunciante
+                        ? 'Carregando...'
+                        : controller.nomeAnunciante,
+                    localizacao: pet.localizacao,
+                    fotoPerfilUrl: controller.fotoAnunciante,
+                    quantidadeAvaliacoes: controller.quantidadeAvaliacoes,
+                    mediaAvaliacao: controller.mediaAvaliacao,
+                    onAvaliarTapped: () =>
+                        _mostrarDialogAvaliacao(context, controller),
+                    onContatoPressed: () {},
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -228,6 +280,7 @@ class _CardAnunciante extends StatelessWidget {
   final String? fotoPerfilUrl;
   final int quantidadeAvaliacoes;
   final double mediaAvaliacao;
+  final VoidCallback onAvaliarTapped;
   final VoidCallback onContatoPressed;
 
   const _CardAnunciante({
@@ -236,6 +289,7 @@ class _CardAnunciante extends StatelessWidget {
     this.fotoPerfilUrl,
     required this.quantidadeAvaliacoes,
     required this.mediaAvaliacao,
+    required this.onAvaliarTapped,
     required this.onContatoPressed,
   });
 
@@ -270,7 +324,11 @@ class _CardAnunciante extends StatelessWidget {
           const SizedBox(height: 4),
           const Text(
             'Sobre o anunciante',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87),
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
           ),
           const Divider(height: 20, color: Color(0xFFEEEEEE)),
           Row(
@@ -278,7 +336,8 @@ class _CardAnunciante extends StatelessWidget {
               CircleAvatar(
                 radius: 28,
                 backgroundColor: Colors.grey[200],
-                backgroundImage: (fotoPerfilUrl != null && fotoPerfilUrl!.isNotEmpty)
+                backgroundImage:
+                    (fotoPerfilUrl != null && fotoPerfilUrl!.isNotEmpty)
                     ? NetworkImage(fotoPerfilUrl!)
                     : null,
                 child: (fotoPerfilUrl == null || fotoPerfilUrl!.isEmpty)
@@ -306,49 +365,76 @@ class _CardAnunciante extends StatelessWidget {
                     const SizedBox(height: 4),
                     Row(
                       children: [
-                        const Icon(Icons.location_on_outlined, size: 14, color: Colors.blue),
+                        const Icon(
+                          Icons.location_on_outlined,
+                          size: 14,
+                          color: Colors.blue,
+                        ),
                         const SizedBox(width: 4),
                         Expanded(
                           child: Text(
-                            localizacao.isNotEmpty ? localizacao : 'Localização informada no anúncio',
-                            style: const TextStyle(fontSize: 12, color: Colors.blue),
+                            localizacao.isNotEmpty
+                                ? localizacao
+                                : 'Localização informada',
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: Colors.blue,
+                            ),
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 6),
-                    Row(
-                      children: [
-                        if (quantidadeAvaliacoes > 0) ...[
-                          Row(
-                            children: List.generate(5, (index) {
-                              return Icon(
-                                index < mediaAvaliacao.floor() ? Icons.star : Icons.star_border,
-                                size: 14,
-                                color: Colors.amber,
-                              );
-                            }),
-                          ),
-                          const SizedBox(width: 6),
-                          Text(
-                            '$quantidadeAvaliacoes ${quantidadeAvaliacoes == 1 ? 'avaliação' : 'avaliações'}',
-                            style: const TextStyle(fontSize: 12, color: Colors.grey),
-                          ),
-                        ] else ...[
-                          Row(
-                            children: List.generate(
-                              5,
-                              (_) => const Icon(Icons.star_border, size: 14, color: Colors.amber),
+
+                    InkWell(
+                      onTap: onAvaliarTapped,
+                      child: Row(
+                        children: [
+                          if (quantidadeAvaliacoes > 0) ...[
+                            Row(
+                              children: List.generate(5, (index) {
+                                return Icon(
+                                  index < mediaAvaliacao.floor()
+                                      ? Icons.star
+                                      : Icons.star_border,
+                                  size: 14,
+                                  color: Colors.amber,
+                                );
+                              }),
                             ),
-                          ),
-                          const SizedBox(width: 6),
-                          const Text(
-                            'sem avaliações',
-                            style: TextStyle(fontSize: 12, color: Colors.grey),
-                          ),
+                            const SizedBox(width: 6),
+                            Text(
+                              '${mediaAvaliacao.toStringAsFixed(1)} ($quantidadeAvaliacoes ${quantidadeAvaliacoes == 1 ? 'avaliação' : 'avaliações'})',
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black54,
+                              ),
+                            ),
+                          ] else ...[
+                            Row(
+                              children: List.generate(
+                                5,
+                                (_) => const Icon(
+                                  Icons.star_border,
+                                  size: 14,
+                                  color: Colors.amber,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            const Text(
+                              'Toque para avaliar',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.blue,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
                         ],
-                      ],
+                      ),
                     ),
                   ],
                 ),
@@ -356,7 +442,6 @@ class _CardAnunciante extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-          
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
@@ -365,7 +450,11 @@ class _CardAnunciante extends StatelessWidget {
             ),
             child: Row(
               children: const [
-                Icon(Icons.verified_user_outlined, color: Color(0xFF1565C0), size: 20),
+                Icon(
+                  Icons.verified_user_outlined,
+                  color: Color(0xFF1565C0),
+                  size: 20,
+                ),
                 SizedBox(width: 10),
                 Expanded(
                   child: Text(
@@ -381,25 +470,23 @@ class _CardAnunciante extends StatelessWidget {
               ],
             ),
           ),
-
           const Divider(height: 24, color: Color(0xFFEEEEEE)),
-
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Text(
                 'Tem interesse neste pet?',
-                style: TextStyle(
-                  color: Colors.black54,
-                  fontSize: 13,
-                ),
+                style: TextStyle(color: Colors.black54, fontSize: 13),
               ),
               ElevatedButton.icon(
                 onPressed: onContatoPressed,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF1976D2),
                   elevation: 0,
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 10,
+                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -407,7 +494,11 @@ class _CardAnunciante extends StatelessWidget {
                 icon: const Icon(Icons.chat, color: Colors.white, size: 16),
                 label: const Text(
                   'Entrar em contato',
-                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                  ),
                 ),
               ),
             ],
