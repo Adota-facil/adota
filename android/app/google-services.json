@@ -12,7 +12,12 @@
           "package_name": "com.example.adota_facil"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "1049234975862-t5rnho9allp7uimassgf4ntrnecd92ms.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDllrDEaaTEWI3mU5_E2I5qdXQ06GQLmF4"
@@ -20,7 +25,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1049234975862-t5rnho9allp7uimassgf4ntrnecd92ms.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1049234975862-oemdqgd18dd2m219h5circt7c317jgms.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.adotaFacil"
+              }
+            }
+          ]
         }
       }
     }

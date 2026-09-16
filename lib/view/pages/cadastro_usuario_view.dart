@@ -66,6 +66,30 @@ class _CadastroUsuarioViewState extends State<CadastroUsuarioView> {
     }
   }
 
+  Future<void> _cadastrarComGoogle() async {
+    final authController = context.read<AuthController>();
+    final sucesso = await authController.loginComGoogle(
+      tipo: _tipo,
+      tipoAnunciante: _tipo == 'adotante' ? null : _tipoAnunciante,
+      telefone: _telefoneController.text.trim().isEmpty
+          ? null
+          : _telefoneController.text.trim(),
+      estado: _estadoController.text.trim(),
+      cidade: _cidadeController.text.trim(),
+    );
+
+    if (!mounted) return;
+    if (sucesso) {
+      Navigator.of(context)
+        ..pop()
+        ..pop();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(authController.erro ?? 'Erro ao entrar com Google.')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final authController = context.watch<AuthController>();
@@ -215,6 +239,20 @@ class _CadastroUsuarioViewState extends State<CadastroUsuarioView> {
                 ),
               ],
               const SizedBox(height: 28),
+              OutlinedButton.icon(
+                onPressed: authController.carregando ? null : _cadastrarComGoogle,
+                icon: const Icon(Icons.account_circle_outlined),
+                label: const Text('Criar conta com Google'),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  side: const BorderSide(color: Color(0xFF4285F4)),
+                  foregroundColor: const Color(0xFF4285F4),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
               ElevatedButton(
                 onPressed: authController.carregando ? null : _cadastrar,
                 style: ElevatedButton.styleFrom(
