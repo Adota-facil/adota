@@ -14,8 +14,15 @@ const List<String> _bannersSecundarios = ["assets/image/Rectangle 30.png"];
 
 class HomePageView extends StatelessWidget {
   final ValueChanged<String>? onCategoriaSelecionada;
+  final VoidCallback? onAdoteAgora;
+  final VoidCallback? onAnunciarPet;
 
-  const HomePageView({super.key, this.onCategoriaSelecionada});
+  const HomePageView({
+    super.key,
+    this.onCategoriaSelecionada,
+    this.onAdoteAgora,
+    this.onAnunciarPet,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -63,14 +70,7 @@ class HomePageView extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => CuriosidadesView(),
-                            ),
-                          );
-                        },
+                        onPressed: onAdoteAgora,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF4998E5),
                           elevation: 4,
@@ -90,7 +90,7 @@ class HomePageView extends StatelessWidget {
                         ),
                       ),
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: onAnunciarPet,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFFEAA62),
                           elevation: 4,
@@ -207,13 +207,33 @@ class HomePageView extends StatelessWidget {
               child: _ListaDePets(controller: controller),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 20, top: 20),
-              child: const Text(
-                "Curiosidades",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF4998E5),
-                  fontSize: 25,
+              padding: const EdgeInsets.only(left: 20, top: 20, right: 20),
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const CuriosidadesView(),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.auto_awesome, size: 20),
+                label: const Text("Curiosidades"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF4998E5),
+                  foregroundColor: Colors.white,
+                  elevation: 2,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 18,
+                    vertical: 12,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  textStyle: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
                 ),
               ),
             ),
