@@ -5,6 +5,7 @@ import 'package:adota_facil/models/pet_model.dart';
 class PerfilPetController extends ChangeNotifier {
   String nomeAnunciante = '';
   String? fotoAnunciante;
+  String localizacaoAnunciante = '';
   bool carregandoAnunciante = true;
 
   int quantidadeAvaliacoes = 0;
@@ -14,6 +15,8 @@ class PerfilPetController extends ChangeNotifier {
     if (pet.usuarioNome.isNotEmpty) {
       nomeAnunciante = pet.usuarioNome;
     }
+
+    localizacaoAnunciante = pet.localizacao; 
 
     if (pet.anuncianteId.isNotEmpty) {
       try {
@@ -33,6 +36,17 @@ class PerfilPetController extends ChangeNotifier {
                 'Protetor Independente';
           }
           fotoAnunciante = dados['fotoUrl'] ?? dados['fotoBase64'];
+          
+          final cidadeUser = dados['cidade'] ?? '';
+          final estadoUser = dados['estado'] ?? '';
+          
+          if (cidadeUser.isNotEmpty && estadoUser.isNotEmpty) {
+            localizacaoAnunciante = '$cidadeUser, $estadoUser';
+          } else if (cidadeUser.isNotEmpty) {
+            localizacaoAnunciante = cidadeUser;
+          } else if (estadoUser.isNotEmpty) {
+            localizacaoAnunciante = estadoUser;
+          }
         }
 
         await _recalcularMediaAvaliacoes(pet.anuncianteId);
