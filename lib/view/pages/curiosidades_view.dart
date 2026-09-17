@@ -134,7 +134,6 @@ class _CuriosidadesViewState extends State<CuriosidadesView> {
       'Watchful': 'Vigilante',
       'Strong Willed': 'Determinado',
       'Stubborn': 'Teimoso',
-      'Protective': 'Protetor',
       'Sensitive': 'Sensível',
       'Patient': 'Paciente',
       'Fearless': 'Destemido',
@@ -155,7 +154,6 @@ class _CuriosidadesViewState extends State<CuriosidadesView> {
       'Strong': 'Forte',
       'Vigilant': 'Vigilante',
       'Territorial': 'Territorial',
-      'Protective': 'Protetor',
     };
 
     String resultado = texto;

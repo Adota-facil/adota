@@ -121,7 +121,7 @@ class AppbarWidget extends StatelessWidget implements PreferredSizeWidget {
           ),
         ),
         const SizedBox(
-          width: 56,
+          width: 76,
           child: AvatarButton(),
         ),
       ],
