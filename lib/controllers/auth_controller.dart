@@ -127,17 +127,37 @@ class AuthController extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<bool> alterarSenha({
+    required String senhaAtual,
+    required String novaSenha,
+  }) async {
+    _setCarregando(true);
+    try {
+      await _authRepository.alterarSenha(
+        senhaAtual: senhaAtual,
+        novaSenha: novaSenha,
+      );
+      _erro = null;
+      return true;
+    } catch (e) {
+      _erro = _mensagemDeErro(e);
+      return false;
+    } finally {
+      _setCarregando(false);
+    }
+  }
+
   /// Apaga o documento em `usuarios` ANTES de apagar a conta no Auth —
   /// depois que a conta de Auth some, request.auth deixa de existir e as
   /// regras de segurança do Firestore bloqueariam o delete do documento.
-  Future<bool> excluirConta() async {
+  Future<bool> excluirConta({required String senha}) async {
     final uid = usuarioId;
     if (uid == null) return false;
 
     _setCarregando(true);
     try {
       await _usuarioRepository.deletar(uid);
-      await _authRepository.excluirConta();
+      await _authRepository.excluirConta(senha: senha);
       _erro = null;
       notifyListeners();
       return true;
