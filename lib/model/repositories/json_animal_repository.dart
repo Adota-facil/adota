@@ -1,4 +1,4 @@
-import 'package:adota_facil/model/models/pet_model.dart';
+import 'package:adota_facil/models/pet_model.dart';
 
 import 'i_animal_repository.dart';
 

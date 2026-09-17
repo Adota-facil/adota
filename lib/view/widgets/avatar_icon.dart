@@ -10,22 +10,19 @@ class AvatarButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final authController = context.watch<AuthController>();
 
-    return Padding(
-      padding: const EdgeInsets.only(right: 20),
-      child: GestureDetector(
-        onTap: () {
-          // Já logado: não faz nada aqui (o perfil completo já está
-          // na aba "Perfil" da navegação inferior).
-          if (authController.logado) return;
+    return GestureDetector(
+      onTap: () {
+        // Já logado: não faz nada aqui (o perfil completo já está
+        // na aba "Perfil" da navegação inferior).
+        if (authController.logado) return;
 
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => const LoginView()),
-          );
-        },
-        child: const CircleAvatar(
-          radius: 30,
-          child: Icon(Icons.person, size: 40),
-        ),
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => const LoginView()),
+        );
+      },
+      child: const CircleAvatar(
+        radius: 22,
+        child: Icon(Icons.person, size: 28),
       ),
     );
   }

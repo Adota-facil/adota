@@ -168,7 +168,6 @@ class HomePageView extends StatelessWidget {
                   children: [
                     AvatarAnimais(
                       onPressed: () {
-                        controller.filtrarPorCategoria("Cachorro");
                         onCategoriaSelecionada?.call("Cachorro");
                       },
                       iconeSvg: 'assets/image/lucide_dog.svg',
@@ -176,7 +175,6 @@ class HomePageView extends StatelessWidget {
                     ),
                     AvatarAnimais(
                       onPressed: () {
-                        controller.filtrarPorCategoria("Gato");
                         onCategoriaSelecionada?.call("Gato");
                       },
                       iconeSvg: 'assets/image/Group.svg',
@@ -184,7 +182,6 @@ class HomePageView extends StatelessWidget {
                     ),
                     AvatarAnimais(
                       onPressed: () {
-                        controller.filtrarPorCategoria("Outros");
                         onCategoriaSelecionada?.call("Outros");
                       },
                       iconeSvg: "assets/image/material-symbols_add.svg",

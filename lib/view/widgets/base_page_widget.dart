@@ -19,6 +19,7 @@ class _BasePageViewState extends State<BasePageView> {
   static const double _limiarParaAlternar = 8.0;
 
   int _currentIndex = 0;
+  String? _categoriaPesquisaInicial;
   final PageController _pageController = PageController();
   bool _mostrarNav = true;
   double _deltaAcumulado = 0;
@@ -90,9 +91,15 @@ class _BasePageViewState extends State<BasePageView> {
               onPageChanged: _onPageChanged,
               children: [
                 HomePageView(
-                  onCategoriaSelecionada: (_) => _onBottomNavTap(1),
+                  onCategoriaSelecionada: (categoria) {
+                    setState(() => _categoriaPesquisaInicial = categoria);
+                    _onBottomNavTap(1);
+                  },
                 ),
-                const SearchPageView(),
+                SearchPageView(
+                  key: ValueKey(_categoriaPesquisaInicial),
+                  categoriaInicial: _categoriaPesquisaInicial,
+                ),
                 const CadastroPetView(),
                 const PerfilUsuarioView(),
                 const ConfigView(),
