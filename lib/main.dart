@@ -7,7 +7,7 @@ import 'package:adota_facil/models/repositories/auth_repository.dart';
 import 'package:adota_facil/models/repositories/usuario_repository.dart';
 import 'package:adota_facil/services/armazenamento_base64.dart';
 import 'package:adota_facil/services/firebase_analytics_service.dart';
-import 'package:adota_facil/view/pages/base_page_view.dart';
+import 'package:adota_facil/view/widgets/base_page_widget.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

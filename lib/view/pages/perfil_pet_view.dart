@@ -267,6 +267,7 @@ class PerfilPetView extends StatelessWidget {
               ),
               const SizedBox(height: 24),
 
+            if (!eDonoDoPet)
               Consumer<PerfilPetController>(
                 builder: (context, controller, child) {
                   return CardAnuncianteWidget(

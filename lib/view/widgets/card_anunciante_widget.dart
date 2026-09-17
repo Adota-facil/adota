@@ -183,6 +183,7 @@ class CardAnuncianteWidget extends StatelessWidget {
               ),
             ],
           ),
+          if (!eDonoDoPet) ...[
           const SizedBox(height: 16),
           Container(
             padding: const EdgeInsets.all(12),
@@ -245,6 +246,7 @@ class CardAnuncianteWidget extends StatelessWidget {
               ),
             ],
           ),
+          ],
         ],
       ),
     );
