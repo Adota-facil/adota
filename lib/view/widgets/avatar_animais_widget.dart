@@ -4,15 +4,21 @@ import 'package:flutter_svg/svg.dart';
 class AvatarAnimais extends StatelessWidget {
   final String nome;
   final String iconeSvg;
+  final VoidCallback? onPressed;
 
-  const AvatarAnimais({super.key, required this.iconeSvg, required this.nome});
+  const AvatarAnimais({
+    super.key,
+    required this.iconeSvg,
+    required this.nome,
+    this.onPressed,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         ElevatedButton(
-          onPressed: () {},
+          onPressed: onPressed,
           style: ElevatedButton.styleFrom(
             minimumSize: Size(60, 60),
             backgroundColor: const Color(0xDDFEAA62),
