@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class SearchPageView extends StatefulWidget {
-  const SearchPageView({super.key});
+  final String? categoriaInicial;
+
+  const SearchPageView({super.key, this.categoriaInicial});
 
   @override
   State<SearchPageView> createState() => _SearchPageViewState();
@@ -14,6 +16,13 @@ class SearchPageView extends StatefulWidget {
 class _SearchPageViewState extends State<SearchPageView> {
   final TextEditingController _searchController = TextEditingController();
   String _termoBusca = '';
+  String? _categoriaSelecionada;
+
+  @override
+  void initState() {
+    super.initState();
+    _categoriaSelecionada = widget.categoriaInicial;
+  }
 
   void _runFilter(String enteredKeyword) {
     setState(() {
@@ -27,10 +36,16 @@ class _SearchPageViewState extends State<SearchPageView> {
   }
 
   List<PetModel> _filtrar(List<PetModel> pets) {
-    if (_termoBusca.isEmpty) return pets;
+    final petsDaCategoria = _categoriaSelecionada == null
+        ? pets
+        : pets
+              .where((pet) => pet.especie == _categoriaSelecionada)
+              .toList();
+
+    if (_termoBusca.isEmpty) return petsDaCategoria;
 
     final query = _termoBusca.toLowerCase();
-    return pets.where((pet) {
+    return petsDaCategoria.where((pet) {
       final nameMatches = pet.nome.toLowerCase().contains(query);
       final infoMatches = pet.informacoesFormatadas.toLowerCase().contains(
         query,

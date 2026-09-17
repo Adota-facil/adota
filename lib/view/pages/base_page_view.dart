@@ -89,7 +89,9 @@ class _BasePageViewState extends State<BasePageView> {
               controller: _pageController,
               onPageChanged: _onPageChanged,
               children: [
-                HomePageView(),
+                HomePageView(
+                  onCategoriaSelecionada: (_) => _onBottomNavTap(1),
+                ),
                 const SearchPageView(),
                 const CadastroPetView(),
                 const PerfilUsuarioView(),

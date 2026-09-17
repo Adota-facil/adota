@@ -11,7 +11,9 @@ const List<String> _bannersPromocionais = ["assets/image/image 20.png"];
 const List<String> _bannersSecundarios = ["assets/image/Rectangle 30.png"];
 
 class HomePageView extends StatelessWidget {
-  const HomePageView({super.key});
+  final ValueChanged<String>? onCategoriaSelecionada;
+
+  const HomePageView({super.key, this.onCategoriaSelecionada});
 
   @override
   Widget build(BuildContext context) {
@@ -141,7 +143,7 @@ class HomePageView extends StatelessWidget {
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
-              children: const [
+              children: [
                 Padding(
                   padding: const EdgeInsets.only(left: 20),
                   child: Text(
@@ -162,26 +164,29 @@ class HomePageView extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    GestureDetector(
-                      onTap: () => controller.filtrarPorCategoria("Cachorro"),
-                      child: AvatarAnimais(
-                        iconeSvg: 'assets/image/lucide_dog.svg',
-                        nome: "Cachorro",
-                      ),
+                    AvatarAnimais(
+                      onPressed: () {
+                        controller.filtrarPorCategoria("Cachorro");
+                        onCategoriaSelecionada?.call("Cachorro");
+                      },
+                      iconeSvg: 'assets/image/lucide_dog.svg',
+                      nome: "Cachorro",
                     ),
-                    GestureDetector(
-                      onTap: () => controller.filtrarPorCategoria("Gato"),
-                      child: AvatarAnimais(
-                        iconeSvg: 'assets/image/Group.svg',
-                        nome: "Gatos",
-                      ),
+                    AvatarAnimais(
+                      onPressed: () {
+                        controller.filtrarPorCategoria("Gato");
+                        onCategoriaSelecionada?.call("Gato");
+                      },
+                      iconeSvg: 'assets/image/Group.svg',
+                      nome: "Gatos",
                     ),
-                    GestureDetector(
-                      onTap: () => controller.filtrarPorCategoria("Outros"),
-                      child: AvatarAnimais(
-                        iconeSvg: "assets/image/material-symbols_add.svg",
-                        nome: "Outros",
-                      ),
+                    AvatarAnimais(
+                      onPressed: () {
+                        controller.filtrarPorCategoria("Outros");
+                        onCategoriaSelecionada?.call("Outros");
+                      },
+                      iconeSvg: "assets/image/material-symbols_add.svg",
+                      nome: "Outros",
                     ),
                   ],
                 ),
