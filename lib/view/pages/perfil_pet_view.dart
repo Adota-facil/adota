@@ -273,7 +273,7 @@ class PerfilPetView extends StatelessWidget {
                     nomeAnunciante: controller.carregandoAnunciante
                         ? 'Carregando...'
                         : controller.nomeAnunciante,
-                    localizacao: pet.localizacao,
+                    localizacao: controller.localizacaoAnunciante,
                     fotoPerfilUrl: controller.fotoAnunciante,
                     quantidadeAvaliacoes: controller.quantidadeAvaliacoes,
                     mediaAvaliacao: controller.mediaAvaliacao,

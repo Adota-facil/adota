@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class CadastroUsuarioController {
@@ -12,10 +14,12 @@ class CadastroUsuarioController {
   final senhaController = TextEditingController();
   final confirmarSenhaController = TextEditingController();
 
-  // Validações de Regra de Negócio
+  bool carregando = false;
+
   String? validarNome(String? value) {
-    if (value == null || value.trim().isEmpty)
+    if (value == null || value.trim().isEmpty) {
       return 'Informe seu nome completo';
+    }
     return null;
   }
 
@@ -48,13 +52,46 @@ class CadastroUsuarioController {
     return null;
   }
 
-  // Ação principal de cadastro
   Future<bool> cadastrarUsuario() async {
-    if (formKey.currentState!.validate()) {
-      print("Enviando cadastro para o banco de dados...");
-      return true;
+    if (!formKey.currentState!.validate()) {
+      return false;
     }
-    return false;
+
+    try {
+      carregando = true;
+
+      UserCredential credencial = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: senhaController.text,
+      );
+
+      final user = credencial.user;
+
+      if (user != null) {
+         
+        await FirebaseFirestore.instance
+            .collection('usuarios')
+            .doc(user.uid)
+            .set({
+          'uid': user.uid,
+          'nome': nomeController.text.trim(),
+          'cpf': cpfController.text.trim(),
+          'email': emailController.text.trim(),
+          'whatsapp': whatsappController.text.trim(),
+          'cidade': cidadeController.text.trim(),
+          'estado': estadoController.text.trim(),
+          'criadoEm': FieldValue.serverTimestamp(),
+        });
+      }
+
+      carregando = false;
+      return true;
+    } catch (e) {
+      carregando = false;
+      print("Erro ao cadastrar usuário: $e");
+      return false;
+    }
   }
 
   void dispose() {

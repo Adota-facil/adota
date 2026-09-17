@@ -72,7 +72,7 @@ class _PerfilUsuarioContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // O Consumer reconstrói a tela automaticamente sempre que o notifyListeners() é disparado
+
     return Consumer<PerfilUsuarioController>(
       builder: (context, controller, child) {
         if (!controller.logado) {
