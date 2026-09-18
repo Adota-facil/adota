@@ -35,6 +35,8 @@ class AuthController extends ChangeNotifier {
     String? telefone,
     String? estado,
     String? cidade,
+    String? fotoUrl,
+    String? fotoBase64,
   }) async {
     _setCarregando(true);
     try {
@@ -44,6 +46,8 @@ class AuthController extends ChangeNotifier {
         nome: nome,
         email: email,
         telefone: telefone,
+        fotoUrl: fotoUrl ?? '',
+        fotoBase64: fotoBase64 ?? '',
         tipo: tipo,
         tipoAnunciante: tipoAnunciante,
         estado: estado ?? '',

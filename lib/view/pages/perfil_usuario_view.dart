@@ -2,7 +2,7 @@ import 'package:adota_facil/controllers/auth_controller.dart';
 import 'package:adota_facil/controllers/perfil_usuario_controller.dart';
 import 'package:adota_facil/models/repositories/usuario_repository.dart';
 import 'package:adota_facil/models/usuario_model.dart';
-import 'package:adota_facil/services/armazenamento_base64.dart';
+import 'package:adota_facil/services/armazenamento_firebase_storage.dart';
 import 'package:adota_facil/view/pages/login_view.dart';
 import 'package:adota_facil/view/pages/meus_anuncios_view.dart';
 import 'package:adota_facil/view/widgets/pet_image_widget.dart';
@@ -29,7 +29,7 @@ class _PerfilUsuarioViewState extends State<PerfilUsuarioView> {
     _controller = PerfilUsuarioController(
       context.read<AuthController>(),
       _usuarioRepository,
-      ArmazenamentoBase64(),
+      ArmazenamentoFirebaseStorage(),
     );
   }
 

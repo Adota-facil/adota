@@ -48,7 +48,11 @@ class PerfilUsuarioController extends ChangeNotifier {
     try {
       final arquivoTemporario =
           await _bytesParaArquivoTemporario(bytesAjustados, usuarioId);
-      final resultado = await _estrategiaFoto.salvar(arquivoTemporario, usuarioId);
+      final resultado = await _estrategiaFoto.salvar(
+        arquivoTemporario,
+        usuarioId,
+        pasta: 'usuarios',
+      );
 
       final atualizado = usuarioAtual.copyWith(
         fotoUrl: resultado.url,

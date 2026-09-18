@@ -29,8 +29,8 @@ class HomeController extends ChangeNotifier
     this._repository,
     this._estrategiaFoto,
     this._analytics, {
-    void Function(List<PetModel>)? aoAtualizarAnimais,
-  }) : _aoAtualizarAnimais = aoAtualizarAnimais;
+    this._aoAtualizarAnimais,
+  });
 
   List<PetModel> _animais = [];
 
@@ -53,7 +53,7 @@ class HomeController extends ChangeNotifier
   @override
   bool get salvando => _salvando;
 
-  get curiosidades => null;
+  Null get curiosidades => null;
 
   @override
   Future<void> carregarAnimais() => _executarComCarregando(
@@ -105,7 +105,11 @@ class HomeController extends ChangeNotifier
 
   Future<PetModel> _prepararComFoto(PetModel animal, File arquivoFoto) async {
     final petId = animal.id.isNotEmpty ? animal.id : _repository.gerarNovoId();
-    final resultado = await _estrategiaFoto.salvar(arquivoFoto, petId);
+    final resultado = await _estrategiaFoto.salvar(
+      arquivoFoto,
+      petId,
+      pasta: 'pets',
+    );
     return animal.copyWith(
       id: petId,
       fotoUrl: resultado.url,

@@ -13,8 +13,9 @@ class CadastroUsuarioController {
   final confirmarSenhaController = TextEditingController();
 
   String? validarNome(String? value) {
-    if (value == null || value.trim().isEmpty)
+    if (value == null || value.trim().isEmpty) {
       return 'Informe seu nome completo';
+    }
     return null;
   }
 

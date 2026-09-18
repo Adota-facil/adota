@@ -85,7 +85,7 @@ class _AjusteFotoState extends State<AjusteFoto> {
           cornerDotBuilder: (size, edgeAlignment) =>
               const DotControl(color: Colors.green),
           baseColor: Colors.black,
-          maskColor: Colors.black.withOpacity(0.7),
+          maskColor: Colors.black.withValues(alpha: 0.7),
           onCropped: (CropResult result) async {
             if (!mounted) return;
 

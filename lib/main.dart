@@ -5,7 +5,7 @@ import 'package:adota_facil/firebase_options.dart';
 import 'package:adota_facil/models/repositories/animal_repository.dart';
 import 'package:adota_facil/models/repositories/auth_repository.dart';
 import 'package:adota_facil/models/repositories/usuario_repository.dart';
-import 'package:adota_facil/services/armazenamento_base64.dart';
+import 'package:adota_facil/services/armazenamento_firebase_storage.dart';
 import 'package:adota_facil/services/firebase_analytics_service.dart';
 import 'package:adota_facil/view/widgets/base_page_widget.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (context) => HomeController(
             AnimalRepositoryImpl(),
-            ArmazenamentoBase64(),
+            ArmazenamentoFirebaseStorage(),
             FirebaseAnalyticsService(),
             aoAtualizarAnimais:
                 context.read<NotificacaoController>().atualizarPets,

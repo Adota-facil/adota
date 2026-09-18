@@ -32,7 +32,7 @@ class CardAnuncianteWidget extends StatelessWidget {
         border: Border.all(color: Colors.grey.shade300, width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -154,8 +154,8 @@ class CardAnuncianteWidget extends StatelessWidget {
                           style: OutlinedButton.styleFrom(
                             foregroundColor: Colors.amber.shade900,
                             side: BorderSide(color: Colors.amber.shade400),
-                            backgroundColor: Colors.amber.shade50.withOpacity(
-                              0.5,
+                            backgroundColor: Colors.amber.shade50.withValues(
+                              alpha: 0.5,
                             ),
                             padding: const EdgeInsets.symmetric(horizontal: 10),
                             shape: RoundedRectangleBorder(

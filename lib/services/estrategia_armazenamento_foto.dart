@@ -18,5 +18,9 @@ class ResultadoArmazenamentoFoto {
 }
 
 abstract class EstrategiaArmazenamentoFoto {
-  Future<ResultadoArmazenamentoFoto> salvar(File arquivo, String petId);
+  Future<ResultadoArmazenamentoFoto> salvar(
+    File arquivo,
+    String id, {
+    String pasta = 'pets',
+  });
 }

@@ -1,5 +1,10 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:adota_facil/controllers/auth_controller.dart';
+import 'package:adota_facil/view/widgets/ajuste_foto_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 class CadastroUsuarioView extends StatefulWidget {
@@ -22,6 +27,8 @@ class _CadastroUsuarioViewState extends State<CadastroUsuarioView> {
   String _tipo = 'adotante';
   String _tipoAnunciante = 'Protetor Independente';
   bool _senhaVisivel = false;
+  Uint8List? _fotoBytes;
+  String _fotoBase64 = '';
 
   static const _tiposAnunciante = ['Protetor Independente', 'ONG', 'Abrigo'];
 
@@ -35,6 +42,47 @@ class _CadastroUsuarioViewState extends State<CadastroUsuarioView> {
     _senhaController.dispose();
     _confirmarSenhaController.dispose();
     super.dispose();
+  }
+
+  Future<void> _selecionarFoto() async {
+    final source = await showModalBottomSheet<ImageSource>(
+      context: context,
+      builder: (context) => SafeArea(
+        child: Wrap(
+          children: [
+            ListTile(
+              leading: const Icon(Icons.photo_library),
+              title: const Text('Escolher da galeria'),
+              onTap: () => Navigator.of(context).pop(ImageSource.gallery),
+            ),
+            ListTile(
+              leading: const Icon(Icons.camera_alt),
+              title: const Text('Tirar foto agora'),
+              onTap: () => Navigator.of(context).pop(ImageSource.camera),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    if (source == null) return;
+
+    final arquivo = await ImagePicker().pickImage(source: source, imageQuality: 85);
+    if (arquivo == null) return;
+
+    final bytesOriginais = await arquivo.readAsBytes();
+    if (!context.mounted) return;
+
+    final bytesAjustados = await Navigator.of(context).push<Uint8List>(
+      MaterialPageRoute(builder: (_) => AjusteFoto(imageBytes: bytesOriginais)),
+    );
+
+    if (bytesAjustados == null) return;
+
+    setState(() {
+      _fotoBytes = bytesAjustados;
+      _fotoBase64 = base64Encode(bytesAjustados);
+    });
   }
 
   Future<void> _cadastrar() async {
@@ -52,6 +100,7 @@ class _CadastroUsuarioViewState extends State<CadastroUsuarioView> {
           : _telefoneController.text.trim(),
       estado: _estadoController.text.trim(),
       cidade: _cidadeController.text.trim(),
+      fotoBase64: _fotoBase64,
     );
 
     if (!mounted) return;
@@ -125,6 +174,37 @@ class _CadastroUsuarioViewState extends State<CadastroUsuarioView> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 8),
+              Center(
+                child: Column(
+                  children: [
+                    GestureDetector(
+                      onTap: _selecionarFoto,
+                      child: CircleAvatar(
+                        radius: 48,
+                        backgroundColor: const Color(0xFFF5F5F5),
+                        backgroundImage:
+                            _fotoBytes != null ? MemoryImage(_fotoBytes!) : null,
+                        child: _fotoBytes == null
+                            ? const Icon(
+                                Icons.add_a_photo,
+                                size: 30,
+                                color: Color(0xFFEF9737),
+                              )
+                            : null,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    TextButton.icon(
+                      onPressed: _selecionarFoto,
+                      icon: const Icon(Icons.photo_camera),
+                      label: Text(
+                        _fotoBytes == null ? 'Adicionar foto' : 'Trocar foto',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
               TextFormField(
                 controller: _nomeController,
                 decoration: const InputDecoration(
