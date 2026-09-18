@@ -5,6 +5,7 @@ import 'package:adota_facil/controllers/home_controller_interfaces.dart';
 import 'package:adota_facil/models/pet_model.dart';
 import 'package:adota_facil/models/repositories/animal_repository.dart';
 import 'package:adota_facil/services/analytics_service.dart';
+import 'package:adota_facil/services/armazenamento_base64.dart';
 import 'package:adota_facil/services/estrategia_armazenamento_foto.dart';
 import 'package:flutter/material.dart';
 
@@ -105,15 +106,17 @@ class HomeController extends ChangeNotifier
 
   Future<PetModel> _prepararComFoto(PetModel animal, File arquivoFoto) async {
     final petId = animal.id.isNotEmpty ? animal.id : _repository.gerarNovoId();
-    final resultado = await _estrategiaFoto.salvar(
+    final resultado = await EstrategiaArmazenamentoFotoHelper.salvarComFallback(
+      _estrategiaFoto,
       arquivoFoto,
       petId,
+      fallback: ArmazenamentoBase64(),
       pasta: 'pets',
     );
     return animal.copyWith(
       id: petId,
-      fotoUrl: resultado.url,
-      fotoBase64: resultado.base64,
+      fotoUrl: resultado.url ?? '',
+      fotoBase64: resultado.base64 ?? '',
     );
   }
 

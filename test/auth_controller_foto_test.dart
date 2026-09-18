@@ -1,9 +1,13 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 
 import 'package:adota_facil/controllers/auth_controller.dart';
 import 'package:adota_facil/models/repositories/auth_repository.dart';
 import 'package:adota_facil/models/repositories/usuario_repository.dart';
 import 'package:adota_facil/models/usuario_model.dart';
+import 'package:adota_facil/services/armazenamento_base64.dart';
+import 'package:adota_facil/services/estrategia_armazenamento_foto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -64,6 +68,17 @@ class FakeUsuarioRepository implements UsuarioRepository {
   Stream<UsuarioModel?> observarUsuario(String id) => Stream.value(null);
 }
 
+class _StorageQueFalha implements EstrategiaArmazenamentoFoto {
+  @override
+  Future<ResultadoArmazenamentoFoto> salvar(
+    File arquivo,
+    String id, {
+    String pasta = 'pets',
+  }) async {
+    throw const SocketException('upload falhou');
+  }
+}
+
 void main() {
   test('deve salvar fotoBase64 no cadastro do usuário', () async {
     final authRepo = FakeAuthRepository();
@@ -81,5 +96,28 @@ void main() {
     expect(sucesso, isTrue);
     expect(usuarioRepo.salvo, isNotNull);
     expect(usuarioRepo.salvo!.fotoBase64, 'abc123');
+  });
+
+  test('deve usar fallback em base64 quando o storage principal falha', () async {
+    final arquivo = File('${Directory.systemTemp.path}/foto_fallback_test.jpg');
+    await arquivo.writeAsBytes(utf8.encode('imagem de teste'));
+
+    addTearDown(() async {
+      if (await arquivo.exists()) {
+        await arquivo.delete();
+      }
+    });
+
+    final resultado = await EstrategiaArmazenamentoFotoHelper.salvarComFallback(
+      _StorageQueFalha(),
+      arquivo,
+      'usuario-123',
+      fallback: ArmazenamentoBase64(),
+      pasta: 'usuarios',
+    );
+
+    expect(resultado.url, isNull);
+    expect(resultado.base64, isNotNull);
+    expect(resultado.base64, isNotEmpty);
   });
 }

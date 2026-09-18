@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:adota_facil/controllers/auth_controller.dart';
 import 'package:adota_facil/models/repositories/usuario_repository.dart';
 import 'package:adota_facil/models/usuario_model.dart';
+import 'package:adota_facil/services/armazenamento_base64.dart';
 import 'package:adota_facil/services/estrategia_armazenamento_foto.dart';
 import 'package:adota_facil/view/widgets/ajuste_foto_widget.dart';
 import 'package:flutter/material.dart';
@@ -48,15 +49,17 @@ class PerfilUsuarioController extends ChangeNotifier {
     try {
       final arquivoTemporario =
           await _bytesParaArquivoTemporario(bytesAjustados, usuarioId);
-      final resultado = await _estrategiaFoto.salvar(
+      final resultado = await EstrategiaArmazenamentoFotoHelper.salvarComFallback(
+        _estrategiaFoto,
         arquivoTemporario,
         usuarioId,
+        fallback: ArmazenamentoBase64(),
         pasta: 'usuarios',
       );
 
       final atualizado = usuarioAtual.copyWith(
-        fotoUrl: resultado.url,
-        fotoBase64: resultado.base64,
+        fotoUrl: resultado.url ?? '',
+        fotoBase64: resultado.base64 ?? '',
       );
       await _usuarioRepository.salvar(atualizado);
       if (context.mounted) {
