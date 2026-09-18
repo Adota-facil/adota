@@ -1,25 +1,18 @@
-import 'dart:io';
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:adota_facil/controllers/auth_controller.dart';
 import 'package:adota_facil/models/repositories/usuario_repository.dart';
 import 'package:adota_facil/models/usuario_model.dart';
-import 'package:adota_facil/services/estrategia_armazenamento_foto.dart';
 import 'package:adota_facil/view/widgets/ajuste_foto_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
 
 class PerfilUsuarioController extends ChangeNotifier {
   final AuthController _authController;
   final UsuarioRepository _usuarioRepository;
-  final EstrategiaArmazenamentoFoto _estrategiaFoto;
 
-  PerfilUsuarioController(
-    this._authController,
-    this._usuarioRepository,
-    this._estrategiaFoto,
-  );
+  PerfilUsuarioController(this._authController, this._usuarioRepository);
 
   bool _carregandoFoto = false;
   bool get carregandoFoto => _carregandoFoto;
@@ -31,8 +24,9 @@ class PerfilUsuarioController extends ChangeNotifier {
     final usuarioId = _authController.usuarioId;
     if (usuarioId == null) return;
 
-    final arquivoEscolhido =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
+    final arquivoEscolhido = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+    );
     if (arquivoEscolhido == null) return;
 
     final bytesOriginais = await arquivoEscolhido.readAsBytes();
@@ -46,13 +40,9 @@ class PerfilUsuarioController extends ChangeNotifier {
     _carregandoFoto = true;
     notifyListeners();
     try {
-      final arquivoTemporario =
-          await _bytesParaArquivoTemporario(bytesAjustados, usuarioId);
-      final resultado = await _estrategiaFoto.salvar(arquivoTemporario, usuarioId);
-
       final atualizado = usuarioAtual.copyWith(
-        fotoUrl: resultado.url,
-        fotoBase64: resultado.base64,
+        fotoUrl: '',
+        fotoBase64: base64Encode(bytesAjustados),
       );
       await _usuarioRepository.salvar(atualizado);
       if (context.mounted) {
@@ -70,12 +60,6 @@ class PerfilUsuarioController extends ChangeNotifier {
       _carregandoFoto = false;
       notifyListeners();
     }
-  }
-
-  Future<File> _bytesParaArquivoTemporario(Uint8List bytes, String id) async {
-    final diretorio = await getTemporaryDirectory();
-    final arquivo = File('${diretorio.path}/perfil_$id.jpg');
-    return arquivo.writeAsBytes(bytes);
   }
 
   Future<void> sairDaConta(BuildContext context) async {

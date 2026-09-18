@@ -62,7 +62,7 @@ class NotificacoesSheet extends StatelessWidget {
                       controller: scrollController,
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       itemCount: itens.length,
-                      separatorBuilder: (_, __) => const Divider(height: 1),
+                      separatorBuilder: (_, _) => const Divider(height: 1),
                       itemBuilder: (context, index) {
                         final pet = itens[index];
                         return ListTile(

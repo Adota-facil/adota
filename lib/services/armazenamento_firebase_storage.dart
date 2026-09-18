@@ -5,8 +5,12 @@ import 'package:firebase_storage/firebase_storage.dart';
 
 class ArmazenamentoFirebaseStorage implements EstrategiaArmazenamentoFoto {
   @override
-  Future<ResultadoArmazenamentoFoto> salvar(File arquivo, String petId) async {
-    final referencia = FirebaseStorage.instance.ref('pets/$petId.jpg');
+  Future<ResultadoArmazenamentoFoto> salvar(
+    File arquivo,
+    String id, {
+    String pasta = 'pets',
+  }) async {
+    final referencia = FirebaseStorage.instance.ref('$pasta/$id/foto.jpg');
     await referencia.putFile(arquivo);
     final String url = await referencia.getDownloadURL();
     return ResultadoArmazenamentoFoto.url(url);

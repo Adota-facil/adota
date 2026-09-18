@@ -18,5 +18,25 @@ class ResultadoArmazenamentoFoto {
 }
 
 abstract class EstrategiaArmazenamentoFoto {
-  Future<ResultadoArmazenamentoFoto> salvar(File arquivo, String petId);
+  Future<ResultadoArmazenamentoFoto> salvar(
+    File arquivo,
+    String id, {
+    String pasta = 'pets',
+  });
+}
+
+class EstrategiaArmazenamentoFotoHelper {
+  static Future<ResultadoArmazenamentoFoto> salvarComFallback(
+    EstrategiaArmazenamentoFoto primaria,
+    File arquivo,
+    String id, {
+    required EstrategiaArmazenamentoFoto fallback,
+    String pasta = 'pets',
+  }) async {
+    try {
+      return await primaria.salvar(arquivo, id, pasta: pasta);
+    } catch (_) {
+      return await fallback.salvar(arquivo, id, pasta: pasta);
+    }
+  }
 }
