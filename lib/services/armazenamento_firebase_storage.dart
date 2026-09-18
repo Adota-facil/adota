@@ -10,7 +10,7 @@ class ArmazenamentoFirebaseStorage implements EstrategiaArmazenamentoFoto {
     String id, {
     String pasta = 'pets',
   }) async {
-    final referencia = FirebaseStorage.instance.ref('$pasta/$id.jpg');
+    final referencia = FirebaseStorage.instance.ref('$pasta/$id/foto.jpg');
     await referencia.putFile(arquivo);
     final String url = await referencia.getDownloadURL();
     return ResultadoArmazenamentoFoto.url(url);

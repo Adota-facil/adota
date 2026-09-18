@@ -183,68 +183,68 @@ class CardAnuncianteWidget extends StatelessWidget {
             ],
           ),
           if (!eDonoDoPet) ...[
-          const SizedBox(height: 16),
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: const Color(0xFFE3F2FD),
-              borderRadius: BorderRadius.circular(8),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: const Color(0xFFE3F2FD),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                children: const [
+                  Icon(
+                    Icons.verified_user_outlined,
+                    color: Color(0xFF1565C0),
+                    size: 20,
+                  ),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      'Converse pelo WhatsApp e confirme todas as informações antes de combinar a adoção.',
+                      style: TextStyle(
+                        color: Color(0xFF0D47A1),
+                        fontSize: 12,
+                        height: 1.3,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-            child: Row(
-              children: const [
-                Icon(
-                  Icons.verified_user_outlined,
-                  color: Color(0xFF1565C0),
-                  size: 20,
+            const Divider(height: 24, color: Color(0xFFEEEEEE)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Tem interesse neste pet?',
+                  style: TextStyle(color: Colors.black54, fontSize: 13),
                 ),
-                SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    'Converse pelo WhatsApp e confirme todas as informações antes de combinar a adoção.',
+                ElevatedButton.icon(
+                  onPressed: onContatoPressed,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF1976D2),
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 10,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  icon: const Icon(Icons.chat, color: Colors.white, size: 16),
+                  label: const Text(
+                    'Entrar em contato',
                     style: TextStyle(
-                      color: Color(0xFF0D47A1),
-                      fontSize: 12,
-                      height: 1.3,
-                      fontWeight: FontWeight.w500,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
                     ),
                   ),
                 ),
               ],
             ),
-          ),
-          const Divider(height: 24, color: Color(0xFFEEEEEE)),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                'Tem interesse neste pet?',
-                style: TextStyle(color: Colors.black54, fontSize: 13),
-              ),
-              ElevatedButton.icon(
-                onPressed: onContatoPressed,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF1976D2),
-                  elevation: 0,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 10,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                icon: const Icon(Icons.chat, color: Colors.white, size: 16),
-                label: const Text(
-                  'Entrar em contato',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
-                  ),
-                ),
-              ),
-            ],
-          ),
           ],
         ],
       ),
