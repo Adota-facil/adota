@@ -33,8 +33,6 @@ class _PerfilUsuarioViewState extends State<PerfilUsuarioView> {
     );
   }
 
-  /// Só cria (e inscreve) um stream novo se o usuário logado mudou —
-  /// evita que o StreamBuilder resete a cada rebuild da tela.
   Stream<UsuarioModel?> _obterStreamUsuario(String usuarioId) {
     if (_streamUsuario == null || _usuarioIdDoStream != usuarioId) {
       _usuarioIdDoStream = usuarioId;
@@ -150,20 +148,14 @@ class _PerfilUsuarioViewState extends State<PerfilUsuarioView> {
 
   @override
   Widget build(BuildContext context) {
-    // context.watch garante que essa tela reconstrói sozinha sempre que o
-    // AuthController mudar — incluindo quando uma sessão é restaurada
-    // automaticamente pelo Firebase, não só em login/logout manual.
     final authController = context.watch<AuthController>();
 
     if (!authController.logado) {
-      _streamUsuario = null; // limpa cache se a sessão sair
+      _streamUsuario = null;
       _usuarioIdDoStream = null;
       return _construirTelaNaoLogado();
     }
 
-    // StreamBuilder observa o documento em tempo real: qualquer alteração
-    // no Firestore (inclusive a foto que o próprio editarFotoPerfil salva)
-    // chega aqui sozinha, sem precisar de nenhum sistema de aviso manual.
     return StreamBuilder<UsuarioModel?>(
       stream: _obterStreamUsuario(authController.usuarioId!),
       builder: (context, snapshot) {

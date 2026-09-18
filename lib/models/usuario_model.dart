@@ -8,11 +8,8 @@ class UsuarioModel {
   final String fotoUrl;
   final String fotoBase64;
 
-  /// 'adotante' | 'anunciante' | 'ambos'
   final String tipo;
 
-  /// 'Protetor Independente' | 'ONG' | 'Abrigo' — só preenchido quando
-  /// [tipo] inclui anunciante.
   final String? tipoAnunciante;
 
   final String estado;

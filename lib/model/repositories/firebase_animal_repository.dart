@@ -1,12 +1,10 @@
 import 'package:adota_facil/models/pet_model.dart';
 import 'package:adota_facil/model/repositories/i_animal_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-// Importe a interface e o model
 
 class FirebaseAnimalRepository implements IAnimalRepository {
   final FirebaseFirestore _firestore;
 
-  // Construtor recebendo a instância para facilitar injeção de dependência e testes
   FirebaseAnimalRepository(this._firestore);
 
   @override
@@ -20,7 +18,6 @@ class FirebaseAnimalRepository implements IAnimalRepository {
       }).toList();
       
     } catch (e) {
-      // Aqui você pode logar o erro no Crashlytics, por exemplo
       throw Exception('Erro ao buscar a lista de animais no Firestore: $e');
     }
   }

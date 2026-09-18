@@ -25,8 +25,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        // Precisa vir ANTES do HomeController na lista: o create do
-        // HomeController lê esse provider via context.read() logo abaixo.
         ChangeNotifierProvider(create: (_) => NotificacaoController()),
         ChangeNotifierProvider(
           create: (context) => HomeController(

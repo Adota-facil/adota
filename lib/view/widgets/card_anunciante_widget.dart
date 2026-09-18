@@ -6,7 +6,7 @@ class CardAnuncianteWidget extends StatelessWidget {
   final String? fotoPerfilUrl;
   final int quantidadeAvaliacoes;
   final double mediaAvaliacao;
-  final bool eDonoDoPet; // <--- NOVO PARÂMETRO
+  final bool eDonoDoPet;
   final VoidCallback onAvaliarTapped;
   final VoidCallback onContatoPressed;
 
@@ -17,7 +17,7 @@ class CardAnuncianteWidget extends StatelessWidget {
     this.fotoPerfilUrl,
     required this.quantidadeAvaliacoes,
     required this.mediaAvaliacao,
-    required this.eDonoDoPet, // <--- NOVO PARÂMETRO
+    required this.eDonoDoPet,
     required this.onAvaliarTapped,
     required this.onContatoPressed,
   });
@@ -145,7 +145,6 @@ class CardAnuncianteWidget extends StatelessWidget {
                       ],
                     ),
 
-                    // SÓ EXIBE O BOTÃO SE NÃO FOR O DONO DO PET
                     if (!eDonoDoPet) ...[
                       const SizedBox(height: 10),
                       SizedBox(

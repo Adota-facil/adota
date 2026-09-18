@@ -12,7 +12,6 @@ class CadastroUsuarioController {
   final senhaController = TextEditingController();
   final confirmarSenhaController = TextEditingController();
 
-  // Validações de Regra de Negócio
   String? validarNome(String? value) {
     if (value == null || value.trim().isEmpty)
       return 'Informe seu nome completo';
@@ -48,7 +47,6 @@ class CadastroUsuarioController {
     return null;
   }
 
-  // Ação principal de cadastro
   Future<bool> cadastrarUsuario() async {
     if (formKey.currentState!.validate()) {
       print("Enviando cadastro para o banco de dados...");

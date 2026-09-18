@@ -26,7 +26,7 @@ class NotificacaoController extends ChangeNotifier {
       final dataA = a.criadoEm;
       final dataB = b.criadoEm;
       if (dataA == null && dataB == null) return 0;
-      if (dataA == null) return 1; // sem data vai pro final da lista
+      if (dataA == null) return 1;
       if (dataB == null) return -1;
       return dataB.compareTo(dataA);
     });
@@ -41,16 +41,11 @@ class NotificacaoController extends ChangeNotifier {
         .length;
   }
 
-  /// Chame isso sempre que tiver a lista atualizada de TODOS os pets
-  /// (ex: dentro do HomeController.carregarAnimais(), via o callback
-  /// aoAtualizarAnimais).
   void atualizarPets(List<PetModel> pets) {
     _pets = pets;
     notifyListeners();
   }
 
-  /// Alternativa a atualizarPets: se você tiver um stream em tempo real
-  /// (ex: vindo do Firestore), conecta aqui pra atualizar sozinho.
   void observarPets(Stream<List<PetModel>> streamDePets) {
     _subscription?.cancel();
     _subscription = streamDePets.listen(atualizarPets);

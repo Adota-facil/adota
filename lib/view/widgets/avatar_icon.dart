@@ -44,8 +44,6 @@ class _AvatarButtonState extends State<AvatarButton> {
 
     return GestureDetector(
       onTap: () {
-        // Já logado: não faz nada aqui (o perfil completo já está
-        // na aba "Perfil" da navegação inferior).
         if (authController.logado) return;
 
         Navigator.of(context).push(

@@ -3,7 +3,7 @@ import 'package:adota_facil/controllers/perfil_pet_controller.dart';
 import 'package:adota_facil/models/pet_model.dart';
 import 'package:adota_facil/view/pages/editar_pet_view.dart';
 import 'package:adota_facil/view/widgets/appBar_Widget.dart';
-import 'package:adota_facil/view/widgets/card_anunciante_widget.dart'; // <--- Importação necessária aqui
+import 'package:adota_facil/view/widgets/card_anunciante_widget.dart';
 import 'package:adota_facil/view/widgets/pet_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

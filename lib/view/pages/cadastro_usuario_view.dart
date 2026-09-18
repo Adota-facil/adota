@@ -57,8 +57,8 @@ class _CadastroUsuarioViewState extends State<CadastroUsuarioView> {
     if (!mounted) return;
     if (sucesso) {
       Navigator.of(context)
-        ..pop() // fecha a tela de Cadastro
-        ..pop(); // fecha a tela de Login também — já está logado
+        ..pop()
+        ..pop();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(authController.erro ?? 'Erro ao cadastrar.')),

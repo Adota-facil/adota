@@ -10,11 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 
-/// Cuida só das AÇÕES do perfil (trocar foto, sair da conta). Os DADOS do
-/// usuário não ficam mais guardados aqui — a PerfilUsuarioView observa o
-/// documento do Firestore diretamente via stream, então esse controller
-/// não precisa (e não deve) manter uma cópia própria que possa ficar
-/// desatualizada.
 class PerfilUsuarioController extends ChangeNotifier {
   final AuthController _authController;
   final UsuarioRepository _usuarioRepository;
@@ -29,10 +24,6 @@ class PerfilUsuarioController extends ChangeNotifier {
   bool _carregandoFoto = false;
   bool get carregandoFoto => _carregandoFoto;
 
-  /// Escolhe uma foto da galeria, recorta (reaproveitando a tela
-  /// AjusteFoto já usada pros pets), salva via EstrategiaArmazenamentoFoto
-  /// e atualiza o documento do usuário. [usuarioAtual] vem de quem chama
-  /// (a View, que já tem o dado fresco vindo do StreamBuilder).
   Future<void> editarFotoPerfil(
     BuildContext context,
     UsuarioModel usuarioAtual,
@@ -50,7 +41,7 @@ class PerfilUsuarioController extends ChangeNotifier {
     final bytesAjustados = await Navigator.of(context).push<Uint8List>(
       MaterialPageRoute(builder: (_) => AjusteFoto(imageBytes: bytesOriginais)),
     );
-    if (bytesAjustados == null) return; // usuário cancelou o corte
+    if (bytesAjustados == null) return;
 
     _carregandoFoto = true;
     notifyListeners();
@@ -64,9 +55,6 @@ class PerfilUsuarioController extends ChangeNotifier {
         fotoBase64: resultado.base64,
       );
       await _usuarioRepository.salvar(atualizado);
-      // Não precisa guardar o resultado aqui: o StreamBuilder da View
-      // recebe essa mudança sozinho, direto do Firestore.
-
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Foto de perfil atualizada!')),

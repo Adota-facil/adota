@@ -1,8 +1,6 @@
 import 'package:adota_facil/controllers/home_controller.dart';
 import 'package:adota_facil/view/pages/curiosidades_view.dart';
 import 'package:adota_facil/view/widgets/CarouselSlider_widget.dart';
-//import 'package:adota_facil/view/pages/curiosidades_view.dart';
-//import 'package:adota_facil/view/widgets/CarouselSlider_widget.dart';
 import 'package:adota_facil/view/widgets/avatar_animais_widget.dart';
 import 'package:adota_facil/view/widgets/pet_card_widget.dart';
 import 'package:flutter/material.dart';
@@ -239,70 +237,13 @@ class HomePageView extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-              //child: _construirCarrosselCuriosidades(controller),
             ),
-            const SizedBox(height: 150), // espaço extra: nav flutuante fica por cima
+            const SizedBox(height: 150),
           ],
         ),
       ),
     );
   }
-
-  /*Widget _construirCarrosselCuriosidades(HomeController controller) {
-    if (controller.carregandoCuriosidades) {
-      return const SizedBox(
-        height: 180,
-        child: Center(child: CircularProgressIndicator()),
-      );
-    }
-    if (controller.curiosidades.isEmpty) {
-      return Container(
-        height: 180,
-        width: double.infinity,
-        decoration: BoxDecoration(
-          color: const Color(0xFF4998E5),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        alignment: Alignment.center,
-        child: const Text(
-          'Nenhuma imagem disponível 🐾',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-      );
-    }
-    return CarouselSliderWidget(
-      altura: 180,
-      items: controller.curiosidades.map((curiosidade) {
-        final viewId = 'img-${curiosidade.id}';
-
-        ui.platformViewRegistry.registerViewFactory(viewId, (int viewId) {
-          final element = web.HTMLImageElement();
-          element.src = curiosidade.urlImagem;
-          element.style.width = '100%';
-          element.style.height = '100%';
-          element.style.objectFit = 'cover';
-          element.style.borderRadius = '12px';
-
-          element.onError.listen((event) {
-            element.src = 'pexels.com';
-          });
-          return element;
-        });
-        return Container(
-          width: double.infinity,
-          margin: const EdgeInsets.symmetric(horizontal: 4),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            color: const Color(0xFFECEFF1),
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: HtmlElementView(viewType: viewId),
-          ),
-        );
-      }).toList(),
-    );
-  }*/
 }
 
 class _ListaDePets extends StatelessWidget {

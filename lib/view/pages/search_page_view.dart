@@ -80,13 +80,6 @@ class _SearchPageViewState extends State<SearchPageView> {
     }
   }
 
-  /// Garante que o valor selecionado bate EXATAMENTE (mesma grafia) com um
-  /// item da lista de opções do Dropdown. Se já existir uma opção
-  /// equivalente (ignorando maiúsc/minúsc. e espaços), retorna ela com a
-  /// grafia exata que está na lista — evita o assertion "There should be
-  /// exactly one item with [DropdownButton]'s value" quando o valor vindo
-  /// de fora (ex.: categoria selecionada na Home) tem grafia diferente da
-  /// que está nos dados (ex.: "Gato" vs "gato").
   String? _normalizarSelecao(List<String> opcoes, String? valor) {
     if (valor == null || valor.trim().isEmpty) return null;
     for (final opcao in opcoes) {
@@ -131,8 +124,6 @@ class _SearchPageViewState extends State<SearchPageView> {
             _adicionarOpcaoSelecionada(idades, idade);
             _adicionarOpcaoSelecionada(regioes, regiao);
 
-            // Normaliza a grafia do valor selecionado para bater
-            // exatamente com um item das listas acima.
             categoria = _normalizarSelecao(categorias, categoria);
             raca = _normalizarSelecao(racas, raca);
             idade = _normalizarSelecao(idades, idade);
@@ -306,7 +297,6 @@ class _SearchPageViewState extends State<SearchPageView> {
 
             const SizedBox(height: 4),
 
-            // Grid de Cards
             Expanded(child: _construirConteudo(controller, filteredPets)),
           ],
         ),
@@ -348,7 +338,7 @@ class _SearchPageViewState extends State<SearchPageView> {
     }
 
     return GridView.builder(
-      padding: const EdgeInsets.only(top: 4, bottom: 150), // espaço extra: nav flutuante fica por cima
+      padding: const EdgeInsets.only(top: 4, bottom: 150),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         crossAxisSpacing: 12,

@@ -1,9 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 
-/// Exibe a foto do pet, priorizando Base64 (salvo direto no Firestore).
-/// Cai pra [fotoUrl] se não houver base64, e pro ícone padrão se não
-/// houver nenhuma foto.
 class PetImageWidget extends StatelessWidget {
   final String fotoBase64;
   final String fotoUrl;
