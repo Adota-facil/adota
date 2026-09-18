@@ -57,8 +57,8 @@ class _CadastroUsuarioViewState extends State<CadastroUsuarioView> {
     if (!mounted) return;
     if (sucesso) {
       Navigator.of(context)
-        ..pop() // fecha a tela de Cadastro
-        ..pop(); // fecha a tela de Login também — já está logado
+        ..pop()
+        ..pop();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(authController.erro ?? 'Erro ao cadastrar.')),
@@ -67,6 +67,13 @@ class _CadastroUsuarioViewState extends State<CadastroUsuarioView> {
   }
 
   Future<void> _cadastrarComGoogle() async {
+    if (_telefoneController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Informe seu telefone para continuar.')),
+      );
+      return;
+    }
+
     final authController = context.read<AuthController>();
     final sucesso = await authController.loginComGoogle(
       tipo: _tipo,
@@ -149,9 +156,12 @@ class _CadastroUsuarioViewState extends State<CadastroUsuarioView> {
                 controller: _telefoneController,
                 keyboardType: TextInputType.phone,
                 decoration: const InputDecoration(
-                  labelText: 'Telefone (opcional)',
+                  labelText: 'Telefone',
                   border: OutlineInputBorder(),
                 ),
+                validator: (valor) => (valor == null || valor.trim().isEmpty)
+                    ? 'Informe seu telefone.'
+                    : null,
               ),
               const SizedBox(height: 16),
               Row(

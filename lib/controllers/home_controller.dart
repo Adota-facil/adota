@@ -8,13 +8,8 @@ import 'package:adota_facil/services/analytics_service.dart';
 import 'package:adota_facil/services/estrategia_armazenamento_foto.dart';
 import 'package:flutter/material.dart';
 
-/// [ISP] Implementa as duas interfaces segregadas — nada muda no
-/// comportamento, mas fica explícito que este controller cumpre dois
-/// papéis (listagem e cadastro) que poderiam, no futuro, virar duas
-/// classes menores se crescerem demais.
 class HomeController extends ChangeNotifier
     implements ListaAnimaisController, CadastroAnimalController {
-  /// Categoria especial que representa "sem filtro".
   static const String categoriaTodos = 'Todos';
 
   static const String _erroCarregarAnimais =
@@ -28,20 +23,8 @@ class HomeController extends ChangeNotifier
   final EstrategiaArmazenamentoFoto _estrategiaFoto;
   final AnalyticsService _analytics;
 
-  /// Callback opcional chamado sempre que carregarAnimais() busca a lista
-  /// COMPLETA de pets (não é chamado por filtrarPorCategoria, que só
-  /// carrega um subconjunto). Usado hoje pra alimentar o
-  /// NotificacaoController, mas o HomeController não sabe disso — só
-  /// conhece a função.
   final void Function(List<PetModel>)? _aoAtualizarAnimais;
 
-  /// [DIP] O construtor recebe as dependências como as interfaces
-  /// abstratas (AnimalRepository, EstrategiaArmazenamentoFoto,
-  /// AnalyticsService), nunca as classes concretas. O HomeController não
-  /// sabe se os dados vêm do Firestore, se a foto vira Base64 ou vai pro
-  /// Storage, nem qual provedor de analytics está registrando os
-  /// eventos — só conhece os contratos. Quem decide a implementação
-  /// concreta é o main.dart (o "composition root" do app).
   HomeController(
     this._repository,
     this._estrategiaFoto,
@@ -51,8 +34,6 @@ class HomeController extends ChangeNotifier
 
   List<PetModel> _animais = [];
 
-  /// Retorna uma cópia somente-leitura — quem consome não consegue alterar
-  /// a lista interna do controller por fora (ex: `animais.add(...)`).
   @override
   List<PetModel> get animais => List.unmodifiable(_animais);
 
@@ -71,8 +52,6 @@ class HomeController extends ChangeNotifier
   bool _salvando = false;
   @override
   bool get salvando => _salvando;
-
- // bool get carregandoCuriosidades => null;
 
   get curiosidades => null;
 
@@ -100,9 +79,6 @@ class HomeController extends ChangeNotifier
   @override
   String gerarNovoId() => _repository.gerarNovoId();
 
-  /// [arquivoFoto] é opcional — se vier nulo, o pet é salvo sem foto,
-  /// exatamente como acontece hoje. Quando vier preenchido, a foto passa
-  /// pela estratégia configurada (Base64 ou Storage) antes de salvar.
   @override
   Future<bool> cadastrarAnimal(PetModel animal, {File? arquivoFoto}) async {
     _salvando = true;
@@ -127,10 +103,6 @@ class HomeController extends ChangeNotifier
     }
   }
 
-  /// Resolve o id do pet (gera um novo se ainda não tiver) e delega o
-  /// upload para a estratégia configurada, devolvendo o pet já com a
-  /// foto preenchida. Extraído de [cadastrarAnimal] para que cada método
-  /// continue fazendo uma coisa só.
   Future<PetModel> _prepararComFoto(PetModel animal, File arquivoFoto) async {
     final petId = animal.id.isNotEmpty ? animal.id : _repository.gerarNovoId();
     final resultado = await _estrategiaFoto.salvar(arquivoFoto, petId);
@@ -141,9 +113,6 @@ class HomeController extends ChangeNotifier
     );
   }
 
-  /// Centraliza o padrão repetido em [carregarAnimais] e
-  /// [filtrarPorCategoria]: liga o loading, executa a ação, trata erro
-  /// com a mensagem informada e desliga o loading no final.
   Future<void> _executarComCarregando(
     Future<void> Function() acao,
     String mensagemErro,

@@ -12,10 +12,6 @@ class AuthController extends ChangeNotifier {
   late final StreamSubscription<String?> _inscricaoAuth;
 
   AuthController(this._authRepository, this._usuarioRepository) {
-    // Essencial: sem isso, uma sessão restaurada automaticamente pelo
-    // Firebase (ex: logo após um hot restart, ou ao reabrir o app) nunca
-    // avisa o resto do app que o usuário já está logado — só um login ou
-    // logout feito manualmente disparava notifyListeners() antes.
     _inscricaoAuth = _authRepository.mudancasDeUsuario.listen((_) {
       notifyListeners();
     });
@@ -30,16 +26,11 @@ class AuthController extends ChangeNotifier {
   String? get usuarioId => _authRepository.uidAtual;
   bool get logado => usuarioId != null;
 
-  /// Cria a conta no Firebase Auth e, se der certo, já cria o documento
-  /// correspondente em `usuarios`. Se a criação do perfil falhar depois
-  /// da conta já ter sido criada, a conta de auth continua existindo —
-  /// numa versão futura dá pra tratar isso com mais cuidado (ex: apagar
-  /// a conta se o perfil falhar), mas foge do escopo de agora.
   Future<bool> cadastrar({
     required String nome,
     required String email,
     required String senha,
-    required String tipo, // 'adotante' | 'anunciante' | 'ambos'
+    required String tipo,
     String? tipoAnunciante,
     String? telefone,
     String? estado,
@@ -127,17 +118,34 @@ class AuthController extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Apaga o documento em `usuarios` ANTES de apagar a conta no Auth —
-  /// depois que a conta de Auth some, request.auth deixa de existir e as
-  /// regras de segurança do Firestore bloqueariam o delete do documento.
-  Future<bool> excluirConta() async {
+  Future<bool> alterarSenha({
+    required String senhaAtual,
+    required String novaSenha,
+  }) async {
+    _setCarregando(true);
+    try {
+      await _authRepository.alterarSenha(
+        senhaAtual: senhaAtual,
+        novaSenha: novaSenha,
+      );
+      _erro = null;
+      return true;
+    } catch (e) {
+      _erro = _mensagemDeErro(e);
+      return false;
+    } finally {
+      _setCarregando(false);
+    }
+  }
+
+  Future<bool> excluirConta({required String senha}) async {
     final uid = usuarioId;
     if (uid == null) return false;
 
     _setCarregando(true);
     try {
       await _usuarioRepository.deletar(uid);
-      await _authRepository.excluirConta();
+      await _authRepository.excluirConta(senha: senha);
       _erro = null;
       notifyListeners();
       return true;

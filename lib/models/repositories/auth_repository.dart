@@ -8,8 +8,12 @@ abstract class AuthRepository {
   Future<String> cadastrar({required String email, required String senha});
   Future<String> login({required String email, required String senha});
   Future<UserCredential> loginComGoogle();
+  Future<void> alterarSenha({
+    required String senhaAtual,
+    required String novaSenha,
+  });
   Future<void> logout();
-  Future<void> excluirConta();
+  Future<void> excluirConta({required String senha});
 }
 
 class AuthRepositoryImpl implements AuthRepository {
@@ -61,10 +65,40 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<void> alterarSenha({
+    required String senhaAtual,
+    required String novaSenha,
+  }) async {
+    final usuario = _auth.currentUser;
+    final email = usuario?.email;
+    if (usuario == null || email == null || email.isEmpty) {
+      throw FirebaseAuthException(code: 'operation-not-allowed');
+    }
+
+    final credencial = EmailAuthProvider.credential(
+      email: email,
+      password: senhaAtual,
+    );
+    await usuario.reauthenticateWithCredential(credencial);
+    await usuario.updatePassword(novaSenha);
+  }
+
+  @override
   Future<void> logout() => _auth.signOut();
 
   @override
-  Future<void> excluirConta() async {
-    await _auth.currentUser?.delete();
+  Future<void> excluirConta({required String senha}) async {
+    final usuario = _auth.currentUser;
+    final email = usuario?.email;
+    if (usuario == null || email == null || email.isEmpty) {
+      throw FirebaseAuthException(code: 'operation-not-allowed');
+    }
+
+    final credencial = EmailAuthProvider.credential(
+      email: email,
+      password: senha,
+    );
+    await usuario.reauthenticateWithCredential(credencial);
+    await usuario.delete();
   }
 }

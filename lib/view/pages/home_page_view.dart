@@ -1,8 +1,6 @@
 import 'package:adota_facil/controllers/home_controller.dart';
 import 'package:adota_facil/view/pages/curiosidades_view.dart';
 import 'package:adota_facil/view/widgets/CarouselSlider_widget.dart';
-//import 'package:adota_facil/view/pages/curiosidades_view.dart';
-//import 'package:adota_facil/view/widgets/CarouselSlider_widget.dart';
 import 'package:adota_facil/view/widgets/avatar_animais_widget.dart';
 import 'package:adota_facil/view/widgets/pet_card_widget.dart';
 import 'package:flutter/material.dart';
@@ -14,8 +12,15 @@ const List<String> _bannersSecundarios = ["assets/image/Rectangle 30.png"];
 
 class HomePageView extends StatelessWidget {
   final ValueChanged<String>? onCategoriaSelecionada;
+  final VoidCallback? onAdoteAgora;
+  final VoidCallback? onAnunciarPet;
 
-  const HomePageView({super.key, this.onCategoriaSelecionada});
+  const HomePageView({
+    super.key,
+    this.onCategoriaSelecionada,
+    this.onAdoteAgora,
+    this.onAnunciarPet,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -63,14 +68,7 @@ class HomePageView extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => CuriosidadesView(),
-                            ),
-                          );
-                        },
+                        onPressed: onAdoteAgora,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF4998E5),
                           elevation: 4,
@@ -90,7 +88,7 @@ class HomePageView extends StatelessWidget {
                         ),
                       ),
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: onAnunciarPet,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFFEAA62),
                           elevation: 4,
@@ -168,7 +166,6 @@ class HomePageView extends StatelessWidget {
                   children: [
                     AvatarAnimais(
                       onPressed: () {
-                        controller.filtrarPorCategoria("Cachorro");
                         onCategoriaSelecionada?.call("Cachorro");
                       },
                       iconeSvg: 'assets/image/lucide_dog.svg',
@@ -176,7 +173,6 @@ class HomePageView extends StatelessWidget {
                     ),
                     AvatarAnimais(
                       onPressed: () {
-                        controller.filtrarPorCategoria("Gato");
                         onCategoriaSelecionada?.call("Gato");
                       },
                       iconeSvg: 'assets/image/Group.svg',
@@ -184,7 +180,6 @@ class HomePageView extends StatelessWidget {
                     ),
                     AvatarAnimais(
                       onPressed: () {
-                        controller.filtrarPorCategoria("Outros");
                         onCategoriaSelecionada?.call("Outros");
                       },
                       iconeSvg: "assets/image/material-symbols_add.svg",
@@ -210,82 +205,45 @@ class HomePageView extends StatelessWidget {
               child: _ListaDePets(controller: controller),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 20, top: 20),
-              child: const Text(
-                "Curiosidades",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF4998E5),
-                  fontSize: 25,
+              padding: const EdgeInsets.only(left: 20, top: 20, right: 20),
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const CuriosidadesView(),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.auto_awesome, size: 20),
+                label: const Text("Curiosidades"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF4998E5),
+                  foregroundColor: Colors.white,
+                  elevation: 2,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 18,
+                    vertical: 12,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  textStyle: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
                 ),
               ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-              //child: _construirCarrosselCuriosidades(controller),
             ),
-            const SizedBox(height: 150), // espaço extra: nav flutuante fica por cima
+            const SizedBox(height: 150),
           ],
         ),
       ),
     );
   }
-
-  /*Widget _construirCarrosselCuriosidades(HomeController controller) {
-    if (controller.carregandoCuriosidades) {
-      return const SizedBox(
-        height: 180,
-        child: Center(child: CircularProgressIndicator()),
-      );
-    }
-    if (controller.curiosidades.isEmpty) {
-      return Container(
-        height: 180,
-        width: double.infinity,
-        decoration: BoxDecoration(
-          color: const Color(0xFF4998E5),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        alignment: Alignment.center,
-        child: const Text(
-          'Nenhuma imagem disponível 🐾',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-      );
-    }
-    return CarouselSliderWidget(
-      altura: 180,
-      items: controller.curiosidades.map((curiosidade) {
-        final viewId = 'img-${curiosidade.id}';
-
-        ui.platformViewRegistry.registerViewFactory(viewId, (int viewId) {
-          final element = web.HTMLImageElement();
-          element.src = curiosidade.urlImagem;
-          element.style.width = '100%';
-          element.style.height = '100%';
-          element.style.objectFit = 'cover';
-          element.style.borderRadius = '12px';
-
-          element.onError.listen((event) {
-            element.src = 'pexels.com';
-          });
-          return element;
-        });
-        return Container(
-          width: double.infinity,
-          margin: const EdgeInsets.symmetric(horizontal: 4),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            color: const Color(0xFFECEFF1),
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: HtmlElementView(viewType: viewId),
-          ),
-        );
-      }).toList(),
-    );
-  }*/
 }
 
 class _ListaDePets extends StatelessWidget {

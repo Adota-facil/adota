@@ -122,6 +122,105 @@ class _ConfigViewState extends State<ConfigView> {
     );
   }
 
+  Future<void> _alterarSenha(BuildContext context) async {
+    final senhaAtualController = TextEditingController();
+    final novaSenhaController = TextEditingController();
+    final confirmarSenhaController = TextEditingController();
+
+    final dados = await showDialog<(String, String)?>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Alterar senha'),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: senhaAtualController,
+                obscureText: true,
+                decoration: const InputDecoration(
+                  labelText: 'Senha atual',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: novaSenhaController,
+                obscureText: true,
+                decoration: const InputDecoration(
+                  labelText: 'Nova senha',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: confirmarSenhaController,
+                obscureText: true,
+                decoration: const InputDecoration(
+                  labelText: 'Confirmar nova senha',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              final senhaAtual = senhaAtualController.text.trim();
+              final novaSenha = novaSenhaController.text;
+
+              if (senhaAtual.isEmpty || novaSenha.length < 6) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('A nova senha deve ter pelo menos 6 caracteres.'),
+                  ),
+                );
+                return;
+              }
+              if (novaSenha != confirmarSenhaController.text) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('As senhas não coincidem.')),
+                );
+                return;
+              }
+
+              Navigator.of(dialogContext).pop((senhaAtual, novaSenha));
+            },
+            child: const Text('Salvar'),
+          ),
+        ],
+      ),
+    );
+
+    senhaAtualController.dispose();
+    novaSenhaController.dispose();
+    confirmarSenhaController.dispose();
+
+    if (dados == null || !context.mounted) return;
+
+    final authController = context.read<AuthController>();
+    final sucesso = await authController.alterarSenha(
+      senhaAtual: dados.$1,
+      novaSenha: dados.$2,
+    );
+    if (!context.mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          sucesso
+              ? 'Senha alterada com sucesso.'
+              : (authController.erro ?? 'Não foi possível alterar a senha.'),
+        ),
+      ),
+    );
+  }
+
   Future<void> _confirmarSaida(BuildContext context) async {
     final confirmou = await showDialog<bool>(
       context: context,
@@ -151,13 +250,60 @@ class _ConfigViewState extends State<ConfigView> {
   }
 
   Future<void> _confirmarExclusao(BuildContext context) async {
-    final confirmou = await showDialog<bool>(
+    final senhaController = TextEditingController();
+    final senha = await showDialog<String>(
       context: context,
       builder: (dialogContext) => AlertDialog(
         title: const Text('Excluir conta'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'Essa ação é permanente e não pode ser desfeita. Informe sua '
+              'senha para continuar.',
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: senhaController,
+              obscureText: true,
+              decoration: const InputDecoration(
+                labelText: 'Senha atual',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () {
+              if (senhaController.text.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Informe sua senha.')),
+                );
+                return;
+              }
+              Navigator.of(dialogContext).pop(senhaController.text);
+            },
+            child: const Text('Excluir', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+    senhaController.dispose();
+
+    if (senha == null || !context.mounted) return;
+
+    final confirmou = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Confirmar exclusão'),
         content: const Text(
-          'Essa ação é permanente e não pode ser desfeita. Seus dados de '
-          'perfil serão apagados. Deseja continuar?',
+          'Tem certeza que deseja excluir permanentemente sua conta e seus '
+          'dados?',
         ),
         actions: [
           TextButton(
@@ -166,7 +312,7 @@ class _ConfigViewState extends State<ConfigView> {
           ),
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: const Text('Excluir', style: TextStyle(color: Colors.red)),
+            child: const Text('Sim, excluir', style: TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -175,7 +321,7 @@ class _ConfigViewState extends State<ConfigView> {
     if (confirmou != true || !context.mounted) return;
 
     final authController = context.read<AuthController>();
-    final sucesso = await authController.excluirConta();
+    final sucesso = await authController.excluirConta(senha: senha);
     if (!context.mounted) return;
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -221,7 +367,7 @@ class _ConfigViewState extends State<ConfigView> {
                   icone: Icons.lock_outline,
                   titulo: 'Alterar Senha',
                   subtitulo: 'Atualize sua credencial de acesso',
-                  onTap: () {},
+                  onTap: () => _alterarSenha(context),
                 ),
               ],
             ),

@@ -111,10 +111,15 @@ class PetModel {
     return PetModel._fromMap(
       data,
       id: documentId,
-      criadoEm: data['criadoEm'] != null
-          ? (data['criadoEm'] as Timestamp).toDate()
-          : null,
+      criadoEm: _converterData(data['criadoEm']),
     );
+  }
+
+  static DateTime? _converterData(dynamic valor) {
+    if (valor is Timestamp) return valor.toDate();
+    if (valor is DateTime) return valor;
+    if (valor is String) return DateTime.tryParse(valor);
+    return null;
   }
 
   Map<String, dynamic> get _camposComuns => {

@@ -19,6 +19,9 @@ class _BasePageViewState extends State<BasePageView> {
   static const double _limiarParaAlternar = 8.0;
 
   int _currentIndex = 0;
+  int _versaoPaginaPets = 0;
+  int _versaoPaginaAnunciarPet = 0;
+  String? _categoriaPesquisaInicial;
   final PageController _pageController = PageController();
   bool _mostrarNav = true;
   double _deltaAcumulado = 0;
@@ -32,10 +35,22 @@ class _BasePageViewState extends State<BasePageView> {
   ];
 
   void _onPageChanged(int index) {
+    final saiuDaPaginaDePets = _currentIndex == 1 && index != 1;
+    final saiuDaPaginaDeAnunciarPet = _currentIndex == 2 && index != 2;
+
     setState(() {
       _currentIndex = index;
       _mostrarNav = true;
       _deltaAcumulado = 0;
+
+      if (saiuDaPaginaDePets) {
+        _categoriaPesquisaInicial = null;
+        _versaoPaginaPets++;
+      }
+
+      if (saiuDaPaginaDeAnunciarPet) {
+        _versaoPaginaAnunciarPet++;
+      }
     });
   }
 
@@ -90,10 +105,25 @@ class _BasePageViewState extends State<BasePageView> {
               onPageChanged: _onPageChanged,
               children: [
                 HomePageView(
-                  onCategoriaSelecionada: (_) => _onBottomNavTap(1),
+                  onAdoteAgora: () {
+                    setState(() => _categoriaPesquisaInicial = null);
+                    _onBottomNavTap(1);
+                  },
+                  onAnunciarPet: () => _onBottomNavTap(2),
+                  onCategoriaSelecionada: (categoria) {
+                    setState(() => _categoriaPesquisaInicial = categoria);
+                    _onBottomNavTap(1);
+                  },
                 ),
-                const SearchPageView(),
-                const CadastroPetView(),
+                SearchPageView(
+                  key: ValueKey(
+                    '$_categoriaPesquisaInicial-$_versaoPaginaPets',
+                  ),
+                  categoriaInicial: _categoriaPesquisaInicial,
+                ),
+                CadastroPetView(
+                  key: ValueKey(_versaoPaginaAnunciarPet),
+                ),
                 const PerfilUsuarioView(),
                 const ConfigView(),
               ],
