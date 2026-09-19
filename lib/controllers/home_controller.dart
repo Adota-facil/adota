@@ -7,6 +7,7 @@ import 'package:adota_facil/models/repositories/animal_repository.dart';
 import 'package:adota_facil/services/analytics_service.dart';
 import 'package:adota_facil/services/armazenamento_base64.dart';
 import 'package:adota_facil/services/estrategia_armazenamento_foto.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class HomeController extends ChangeNotifier
@@ -95,13 +96,29 @@ class HomeController extends ChangeNotifier
       _erro = null;
       return true;
     } catch (e) {
-      _erro = _erroCadastrarAnimal;
+      _erro = _mensagemErroCadastro(e);
       notifyListeners();
       return false;
     } finally {
       _salvando = false;
       notifyListeners();
     }
+  }
+
+  String _mensagemErroCadastro(Object erro) {
+    if (erro is FirebaseException) {
+      switch (erro.code) {
+        case 'permission-denied':
+          return 'Seu perfil precisa ser anunciante ou ambos para publicar um animal.';
+        case 'resource-exhausted':
+          return 'As fotos excedem o limite permitido. Escolha imagens menores.';
+        case 'unauthenticated':
+          return 'Sua sessão expirou. Entre novamente para publicar um animal.';
+        case 'failed-precondition':
+          return 'O cadastro não pôde ser concluído por uma configuração do Firebase.';
+      }
+    }
+    return _erroCadastrarAnimal;
   }
 
   Future<PetModel> _prepararComFoto(PetModel animal, File arquivoFoto) async {

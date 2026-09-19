@@ -1,4 +1,5 @@
 import 'package:adota_facil/controllers/auth_controller.dart';
+import 'package:adota_facil/models/repositories/usuario_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -10,6 +11,8 @@ class ConfigView extends StatefulWidget {
 }
 
 class _ConfigViewState extends State<ConfigView> {
+  final UsuarioRepository _usuarioRepository = UsuarioRepositoryImpl();
+
   Widget _construirSecao({required String titulo, required List<Widget> itens}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -249,6 +252,92 @@ class _ConfigViewState extends State<ConfigView> {
     );
   }
 
+  Future<void> _alterarTipoPerfil(BuildContext context) async {
+    final usuarioId = context.read<AuthController>().usuarioId;
+    if (usuarioId == null) return;
+
+    try {
+      final usuario = await _usuarioRepository.buscarPorId(usuarioId);
+      if (!context.mounted || usuario == null) return;
+
+      final novoTipo = await showDialog<String>(
+        context: context,
+        builder: (dialogContext) {
+          var tipoSelecionado = usuario.tipo;
+          return StatefulBuilder(
+            builder: (context, setState) => AlertDialog(
+              title: const Text('Tipo de perfil'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  DropdownButtonFormField<String>(
+                    initialValue: tipoSelecionado,
+                    decoration: const InputDecoration(
+                      labelText: 'Tipo de perfil',
+                      border: OutlineInputBorder(),
+                    ),
+                    items: const [
+                      DropdownMenuItem(
+                        value: 'adotante',
+                        child: Text('Adotante'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'anunciante',
+                        child: Text('Anunciante'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'ambos',
+                        child: Text('Ambos'),
+                      ),
+                    ],
+                    onChanged: (valor) {
+                      if (valor != null) {
+                        setState(() => tipoSelecionado = valor);
+                      }
+                    },
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(dialogContext).pop(),
+                  child: const Text('Cancelar'),
+                ),
+                ElevatedButton(
+                  onPressed: () =>
+                      Navigator.of(dialogContext).pop(tipoSelecionado),
+                  child: const Text('Salvar'),
+                ),
+              ],
+            ),
+          );
+        },
+      );
+
+      if (novoTipo == null || novoTipo == usuario.tipo || !context.mounted) {
+        return;
+      }
+
+      final usuarioAtualizado = usuario.copyWith(
+        tipo: novoTipo,
+        tipoAnunciante: novoTipo == 'adotante'
+            ? ''
+            : (usuario.tipoAnunciante ?? 'Protetor Independente'),
+      );
+      await _usuarioRepository.salvar(usuarioAtualizado);
+      if (!context.mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Tipo de perfil atualizado com sucesso.')),
+      );
+    } catch (_) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Não foi possível alterar o tipo de perfil.')),
+      );
+    }
+  }
+
   Future<void> _confirmarExclusao(BuildContext context) async {
     final senhaController = TextEditingController();
     final senha = await showDialog<String>(
@@ -375,6 +464,12 @@ class _ConfigViewState extends State<ConfigView> {
               _construirSecao(
                 titulo: 'Conta',
                 itens: [
+                  _construirOpcaoClique(
+                    icone: Icons.switch_account_outlined,
+                    titulo: 'Tipo de Perfil',
+                    subtitulo: 'Escolha entre adotante, anunciante ou ambos',
+                    onTap: () => _alterarTipoPerfil(context),
+                  ),
                   _construirOpcaoClique(
                     icone: Icons.logout,
                     titulo: 'Sair da Conta',

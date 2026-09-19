@@ -174,8 +174,16 @@ class _CadastroPetViewState extends State<CadastroPetView> {
           .collection('usuarios')
           .doc(anuncianteId)
           .get();
+        if (!mounted) return;
       if (docUsuario.exists && docUsuario.data() != null) {
         final dados = docUsuario.data()!;
+        final tipoUsuario = dados['tipo'];
+        if (tipoUsuario != 'anunciante' && tipoUsuario != 'ambos') {
+          _mostrarErro(
+            'Seu perfil precisa ser anunciante ou ambos para publicar um animal.',
+          );
+          return;
+        }
         anuncianteNome =
             dados['nome'] ?? dados['name'] ?? dados['nomeCompleto'] ?? '';
       }
