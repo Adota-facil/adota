@@ -65,6 +65,10 @@ class _AvatarButtonState extends State<AvatarButton> {
               : usuario?.nome ?? FirebaseAuth.instance.currentUser?.displayName;
           final primeiroNome = _primeiroNome(nome);
 
+          final temFoto =
+              (usuario?.fotoBase64 != null && usuario!.fotoBase64.isNotEmpty) ||
+              (usuario?.fotoUrl != null && usuario!.fotoUrl.isNotEmpty);
+
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
@@ -73,11 +77,18 @@ class _AvatarButtonState extends State<AvatarButton> {
                 child: SizedBox(
                   width: 44,
                   height: 44,
-                  child: usuario == null
-                      ? const CircleAvatar(child: Icon(Icons.person, size: 28))
+                  child: !temFoto
+                      ? Container(
+                          color: const Color(0xFFEDE7F6),
+                          child: const Icon(
+                            Icons.person,
+                            size: 26,
+                            color: Color(0xFF512DA8),
+                          ),
+                        )
                       : PetImageWidget(
-                          fotoBase64: usuario.fotoBase64,
-                          fotoUrl: usuario.fotoUrl,
+                          fotoBase64: usuario?.fotoBase64 ?? '',
+                          fotoUrl: usuario?.fotoUrl ?? '',
                           fit: BoxFit.cover,
                         ),
                 ),

@@ -98,8 +98,10 @@ class AppbarWidget extends StatelessWidget implements PreferredSizeWidget {
                       top: 2,
                       child: Container(
                         padding: const EdgeInsets.all(4),
-                        constraints:
-                            const BoxConstraints(minWidth: 16, minHeight: 16),
+                        constraints: const BoxConstraints(
+                          minWidth: 16,
+                          minHeight: 16,
+                        ),
                         decoration: const BoxDecoration(
                           color: Colors.red,
                           shape: BoxShape.circle,
@@ -120,10 +122,7 @@ class AppbarWidget extends StatelessWidget implements PreferredSizeWidget {
             },
           ),
         ),
-        const SizedBox(
-          width: 76,
-          child: AvatarButton(),
-        ),
+        const SizedBox(width: 76, child: AvatarButton()),
       ],
     );
   }
