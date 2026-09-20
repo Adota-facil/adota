@@ -1,6 +1,4 @@
 import 'dart:io';
-
-
 import 'package:adota_facil/controllers/home_controller_interfaces.dart';
 import 'package:adota_facil/models/pet_model.dart';
 import 'package:adota_facil/models/repositories/animal_repository.dart';
@@ -57,13 +55,10 @@ class HomeController extends ChangeNotifier
   Null get curiosidades => null;
 
   @override
-  Future<void> carregarAnimais() => _executarComCarregando(
-        () async {
-          _animais = await _repository.buscarAnimais();
-          _aoAtualizarAnimais?.call(_animais);
-        },
-        _erroCarregarAnimais,
-      );
+  Future<void> carregarAnimais() => _executarComCarregando(() async {
+    _animais = await _repository.buscarAnimais();
+    _aoAtualizarAnimais?.call(_animais);
+  }, _erroCarregarAnimais);
 
   @override
   Future<void> filtrarPorCategoria(String categoria) {
